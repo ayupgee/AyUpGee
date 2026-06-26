@@ -11,6 +11,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
+<!-- Preconnect for external asset CDNs -->
+<link rel="preconnect" href="https://cdn.simpleicons.org" />
+<link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
+<link rel="preconnect" href="https://unpkg.com" />
+<link rel="dns-prefetch" href="https://unpkg.com" />
+
 <!-- Lucide icons -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 
@@ -684,7 +690,7 @@ ul,ol{list-style:none}
 <section id="hero">
   <div class="hero">
     <!-- Hero background -->
-    <img class="hero__bg" src="assets/ayupgee-bg-hero.png" alt="" />
+    <img class="hero__bg" src="assets/ayupgee-bg-hero.png" alt="" fetchpriority="high" decoding="async" />
     <div class="hero__scrim"></div>
     <!-- Ambient orbs -->
     <div class="hero__orb hero__orb--a"></div>
@@ -714,6 +720,7 @@ ul,ol{list-style:none}
               <img class="ayg-avatar__img"
                    src="assets/social-profile.jpg"
                    alt="Gee – AyUpGee"
+                   fetchpriority="high" decoding="async"
                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'ayg-avatar__fallback\' style=\'font-size:2.2rem\'>G</span>'" />
             </span>
             <div>
@@ -796,7 +803,7 @@ ul,ol{list-style:none}
       </div>
       <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
          class="ayg-btn ayg-btn--md" style="--_bg:#9146ff;--_fg:#fff;flex:none">
-        <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" />
+        <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" loading="lazy" decoding="async" />
         Open on Twitch
       </a>
     </div>
@@ -806,7 +813,7 @@ ul,ol{list-style:none}
       <div class="twitch-player-wrap">
         <div class="twitch-player-header">
           <div class="twitch-player-title">
-            <img src="https://cdn.simpleicons.org/twitch/9146ff" style="width:18px;height:18px" alt="" />
+            <img src="https://cdn.simpleicons.org/twitch/9146ff" style="width:18px;height:18px" alt="" loading="lazy" decoding="async" />
             AyUpGee
             <span id="liveStatusBadge"></span>
           </div>
@@ -834,7 +841,7 @@ ul,ol{list-style:none}
           </p>
           <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
              class="ayg-social ayg-btn--block" style="--_c:#9146ff;justify-content:center">
-            <img class="ayg-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" />
+            <img class="ayg-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" />
             Follow on Twitch
           </a>
         </div>
@@ -847,12 +854,12 @@ ul,ol{list-style:none}
           <div style="display:flex;flex-direction:column;gap:var(--space-2)">
             <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
                class="ayg-btn ayg-btn--secondary ayg-btn--sm ayg-btn--block">
-              <img src="https://cdn.simpleicons.org/twitch/9146ff" style="width:14px;height:14px" alt="" />
+              <img src="https://cdn.simpleicons.org/twitch/9146ff" style="width:14px;height:14px" alt="" loading="lazy" decoding="async" />
               Twitch VODs
             </a>
             <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
                class="ayg-btn ayg-btn--secondary ayg-btn--sm ayg-btn--block">
-              <img src="https://cdn.simpleicons.org/youtube/FF0033" style="width:14px;height:14px" alt="" />
+              <img src="https://cdn.simpleicons.org/youtube/FF0033" style="width:14px;height:14px" alt="" loading="lazy" decoding="async" />
               YouTube highlights
             </a>
           </div>
@@ -1133,7 +1140,7 @@ ul,ol{list-style:none}
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
       <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener"
          class="ayg-social" style="--_c:#000000">
-        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/tiktok/white" alt="" />
+        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/tiktok/white" alt="" loading="lazy" decoding="async" />
         Follow on TikTok
       </a>
     </div>
@@ -1226,7 +1233,7 @@ ul,ol{list-style:none}
       <!-- UPDATE: replace # with your real Instagram URL -->
       <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener"
          class="ayg-social" style="--_c:#E4405F">
-        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/instagram/white" alt="" />
+        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" />
         Follow on Instagram
       </a>
     </div>
@@ -1297,7 +1304,7 @@ ul,ol{list-style:none}
       <!-- Discord card -->
       <div class="discord-card reveal">
         <div class="discord-card__logo">
-          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" />
+          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" loading="lazy" decoding="async" />
         </div>
         <h3 class="discord-card__title">Join the Hive 🐝</h3>
         <p class="discord-card__desc">
@@ -1307,7 +1314,7 @@ ul,ol{list-style:none}
         <!-- UPDATE: replace with your real Discord invite link -->
         <a href="https://discord.gg/uAhZtzkKDU" target="_blank" rel="noopener"
            class="discord-invite-btn">
-          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="" style="width:22px;height:22px" />
+          <img src="https://cdn.simpleicons.org/discord/5865F2" alt="" style="width:22px;height:22px" loading="lazy" decoding="async" />
           Join the AyUpGee Discord
         </a>
       </div>
@@ -1329,6 +1336,7 @@ ul,ol{list-style:none}
             <!-- UPDATE: replace with your real profile photo -->
             <img src="assets/social-profile.jpg"
                  alt="Gee – AyUpGee"
+                 loading="lazy" decoding="async"
                  onerror="this.style.display='none';this.parentNode.innerHTML='🎮'" />
           </div>
         </div>
@@ -1382,7 +1390,7 @@ ul,ol{list-style:none}
         <div style="margin-top:var(--space-4)">
           <a href="https://twitch.tv/ayupgee/subscribe" target="_blank" rel="noopener"
              class="ayg-btn ayg-btn--md" style="--_bg:#9146ff;--_fg:#fff">
-            <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" />
+            <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" loading="lazy" decoding="async" />
             Subscribe on Twitch
           </a>
         </div>
@@ -1390,19 +1398,19 @@ ul,ol{list-style:none}
       <div class="hive__tiers">
         <div class="hive__tier">
           <div class="hive__pad">
-            <img src="assets/bee_sub_basic_72x72.png" alt="Basic bee badge" />
+            <img src="assets/bee_sub_basic_72x72.png" alt="Basic bee badge" loading="lazy" decoding="async" />
           </div>
           <span class="hive__name">Basic bee</span>
         </div>
         <div class="hive__tier">
           <div class="hive__pad">
-            <img src="assets/bee_sub_sapphire_72x72.png" alt="Sapphire bee badge" />
+            <img src="assets/bee_sub_sapphire_72x72.png" alt="Sapphire bee badge" loading="lazy" decoding="async" />
           </div>
           <span class="hive__name">Sapphire bee</span>
         </div>
         <div class="hive__tier">
           <div class="hive__pad">
-            <img src="assets/bee_sub_platinum_72x72.png" alt="Platinum bee badge" />
+            <img src="assets/bee_sub_platinum_72x72.png" alt="Platinum bee badge" loading="lazy" decoding="async" />
           </div>
           <span class="hive__name">Platinum bee</span>
         </div>
@@ -1503,19 +1511,19 @@ ul,ol{list-style:none}
       <div class="site-footer__socials">
         <!-- UPDATE all href values to your real social URLs -->
         <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener" class="footer-social">
-          <img src="https://cdn.simpleicons.org/twitch/white" alt="" /> Twitch
+          <img src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" /> Twitch
         </a>
         <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener" class="footer-social">
-          <img src="https://cdn.simpleicons.org/youtube/white" alt="" /> YouTube
+          <img src="https://cdn.simpleicons.org/youtube/white" alt="" loading="lazy" decoding="async" /> YouTube
         </a>
         <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="footer-social">
-          <img src="https://cdn.simpleicons.org/tiktok/white" alt="" /> TikTok
+          <img src="https://cdn.simpleicons.org/tiktok/white" alt="" loading="lazy" decoding="async" /> TikTok
         </a>
         <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener" class="footer-social">
-          <img src="https://cdn.simpleicons.org/instagram/white" alt="" /> Instagram
+          <img src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" /> Instagram
         </a>
         <a href="https://discord.gg/uAhZtzkKDU" target="_blank" rel="noopener" class="footer-social">
-          <img src="https://cdn.simpleicons.org/discord/white" alt="" /> Discord
+          <img src="https://cdn.simpleicons.org/discord/white" alt="" loading="lazy" decoding="async" /> Discord
         </a>
         <a href="https://throne.com/ayupgee" target="_blank" rel="noopener" class="footer-social">
           👑 Throne
