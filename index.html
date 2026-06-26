@@ -514,7 +514,7 @@ ul,ol{list-style:none}
    INSTAGRAM SECTION
    ═══════════════════════════════════════════════════════ */
 #instagram{background:var(--bg-subtle)}
-.insta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)}
+.insta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
 .insta-cell{position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:var(--surface-sunken);cursor:pointer;display:block;text-decoration:none}
 .insta-cell img{width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease-out);display:block}
 .insta-cell:hover img{transform:scale(1.06)}
@@ -1157,8 +1157,6 @@ ul,ol{list-style:none}
     <!-- Instagram grid — populated dynamically by loadInstagramFeed() -->
     <div class="insta-grid reveal" id="instaFeed" aria-live="polite" aria-label="Instagram posts">
       <!-- Skeleton placeholders shown while loading -->
-      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
-      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
