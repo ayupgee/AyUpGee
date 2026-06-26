@@ -1699,9 +1699,6 @@ function closeMenu() {
     list.className = 'schedule-list';
     list.innerHTML = '';
 
-    // No Twitch schedule configured yet — fall back to static pattern
-    if (!items.length) { renderStatic(); return; }
-
     items.forEach(item => {
       const tag = (item.category && item.category !== item.title) ? item.category : '';
       const { dow, day, isToday } = ukParts(new Date(item.startTime));
@@ -1719,17 +1716,54 @@ function closeMenu() {
     if (window.lucide) lucide.createIcons();
   }
 
-  // ── Render static fallback (next 7 days, fixed weekly pattern) ───────────
+  // ── No streams card (styled like .ayg-sched--today but without the badge) ─
+  function renderNoSchedule() {
+    list.className = 'schedule-list';
+    list.innerHTML = '';
+    const el = document.createElement('div');
+    el.className = 'ayg-sched ayg-sched--today reveal';
+    el.innerHTML = `
+      <div class="ayg-sched__date" style="background:var(--grad-aurora);color:#1c2b3a">
+        <div class="ayg-sched__dow">📅</div>
+        <div class="ayg-sched__day">–</div>
+      </div>
+      <div class="ayg-sched__body">
+        <div class="ayg-sched__game">No streams scheduled yet</div>
+        <div class="ayg-sched__meta">
+          <span><i data-lucide="bell"></i>Follow on Twitch for stream notifications 🔔</span>
+        </div>
+      </div>
+    `;
+    list.appendChild(el);
+    attachReveal();
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // ── Render static fallback — Mon → Sun of the current week ───────────────
+  // Shows the full week in fixed order; today's card is highlighted.
+  // Use this when the Twitch API is unreachable.
   function renderStatic() {
     list.className = 'schedule-list';
     list.innerHTML = '';
-    const today = new Date();
 
+    // Find the Monday of the current UK week
+    const now = new Date();
+    const todayDow = now.getDay(); // 0=Sun … 6=Sat
+    const daysSinceMon = todayDow === 0 ? 6 : todayDow - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - daysSinceMon);
+    monday.setHours(12, 0, 0, 0); // noon avoids DST edge cases
+
+    // Iterate Mon (offset 0) → Sun (offset 6)
     for (let i = 0; i < 7; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const entry = STATIC_SCHEDULE.find(s => s.dow === ukDowNum(d));
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+
+      // dow for this date: same as JS getDay() since we built from local midnight
+      const dowNum = d.getDay(); // 0=Sun … 6=Sat
+      const entry  = STATIC_SCHEDULE.find(s => s.dow === dowNum);
       if (!entry) continue;
+
       const { dow, day, isToday } = ukParts(d);
       list.appendChild(buildCard({
         dow, day,
@@ -1764,6 +1798,7 @@ function closeMenu() {
     .then(r => { if (!r.ok) throw new Error('api_error'); return r.json(); })
     .then(data => {
       if (data.error || !Array.isArray(data.items)) throw new Error('bad_response');
+      if (!data.items.length) { renderNoSchedule(); return; }
       renderDynamic(data.items);
     })
     .catch(() => renderStatic());
