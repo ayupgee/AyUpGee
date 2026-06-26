@@ -1788,14 +1788,11 @@ function closeMenu() {
     list.innerHTML = '';
     const el = document.createElement('div');
     el.className = 'ayg-sched ayg-sched--today reveal';
+    el.style.justifyContent = 'center';
     el.innerHTML = `
-      <div class="ayg-sched__date" style="background:var(--grad-aurora);color:#1c2b3a">
-        <div class="ayg-sched__dow">📅</div>
-        <div class="ayg-sched__day">–</div>
-      </div>
-      <div class="ayg-sched__body">
+      <div class="ayg-sched__body" style="text-align:center;align-items:center">
         <div class="ayg-sched__game">No streams scheduled yet</div>
-        <div class="ayg-sched__meta">
+        <div class="ayg-sched__meta" style="justify-content:center">
           <span><i data-lucide="bell"></i>Follow on Twitch for stream notifications 🔔</span>
         </div>
       </div>
