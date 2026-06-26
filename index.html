@@ -594,7 +594,8 @@ ul,ol{list-style:none}
   :root{--gutter:var(--space-4)}
   .hero__title{font-size:var(--text-2xl);white-space:normal}
   .hero__inner{padding:var(--space-6) 0 var(--space-5)}
-  .hero__card{padding:var(--space-4)}
+  .hero__card{padding:0}
+  .hero__browser-url{display:none !important}
   .hero__stats{gap:var(--space-4);flex-wrap:wrap}
   .hero__orb--a{width:260px;height:260px}
   .hero__orb--b{width:200px;height:200px}
@@ -607,7 +608,12 @@ ul,ol{list-style:none}
   .clip-row{grid-template-columns:repeat(2,1fr)}
   .insta-grid{grid-template-columns:repeat(2,1fr)}
   .site-footer__inner{grid-template-columns:1fr}
-  .hive{flex-direction:column;align-items:flex-start}
+  .hive{flex-direction:column;align-items:center;text-align:center}
+  .hive__text{display:flex;flex-direction:column;align-items:center}
+  .hive__tiers{justify-content:center}
+  .section-head{text-align:center}
+  .section-head .section-desc{margin-left:auto;margin-right:auto}
+  .section-head--between{flex-direction:column;align-items:center;text-align:center}
   .section{padding:var(--space-6) 0}
   .section--sm{padding:var(--space-5) 0}
   .discord-card{padding:var(--space-5)}
