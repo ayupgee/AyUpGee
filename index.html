@@ -336,10 +336,21 @@ ul,ol{list-style:none}
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--grad-night)}
 [data-theme="night"] .hero{background:var(--grad-night)}
 :not([data-theme="night"]) .hero{background:var(--grad-day)}
+/* Honeycomb tile — subtle honey-gold pattern */
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98'%3E%3Cpolygon points='28,2 54,16 54,50 28,64 2,50 2,16' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3Cpolygon points='28,50 54,64 54,98 28,112 2,98 2,64' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size:56px 98px;opacity:1;z-index:0}
+:not([data-theme="night"]) .hero::before{filter:invert(1) hue-rotate(180deg);opacity:.4}
+/* Ambient glow orbs — honey-warm & dreamy */
 .hero__orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
-.hero__orb--a{width:520px;height:520px;background:var(--dream-400);top:-140px;left:-160px;opacity:.25;animation:ayg-float 9s var(--ease-soft) infinite}
-.hero__orb--b{width:400px;height:400px;background:var(--sky-400);bottom:-100px;right:-120px;opacity:.2;animation:ayg-float 11s var(--ease-soft) infinite reverse}
-.hero__orb--c{width:280px;height:280px;background:var(--blossom-300);top:38%;left:55%;opacity:.15;animation:ayg-float 13s var(--ease-soft) infinite 2s}
+.hero__orb--a{width:520px;height:520px;background:var(--dream-400);top:-140px;left:-160px;opacity:.22;animation:ayg-float 9s var(--ease-soft) infinite}
+.hero__orb--b{width:380px;height:380px;background:var(--moon-400);bottom:-80px;right:-100px;opacity:.18;animation:ayg-float 11s var(--ease-soft) infinite reverse}
+.hero__orb--c{width:260px;height:260px;background:var(--sky-400);top:40%;left:52%;opacity:.12;animation:ayg-float 13s var(--ease-soft) infinite 2s}
+/* Floating bee mascot */
+.hero__bee{position:absolute;right:8%;top:12%;width:96px;height:96px;filter:drop-shadow(var(--glow-moon));animation:ayg-bee-float 5s var(--ease-soft) infinite;pointer-events:none;z-index:2}
+@keyframes ayg-bee-float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+@media(prefers-reduced-motion:reduce){.hero__bee{animation:none}}
+@media(max-width:860px){.hero__bee{display:none}}
 .hero__stars{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .star{position:absolute;border-radius:50%;background:#fff;animation:ayg-twinkle var(--dur,3s) var(--ease-soft) infinite var(--delay,0s)}
 @keyframes ayg-twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
@@ -354,7 +365,10 @@ ul,ol{list-style:none}
 .hero__top{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4)}
 .hero__eyebrow{font-size:var(--text-xs);font-weight:var(--fw-extra);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--brand-strong)}
 .hero__title{font:var(--type-h1);margin:2px 0 0;color:var(--text)}
-.hero__lead{font:var(--type-lead);color:var(--text-muted);margin:0 0 var(--space-5)}
+.hero__lead{font:var(--type-lead);color:var(--text);margin:0 0 var(--space-5)}
+/* Honey-accent tag — for bee-themed pills */
+.ayg-tag--honey{background:color-mix(in srgb,var(--honey) 14%,var(--surface));color:var(--honey-deep);border-color:color-mix(in srgb,var(--honey) 30%,transparent)}
+.ayg-tag--honey:hover{background:color-mix(in srgb,var(--honey) 22%,var(--surface));color:var(--honey-deep);border-color:var(--honey)}
 .hero__cta{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5)}
 .hero__pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5)}
 .hero__stats{display:flex;gap:var(--space-6);padding-top:var(--space-5);border-top:var(--border-thin) solid var(--border)}
@@ -585,9 +599,10 @@ ul,ol{list-style:none}
   .hero__inner{padding:var(--space-6) 0 var(--space-5)}
   .hero__card{padding:var(--space-4)}
   .hero__stats{gap:var(--space-4);flex-wrap:wrap}
-  .hero__orb--a{width:280px;height:280px}
-  .hero__orb--b{width:220px;height:220px}
+  .hero__orb--a{width:260px;height:260px}
+  .hero__orb--b{width:200px;height:200px}
   .hero__orb--c{display:none}
+  .hero::before{background-size:42px 74px}
   .hero__cta{flex-direction:column}
   .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%;justify-content:center}
   .video-grid{grid-template-columns:1fr}
@@ -668,6 +683,8 @@ ul,ol{list-style:none}
     <div class="hero__orb hero__orb--a"></div>
     <div class="hero__orb hero__orb--b"></div>
     <div class="hero__orb hero__orb--c"></div>
+    <!-- Floating bee mascot -->
+    <img class="hero__bee" src="assets/ayupgee-honey_drips_112x112.png" alt="" />
     <!-- Stars (injected by JS) -->
     <div class="hero__stars" id="heroStars"></div>
 
@@ -714,7 +731,7 @@ ul,ol{list-style:none}
             <span class="ayg-tag">🌿 Lurker-friendly</span>
             <span class="ayg-tag">💜 No toxicity</span>
             <span class="ayg-tag">🫖 Grab a brew</span>
-            <span class="ayg-tag">🐝 Join the hive</span>
+            <span class="ayg-tag ayg-tag--honey">🐝 Join the hive</span>
             <span class="ayg-tag">🏝️ Cosy first</span>
           </div>
 
