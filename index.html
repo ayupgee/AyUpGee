@@ -495,33 +495,49 @@ ul,ol{list-style:none}
 
 /* ═══════════════════════════════════════════════════════
    TIKTOK SECTION
-   *** UPDATE TikTok cards below ***
    ═══════════════════════════════════════════════════════ */
 #tiktok{background:var(--bg)}
 .clip-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)}
-.clip{position:relative;aspect-ratio:9/14;border-radius:var(--radius-lg);padding:var(--space-4);display:flex;align-items:flex-end;overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) var(--ease-soft)}
+.clip{position:relative;aspect-ratio:9/14;border-radius:var(--radius-lg);padding:var(--space-4);display:flex;align-items:flex-end;overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) var(--ease-soft);text-decoration:none}
 .clip:hover{transform:translateY(-5px) scale(1.02);box-shadow:var(--shadow-lg)}
+/* Real thumbnail image */
+.clip__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform var(--dur-slow) var(--ease-out)}
+.clip:hover .clip__img{transform:scale(1.04)}
+/* Gradient fallback when no thumbnail */
 .clip__bg{position:absolute;inset:0;background:var(--grad-night);z-index:0}
 .clip__scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(20,18,38,.9) 0%,transparent 55%);z-index:1}
 .clip__play{position:absolute;top:12px;left:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);color:var(--ink-900);display:flex;align-items:center;justify-content:center;z-index:2}
 .clip__play i{width:14px;height:14px;margin-left:1px}
-.clip__title{position:relative;z-index:2;color:#fff;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-md);text-shadow:0 1px 6px rgba(0,0,0,.3)}
-.clip__emoji{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:3rem;z-index:1;opacity:.85}
+.clip__title{position:relative;z-index:2;color:#fff;font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-md);text-shadow:0 1px 6px rgba(0,0,0,.3);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 /* ═══════════════════════════════════════════════════════
    INSTAGRAM SECTION
-   *** UPDATE Instagram grid below ***
    ═══════════════════════════════════════════════════════ */
 #instagram{background:var(--bg-subtle)}
 .insta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)}
-.insta-cell{position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:var(--surface-sunken);cursor:pointer}
-.insta-cell__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.insta-cell img{width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease-out)}
-.insta-cell:hover img{transform:scale(1.08)}
-.insta-cell__overlay{position:absolute;inset:0;background:color-mix(in srgb,var(--dream-500) 75%,var(--sky-400));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);opacity:0;transition:opacity var(--dur-base) var(--ease-soft)}
+.insta-cell{position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:var(--surface-sunken);cursor:pointer;display:block;text-decoration:none}
+.insta-cell img{width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease-out);display:block}
+.insta-cell:hover img{transform:scale(1.06)}
+/* Subtle dark overlay — image stays visible */
+.insta-cell__overlay{position:absolute;inset:0;background:rgba(0,0,0,.38);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);opacity:0;transition:opacity var(--dur-base) var(--ease-soft)}
 .insta-cell:hover .insta-cell__overlay{opacity:1}
 .insta-cell__overlay i{width:24px;height:24px;color:#fff}
 .insta-cell__overlay span{color:#fff;font:var(--type-label);text-align:center;padding:0 var(--space-3)}
+/* Placeholder for cells with no image */
+.insta-cell__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+
+/* ═══════════════════════════════════════════════════════
+   SKELETON / LOADING STATES
+   ═══════════════════════════════════════════════════════ */
+.skel-pulse{position:absolute;inset:0;background:var(--surface-soft);border-radius:inherit;overflow:hidden}
+.skel-pulse::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,color-mix(in srgb,var(--text) 6%,transparent) 50%,transparent 100%);animation:skel-shimmer 1.6s var(--ease-soft) infinite}
+@keyframes skel-shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.skel-pulse::after{animation:none;opacity:.4}}
+
+/* ── Social error / empty states ── */
+.social-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3);padding:var(--space-7) var(--space-4);text-align:center;color:var(--text-muted);grid-column:1/-1}
+.social-error__icon{font-size:2.5rem;line-height:1;opacity:.55}
+.social-error p{font-size:var(--text-sm);max-width:260px}
 
 /* ═══════════════════════════════════════════════════════
    COMMUNITY / DISCORD SECTION
@@ -1108,45 +1124,13 @@ ul,ol{list-style:none}
       </p>
     </div>
 
-    <!-- *** TIKTOK CLIPS: update data-title, data-emoji, and href below *** -->
-    <div class="clip-row reveal">
-
-      <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="clip"
-         data-emoji="🏰" data-title="This valley glow up took me 3 hours 😩✨">
-        <div class="clip__bg" style="background:linear-gradient(160deg,var(--night-900),var(--dream-700))"></div>
-        <div class="clip__scrim"></div>
-        <div class="clip__play"><i data-lucide="play"></i></div>
-        <span class="clip__emoji">🏰</span>
-        <p class="clip__title">This valley glow up took me 3 hours 😩✨</p>
-      </a>
-
-      <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="clip"
-         data-emoji="🍃" data-title="POV: your island is finally finished 🏝️">
-        <div class="clip__bg" style="background:linear-gradient(160deg,var(--night-900),var(--sky-700))"></div>
-        <div class="clip__scrim"></div>
-        <div class="clip__play"><i data-lucide="play"></i></div>
-        <span class="clip__emoji">🍃</span>
-        <p class="clip__title">POV: your island is finally finished 🏝️</p>
-      </a>
-
-      <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="clip"
-         data-emoji="☕" data-title="Stream setup + a cup of tea = perfect night in 🫖">
-        <div class="clip__bg" style="background:linear-gradient(160deg,var(--night-900),var(--blossom-600))"></div>
-        <div class="clip__scrim"></div>
-        <div class="clip__play"><i data-lucide="play"></i></div>
-        <span class="clip__emoji">☕</span>
-        <p class="clip__title">Stream setup + a cup of tea = perfect night in 🫖</p>
-      </a>
-
-      <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="clip"
-         data-emoji="🦋" data-title="DreamSnaps entry looking stunning 😍 #DDV">
-        <div class="clip__bg" style="background:linear-gradient(160deg,var(--night-900),var(--twilight-600))"></div>
-        <div class="clip__scrim"></div>
-        <div class="clip__play"><i data-lucide="play"></i></div>
-        <span class="clip__emoji">🦋</span>
-        <p class="clip__title">DreamSnaps entry looking stunning 😍 #DDV</p>
-      </a>
-
+    <!-- TikTok feed — populated dynamically by loadTikTokFeed() -->
+    <div class="clip-row reveal" id="tiktokFeed" aria-live="polite" aria-label="TikTok clips">
+      <!-- Skeleton placeholders shown while loading -->
+      <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
     </div>
 
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
@@ -1161,8 +1145,6 @@ ul,ol{list-style:none}
 
 <!-- ═══════════════════════════════════════════════════════
      INSTAGRAM SECTION
-     *** UPDATE: replace .insta-cell__ph emoji with real images:
-         <img src="your-photo.jpg" alt="caption" />
      ═══════════════════════════════════════════════════════ -->
 <section id="instagram" class="section">
   <div class="container">
@@ -1172,73 +1154,17 @@ ul,ol{list-style:none}
       <p class="section-desc">Behind-the-scenes moments, DreamSnaps, cosy gaming, stream setup updates, and a few snapshots from everyday life.</p>
     </div>
 
-    <!-- *** INSTAGRAM GRID: replace emoji divs with real images *** -->
-    <div class="insta-grid reveal">
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--dream-700))">🏰</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Dreamlight Valley vibes</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--sky-700))">☕</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Stream desk setup</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--twilight-600))">🎮</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Gaming night in</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--meadow-500))">🌿</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Cosy corner vibes</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--blossom-600))">🌙</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Late night sessions</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--dream-600))">🦋</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>DreamSnaps moment</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--honey-deep))">🏡</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Community spotlight</span>
-        </div>
-      </div>
-
-      <div class="insta-cell">
-        <div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--sky-600))">⭐</div>
-        <div class="insta-cell__overlay">
-          <i data-lucide="camera"></i>
-          <span>Star Path progress</span>
-        </div>
-      </div>
-
+    <!-- Instagram grid — populated dynamically by loadInstagramFeed() -->
+    <div class="insta-grid reveal" id="instaFeed" aria-live="polite" aria-label="Instagram posts">
+      <!-- Skeleton placeholders shown while loading -->
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
+      <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
     </div>
 
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
@@ -1634,6 +1560,163 @@ document.addEventListener('click', function (e) {
   e.preventDefault();
   target.scrollIntoView({ behavior: 'smooth' });
   history.replaceState(null, '', location.pathname);
+});
+
+// ── Social feeds ──────────────────────────────────────────
+// Dynamically renders TikTok and Instagram sections.
+// Data comes from Cloudflare Pages Functions — no API keys in this file.
+
+/** Escape HTML special characters for safe innerHTML insertion */
+function _esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+/**
+ * Remove trailing hashtags from a social caption.
+ * Keeps emojis, punctuation, and regular text.
+ * "Cosy night in ✨ #DDLV #DisneyDreamlightValley" → "Cosy night in ✨"
+ */
+function cleanSocialCaption(caption) {
+  if (!caption) return '';
+  return caption
+    .replace(/(^|\s)#\S+/g, '') // remove #hashtag tokens
+    .replace(/\s{2,}/g, ' ')    // collapse extra whitespace
+    .trim();
+}
+
+// ── TikTok ────────────────────────────────────────────────
+
+function renderTikTokItems(items) {
+  const container = document.getElementById('tiktokFeed');
+  if (!container) return;
+
+  if (!items || !items.length) {
+    container.innerHTML = `
+      <div class="social-error">
+        <div class="social-error__icon">🎵</div>
+        <p>No TikToks yet — check back soon!</p>
+      </div>`;
+    return;
+  }
+
+  // Fallback gradient palette for cards without a thumbnail
+  const gradients = [
+    'linear-gradient(160deg,var(--night-900),var(--dream-700))',
+    'linear-gradient(160deg,var(--night-900),var(--sky-700))',
+    'linear-gradient(160deg,var(--night-900),var(--blossom-600))',
+    'linear-gradient(160deg,var(--night-900),var(--twilight-600))',
+  ];
+
+  container.innerHTML = items.map((item, i) => {
+    const title = _esc(item.title || 'Watch on TikTok');
+    const url   = _esc(item.url   || 'https://tiktok.com/@ayupgee');
+    const hasThumbnail = !!item.thumbnailUrl;
+    const gradient = gradients[i % gradients.length];
+
+    return `
+      <a href="${url}" target="_blank" rel="noopener noreferrer"
+         class="clip" aria-label="${title} — Watch on TikTok">
+        ${hasThumbnail
+          ? `<img class="clip__img" src="${_esc(item.thumbnailUrl)}" alt="${title}" loading="lazy" decoding="async" />`
+          : `<div class="clip__bg" style="background:${gradient}"></div>`
+        }
+        <div class="clip__scrim"></div>
+        <div class="clip__play" aria-hidden="true"><i data-lucide="play"></i></div>
+        <p class="clip__title">${title}</p>
+      </a>`;
+  }).join('');
+
+  if (window.lucide) lucide.createIcons({ nodes: container.querySelectorAll('[data-lucide]') });
+}
+
+function renderTikTokError() {
+  const container = document.getElementById('tiktokFeed');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="social-error">
+      <div class="social-error__icon">🎵</div>
+      <p>Couldn't load TikToks right now. <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener noreferrer">Visit TikTok</a></p>
+    </div>`;
+}
+
+async function loadTikTokFeed() {
+  try {
+    const res = await fetch('/api/social/tiktok');
+    if (!res.ok) { renderTikTokError(); return; }
+    const data = await res.json();
+    if (!data.ok)  { renderTikTokError(); return; }
+    renderTikTokItems(data.items);
+  } catch {
+    renderTikTokError();
+  }
+}
+
+// ── Instagram ─────────────────────────────────────────────
+
+function renderInstagramItems(items) {
+  const container = document.getElementById('instaFeed');
+  if (!container) return;
+
+  if (!items || !items.length) {
+    container.innerHTML = `
+      <div class="social-error">
+        <div class="social-error__icon">📸</div>
+        <p>No Instagram posts yet — check back soon!</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(item => {
+    const rawCaption  = cleanSocialCaption(item.caption);
+    const caption     = _esc(rawCaption || 'View on Instagram');
+    const url         = _esc(item.url || 'https://instagram.com/ayupgee');
+    const hasImage    = !!item.imageUrl;
+
+    return `
+      <a href="${url}" target="_blank" rel="noopener noreferrer"
+         class="insta-cell" aria-label="${caption} — View on Instagram">
+        ${hasImage
+          ? `<img src="${_esc(item.imageUrl)}" alt="${caption}" loading="lazy" decoding="async" />`
+          : `<div class="insta-cell__ph" style="background:linear-gradient(135deg,var(--night-900),var(--dream-700))">📸</div>`
+        }
+        <div class="insta-cell__overlay" aria-hidden="true">
+          <i data-lucide="camera"></i>
+          <span>View on Instagram</span>
+        </div>
+      </a>`;
+  }).join('');
+
+  if (window.lucide) lucide.createIcons({ nodes: container.querySelectorAll('[data-lucide]') });
+}
+
+function renderInstagramError() {
+  const container = document.getElementById('instaFeed');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="social-error">
+      <div class="social-error__icon">📸</div>
+      <p>Couldn't load Instagram right now. <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener noreferrer">Visit Instagram</a></p>
+    </div>`;
+}
+
+async function loadInstagramFeed() {
+  try {
+    const res = await fetch('/api/social/instagram');
+    if (!res.ok) { renderInstagramError(); return; }
+    const data = await res.json();
+    if (!data.ok)  { renderInstagramError(); return; }
+    renderInstagramItems(data.items);
+  } catch {
+    renderInstagramError();
+  }
+}
+
+// ── Run on page load ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadTikTokFeed();
+  loadInstagramFeed();
 });
 
 // ── Starfield ─────────────────────────────────────────────

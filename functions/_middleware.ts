@@ -20,6 +20,7 @@ import { resolveSession } from '../src/services/authService.ts';
 const PUBLIC_PATH_PREFIXES = [
   '/assets/',
   '/api/twitch/',       // Phase 1 Twitch schedule (no auth)
+  '/api/social/',       // Public social feed endpoints (safe read-only JSON)
   '/api/auth/login',
   '/api/auth/logout',
   '/api/auth/setup',
@@ -28,7 +29,7 @@ const PUBLIC_PATH_PREFIXES = [
 ];
 
 // Paths that require admin role
-const ADMIN_PATHS = ['/admin', '/api/users', '/api/posts', '/api/media', '/api/settings', '/api/audit'];
+const ADMIN_PATHS = ['/admin', '/api/admin/', '/api/users', '/api/posts', '/api/media', '/api/settings', '/api/audit'];
 
 // Paths that require moderator or admin role
 const MODERATOR_PATHS = ['/moderator'];
