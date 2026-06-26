@@ -333,9 +333,14 @@ ul,ol{list-style:none}
 /* ═══════════════════════════════════════════════════════
    HERO
    ═══════════════════════════════════════════════════════ */
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--grad-night)}
-[data-theme="night"] .hero{background:var(--grad-night)}
-:not([data-theme="night"]) .hero{background:var(--grad-day)}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--night-900)}
+[data-theme="night"] .hero{background:var(--night-900)}
+:not([data-theme="night"]) .hero{background:var(--cream-50)}
+.hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.38}
+[data-theme="night"] .hero__bg{opacity:.28}
+:not([data-theme="night"]) .hero__bg{opacity:.55}
+.hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--night-900) 35%,transparent) 0%,color-mix(in srgb,var(--night-900) 75%,transparent) 60%,var(--night-900) 100%)}
+:not([data-theme="night"]) .hero__scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--cream-50) 20%,transparent) 0%,color-mix(in srgb,var(--cream-50) 65%,transparent) 60%,var(--cream-50) 100%)}
 /* Honeycomb tile — subtle honey-gold pattern */
 .hero::before{content:'';position:absolute;inset:0;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98'%3E%3Cpolygon points='28,2 54,16 54,50 28,64 2,50 2,16' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3Cpolygon points='28,50 54,64 54,98 28,112 2,98 2,64' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3C/svg%3E");
@@ -679,6 +684,9 @@ ul,ol{list-style:none}
      ═══════════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero">
+    <!-- Hero background -->
+    <img class="hero__bg" src="assets/ayupgee-bg-hero.png" alt="" />
+    <div class="hero__scrim"></div>
     <!-- Ambient orbs -->
     <div class="hero__orb hero__orb--a"></div>
     <div class="hero__orb hero__orb--b"></div>
