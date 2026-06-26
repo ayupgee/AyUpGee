@@ -15,252 +15,236 @@
 <link rel="manifest" href="/assets/favicon/site.webmanifest" />
 <meta name="theme-color" content="#161427" />
 
+<!-- AyUpGee Design System – fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
+<link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
+<link rel="dns-prefetch" href="https://unpkg.com" />
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
 <style>
-  /* ── Design tokens ──────────────────────────────────────────────────────── */
-  :root {
-    --bg:          #161427;
-    --surface:     #1e1b35;
-    --surface-2:   #252240;
-    --border:      #34315e;
-    --text:        #f3f1fb;
-    --text-muted:  #b3afd0;
-    --aurora-from: #98e7e1;
-    --aurora-to:   #eeb5ea;
-    --accent:      #98e7e1;
-    --radius:      18px;
-  }
+/* ═══════════════════════════════════════════════════════
+   AyUpGee Design System — tokens
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --sky-50:#ecfbfa;--sky-100:#cdf4f1;--sky-200:#a7ebe6;--sky-300:#98e7e1;
+  --sky-400:#5fd4d6;--sky-500:#34bcc2;--sky-600:#1f9aa1;--sky-700:#1a7b82;
+  --dream-50:#f7f0fd;--dream-100:#ebd9f8;--dream-200:#e0c8f3;--dream-300:#eeb5ea;
+  --dream-400:#c58fe3;--dream-500:#ab6fd6;--dream-600:#8e52bd;--dream-700:#6f3f97;
+  --blossom-50:#fff0f5;--blossom-100:#fbdde8;--blossom-200:#f9c7da;
+  --blossom-300:#f7a8c4;--blossom-400:#f180ab;--blossom-500:#e85f93;--blossom-600:#cf4179;
+  --twilight-300:#aeb6ee;--twilight-400:#8a93e2;--twilight-500:#7d89da;
+  --twilight-600:#5d6ac4;--twilight-700:#46519e;
+  --moon-100:#fff6dc;--moon-200:#ffedba;--moon-300:#ffdf8e;--moon-400:#ffd166;--moon-500:#f5bd3f;
+  --meadow-100:#e4f6e7;--meadow-200:#c2ebca;--meadow-300:#98dca8;
+  --meadow-400:#6cc684;--meadow-500:#46a866;
+  --cream-50:#fffdf8;--cream-100:#fff8ef;--cream-200:#f6efe6;
+  --night-900:#161427;--night-800:#1e1b35;--night-700:#272448;
+  --night-600:#34315e;--night-500:#454275;--night-400:#6f6ba0;
+  --ink-900:#1f1d33;--ink-700:#44425e;--ink-500:#6c6a87;
+  --ink-400:#9794ad;--ink-300:#c7c4d6;--ink-200:#e4e1ee;--ink-100:#f1eff7;
+  --white:#ffffff;
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Semantic – day */
+  --brand:var(--sky-400);--brand-strong:var(--sky-600);--brand-soft:var(--sky-100);
+  --accent:var(--dream-400);--honey:var(--moon-400);--honey-deep:#e8a33d;
+  --bg:var(--cream-50);--bg-subtle:var(--cream-100);
+  --surface:var(--white);--surface-soft:var(--cream-100);
+  --surface-sunken:var(--cream-200);
+  --text:var(--ink-900);--text-muted:var(--ink-500);--text-faint:var(--ink-400);
+  --text-on-brand:#0a3b3e;--text-link:var(--sky-600);
+  --border:var(--ink-200);--border-strong:var(--ink-300);--border-brand:var(--sky-300);
+  color-scheme:light;
 
-  html { scroll-behavior: smooth; }
+  /* Spacing */
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.5rem;
+  --space-6:2rem;--space-7:3rem;--space-8:4rem;--space-9:6rem;
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Nunito', system-ui, sans-serif;
-    line-height: 1.7;
-    min-height: 100vh;
-  }
+  /* Radii */
+  --radius-sm:10px;--radius-md:16px;--radius-lg:22px;--radius-xl:30px;--radius-pill:999px;
 
-  /* ── Nav ────────────────────────────────────────────────────────────────── */
-  .priv-nav {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .priv-nav__logo {
-    font-family: 'Fredoka', system-ui, sans-serif;
-    font-size: 1.35rem;
-    font-weight: 600;
-    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-decoration: none;
-  }
-  .priv-nav__back {
-    color: var(--text-muted);
-    font-size: .875rem;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: .35rem;
-    margin-left: auto;
-    transition: color .15s;
-  }
-  .priv-nav__back:hover { color: var(--accent); }
+  /* Borders */
+  --border-thin:1px;--border-base:1.5px;
 
-  /* ── Page layout ────────────────────────────────────────────────────────── */
-  .priv-page {
-    max-width: 740px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 5rem;
-  }
+  /* Layout */
+  --container:1180px;--gutter:var(--space-5);
 
-  .priv-page__eyebrow {
-    font-size: .8125rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: .5rem;
-  }
+  /* Shadows */
+  --shadow-sm:0 2px 8px rgba(70,60,120,.08);
+  --shadow-md:0 8px 24px rgba(70,60,120,.10);
 
-  .priv-page__title {
-    font-family: 'Fredoka', system-ui, sans-serif;
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
-    font-weight: 600;
-    line-height: 1.15;
-    color: var(--text);
-    margin-bottom: .5rem;
-  }
+  /* Motion */
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --dur-fast:140ms;--dur-base:220ms;
+  --blur-glass:blur(14px) saturate(1.2);
 
-  .priv-page__updated {
-    font-size: .875rem;
-    color: var(--text-muted);
-    margin-bottom: 3rem;
-  }
+  /* Gradients */
+  --grad-aurora:linear-gradient(110deg,var(--sky-300) 0%,var(--dream-300) 100%);
 
-  /* ── Content ────────────────────────────────────────────────────────────── */
-  .priv-section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .priv-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-  }
+  /* Typography */
+  --font-display:'Fredoka','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --fw-regular:400;--fw-medium:500;--fw-semibold:600;--fw-bold:700;--fw-extra:800;
+  --text-xs:.75rem;--text-sm:.875rem;--text-md:1rem;
+  --text-lg:1.125rem;--text-xl:1.375rem;--text-2xl:1.75rem;--text-3xl:2.25rem;
+  --leading-tight:1.15;--leading-snug:1.3;--leading-normal:1.55;--leading-relaxed:1.7;
+  --tracking-caps:.08em;
+  --ring:0 0 0 3px var(--cream-50),0 0 0 5.5px var(--sky-400);
+}
 
-  .priv-section h2 {
-    font-family: 'Fredoka', system-ui, sans-serif;
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: .875rem;
-  }
+[data-theme="night"] {
+  --brand:var(--sky-300);--brand-strong:var(--sky-200);--brand-soft:var(--night-600);
+  --accent:var(--dream-300);
+  --bg:var(--night-900);--bg-subtle:var(--night-800);
+  --surface:var(--night-800);--surface-soft:var(--night-700);
+  --surface-sunken:var(--night-900);
+  --text:#f3f1fb;--text-muted:#b3afd0;--text-faint:#837fa8;
+  --text-link:var(--sky-300);
+  --border:var(--night-600);--border-strong:var(--night-500);--border-brand:var(--sky-500);
+  --ring:0 0 0 3px var(--night-900),0 0 0 5.5px var(--sky-300);
+  color-scheme:dark;
+}
 
-  .priv-section p {
-    color: var(--text-muted);
-    margin-bottom: .875rem;
-  }
-  .priv-section p:last-child { margin-bottom: 0; }
+/* ── Reset & base ────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-body);font-size:var(--text-md);line-height:var(--leading-normal);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:var(--text-link);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--night-600);border-radius:var(--radius-pill)}
 
-  .priv-section a {
-    color: var(--accent);
-    text-underline-offset: 2px;
-  }
-  .priv-section a:hover { color: #5fd4d6; }
+/* ── Navigation ──────────────────────────────────────────── */
+.site-header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-5);
+  padding:var(--space-3) var(--space-5);
+  background:color-mix(in srgb,var(--bg) 80%,transparent);
+  backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);
+  border-bottom:var(--border-thin) solid var(--border);
+}
+.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none;flex:none}
+.brand-lockup:hover{text-decoration:none}
+.brand-mark{width:36px;height:36px;border-radius:50%;flex:none;background:var(--grad-aurora);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(171,111,214,.32)}
+.brand-mark img{width:26px;height:26px;object-fit:contain}
+.brand-wm{font-family:var(--font-display);font-weight:var(--fw-bold);font-size:1.35rem;color:var(--text);letter-spacing:-.01em}
+.header-actions{display:flex;align-items:center;gap:var(--space-3)}
+.theme-toggle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-soft);border:var(--border-thin) solid var(--border);color:var(--text-muted);cursor:pointer;transition:background var(--dur-base),color var(--dur-base);flex:none}
+.theme-toggle:hover{background:var(--brand-soft);color:var(--brand-strong)}
+.theme-toggle i{width:16px;height:16px}
 
-  /* ── Cookie table ────────────────────────────────────────────────────────── */
-  .priv-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: .875rem;
-    margin-top: 1rem;
-  }
-  .priv-table th {
-    text-align: left;
-    padding: .625rem .875rem;
-    background: var(--surface-2);
-    color: var(--text);
-    font-weight: 700;
-    border-bottom: 1px solid var(--border);
-  }
-  .priv-table th:first-child { border-radius: var(--radius) 0 0 0; }
-  .priv-table th:last-child  { border-radius: 0 var(--radius) 0 0; }
-  .priv-table td {
-    padding: .625rem .875rem;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  .priv-table tr:last-child td { border-bottom: none; }
-  .priv-table code {
-    font-family: 'Courier New', monospace;
-    font-size: .8125rem;
-    background: var(--surface-2);
-    padding: .1em .4em;
-    border-radius: 4px;
-    color: var(--aurora-from);
-  }
+/* ── Footer ──────────────────────────────────────────────── */
+.site-footer{background:var(--night-800);color:var(--cream-50);margin-top:var(--space-8)}
+.site-footer__inner{max-width:var(--container);margin:0 auto;padding:var(--space-8) var(--gutter) var(--space-5);display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:var(--space-7)}
+.site-footer .brand-wm{color:var(--cream-50)}
+.site-footer__tagline{font-size:var(--text-md);color:rgba(255,255,255,.65);margin-top:var(--space-3);max-width:280px;line-height:var(--leading-relaxed)}
+.site-footer__socials{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-5)}
+.footer-social{display:inline-flex;align-items:center;gap:.5em;padding:.4rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-pill);font-size:var(--text-sm);font-weight:var(--fw-semibold);color:rgba(255,255,255,.75);text-decoration:none;transition:all var(--dur-base)}
+.footer-social:hover{background:rgba(255,255,255,.14);color:#fff;text-decoration:none}
+.footer-social img{width:14px;height:14px}
+.site-footer__col-title{font-size:var(--text-xs);font-weight:var(--fw-bold);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:rgba(255,255,255,.45);margin-bottom:var(--space-4)}
+.site-footer__links{display:flex;flex-direction:column;gap:var(--space-3)}
+.site-footer__links a{font-size:var(--text-md);color:rgba(255,255,255,.7);transition:color var(--dur-fast);text-decoration:none}
+.site-footer__links a:hover{color:#fff}
+.site-footer__base{max-width:var(--container);margin:0 auto;padding:var(--space-4) var(--gutter);border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;font-size:var(--text-xs);color:rgba(255,255,255,.45)}
 
-  /* ── Rights list ─────────────────────────────────────────────────────────── */
-  .priv-rights {
-    list-style: none;
-    padding: 0;
-    margin-top: .75rem;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-  }
-  .priv-rights li {
-    color: var(--text-muted);
-    padding-left: 1.5rem;
-    position: relative;
-  }
-  .priv-rights li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-weight: 700;
-  }
+/* ── Privacy page content ─────────────────────────────────── */
+.priv-page{
+  max-width:740px;
+  margin:0 auto;
+  padding:3rem var(--gutter) 5rem;
+}
+.priv-page__eyebrow{
+  font-size:var(--text-xs);font-weight:var(--fw-extra);
+  letter-spacing:var(--tracking-caps);text-transform:uppercase;
+  background:var(--grad-aurora);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;
+}
+.priv-page__title{
+  font-family:var(--font-display);
+  font-size:clamp(1.75rem,5vw,2.5rem);
+  font-weight:var(--fw-semibold);line-height:var(--leading-tight);
+  color:var(--text);margin-bottom:.5rem;
+}
+.priv-page__updated{font-size:var(--text-sm);color:var(--text-faint);margin-bottom:3rem}
+.priv-section{margin-bottom:2.5rem;padding-bottom:2.5rem;border-bottom:var(--border-thin) solid var(--border)}
+.priv-section:last-child{border-bottom:none;margin-bottom:0}
+.priv-section h2{
+  font-family:var(--font-display);font-size:1.3rem;font-weight:var(--fw-semibold);
+  color:var(--text);margin-bottom:.875rem;
+}
+.priv-section p{color:var(--text-muted);margin-bottom:.875rem;line-height:var(--leading-relaxed)}
+.priv-section p:last-child{margin-bottom:0}
+.priv-section strong{color:var(--text);font-weight:var(--fw-bold)}
 
-  /* ── Consent widget ──────────────────────────────────────────────────────── */
-  .priv-consent-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-top: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .priv-consent-card p {
-    margin: 0;
-    font-size: .9rem;
-  }
-  .priv-consent-card .priv-consent-btns {
-    display: flex;
-    gap: .625rem;
-    flex-shrink: 0;
-  }
-  .priv-btn {
-    font-family: 'Fredoka', system-ui, sans-serif;
-    font-size: .9375rem;
-    font-weight: 600;
-    padding: .5rem 1.1rem;
-    border-radius: 999px;
-    cursor: pointer;
-    border: 1.5px solid transparent;
-    transition: filter .15s, transform .15s;
-    line-height: 1;
-  }
-  .priv-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  .priv-btn--outline {
-    background: transparent;
-    border-color: var(--border);
-    color: var(--text-muted);
-  }
-  .priv-btn--outline:hover { border-color: #6f6ba0; color: var(--text); }
-  .priv-btn--aurora {
-    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
-    color: #1a2e3a;
-    box-shadow: 0 4px 16px rgba(95,212,214,.25);
-  }
-  .priv-consent-status {
-    font-size: .8125rem;
-    color: var(--text-muted);
-    margin-top: .5rem;
-  }
-  .priv-consent-status span { color: var(--aurora-from); font-weight: 700; }
+/* Cookie table */
+.priv-table{width:100%;border-collapse:collapse;font-size:var(--text-sm);margin-top:1rem}
+.priv-table th{text-align:left;padding:.625rem .875rem;background:var(--surface-soft);color:var(--text);font-weight:var(--fw-bold);border-bottom:var(--border-thin) solid var(--border)}
+.priv-table th:first-child{border-radius:var(--radius-sm) 0 0 0}
+.priv-table th:last-child{border-radius:0 var(--radius-sm) 0 0}
+.priv-table td{padding:.625rem .875rem;color:var(--text-muted);border-bottom:var(--border-thin) solid var(--border);vertical-align:top}
+.priv-table tr:last-child td{border-bottom:none}
+.priv-table code{font-family:'Courier New',monospace;font-size:.8125rem;background:var(--surface-sunken);padding:.1em .4em;border-radius:4px;color:var(--sky-300)}
 
-  @media (max-width: 560px) {
-    .priv-table { display: block; overflow-x: auto; }
-    .priv-consent-card { flex-direction: column; align-items: flex-start; }
-  }
+/* Rights list */
+.priv-rights{list-style:none;padding:0;margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem}
+.priv-rights li{color:var(--text-muted);padding-left:1.5rem;position:relative;line-height:var(--leading-relaxed)}
+.priv-rights li::before{content:'→';position:absolute;left:0;color:var(--brand);font-weight:var(--fw-bold)}
+
+/* Consent widget */
+.priv-consent-card{background:var(--surface);border:var(--border-base) solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-top:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.priv-consent-card p{margin:0;font-size:.9rem;color:var(--text-muted)}
+.priv-consent-btns{display:flex;gap:.625rem;flex-shrink:0}
+.priv-btn{font-family:var(--font-display);font-size:.9375rem;font-weight:var(--fw-semibold);padding:.5rem 1.1rem;border-radius:var(--radius-pill);cursor:pointer;border:var(--border-base) solid transparent;transition:filter var(--dur-fast),transform var(--dur-fast);line-height:1}
+.priv-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.priv-btn--outline{background:transparent;border-color:var(--border-strong);color:var(--text-muted)}
+.priv-btn--outline:hover{border-color:var(--border-brand);color:var(--text)}
+.priv-btn--aurora{background:var(--grad-aurora);color:#1a2e3a;box-shadow:0 4px 16px rgba(95,212,214,.25)}
+.priv-consent-status{font-size:var(--text-xs);color:var(--text-faint);margin-top:.35rem}
+.priv-consent-status .granted{color:var(--sky-300);font-weight:var(--fw-bold)}
+.priv-consent-status .denied{color:var(--dream-300);font-weight:var(--fw-bold)}
+.priv-consent-status .none{color:var(--text-faint)}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media(max-width:1024px){.site-footer__inner{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){
+  :root{--gutter:var(--space-4)}
+  .site-footer__inner{grid-template-columns:1fr}
+  .priv-table{display:block;overflow-x:auto}
+  .priv-consent-card{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 <body>
 
-<nav class="priv-nav">
-  <a class="priv-nav__logo" href="/">AyUpGee 🐝</a>
-  <a class="priv-nav__back" href="/">← Back to site</a>
-</nav>
+<!-- ═══ HEADER ═══ -->
+<header class="site-header">
+  <a href="/" class="brand-lockup">
+    <div class="brand-mark">
+      <img src="/assets/ayupgee-honey_drips_112x112.png"
+           alt="AyUpGee bee"
+           onerror="this.style.display='none';this.parentNode.innerHTML='🐝'" />
+    </div>
+    <span class="brand-wm">AyUpGee</span>
+  </a>
 
+  <div class="header-actions">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle day / night">
+      <i data-lucide="moon-star"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ CONTENT ═══ -->
 <main class="priv-page">
 
   <p class="priv-page__eyebrow">Legal &amp; Privacy</p>
@@ -273,11 +257,9 @@
     <p>
       AyUpGee (<strong>ayupgee.com</strong>) is a personal content-creator website based in Manchester, UK.
       The site is operated by an individual creator — not a company. For any questions about this policy,
-      please contact us at <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+      contact us at <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
     </p>
-    <p>
-      We are the data controller for personal data collected through this site.
-    </p>
+    <p>We are the data controller for personal data collected through this site.</p>
   </section>
 
   <!-- 2. What data we collect -->
@@ -291,23 +273,23 @@
       <strong>Analytics (with your consent)</strong><br />
       If you accept cookies, we use Google Analytics 4 to collect anonymised usage data — pages visited,
       scroll depth, outbound link clicks, and similar interactions. This helps us understand what content
-      people enjoy and how the site performs. Google Analytics sets cookies in your browser identified
-      by a random ID; it does not collect your name, email, or any directly identifying information.
+      people enjoy and how the site performs. Google Analytics sets cookies identified by a random ID;
+      it does not collect your name, email, or any directly identifying information.
     </p>
     <p>
       <strong>Legal basis:</strong> Consent (Article 6(1)(a) UK GDPR). You can withdraw consent at any
-      time by clicking "Withdraw consent" below.
+      time using the widget in the Cookies section below.
     </p>
     <p>
       <strong>Account data (members &amp; moderators only)</strong><br />
-      If you have a member or moderator account, we store your email address and a hashed (not
-      readable) version of your password in our database. This is required to provide you access
-      to the member area. Legal basis: contract performance (Article 6(1)(b) UK GDPR).
+      If you have a member or moderator account, we store your email address and a hashed version of your
+      password. This is required to provide access to the member area.
+      Legal basis: contract performance (Article 6(1)(b) UK GDPR).
     </p>
     <p>
       <strong>Technical logs</strong><br />
-      Our hosting provider (Cloudflare) may log IP addresses and request metadata for security and
-      abuse prevention purposes. We do not access or process these logs ourselves. See
+      Our hosting provider (Cloudflare) may log IP addresses and request metadata for security purposes.
+      We do not access or process these logs ourselves. See
       <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
         Cloudflare's privacy policy</a>.
     </p>
@@ -361,21 +343,17 @@
       </tbody>
     </table>
 
-    <p style="margin-top:1rem;">
-      The first three cookies are <strong>essential or functional</strong> — they are only set when
-      you sign in or save your cookie preference. The Google Analytics cookies are
-      <strong>optional</strong> and are only set if you accept.
+    <p style="margin-top:1rem">
+      The first three are <strong>essential or functional</strong> — only set when you sign in or save
+      your cookie preference. The Google Analytics cookies are <strong>optional</strong> and only set
+      if you accept below.
     </p>
-
     <p>
-      <strong>International transfers:</strong> Google Analytics data is processed by Google LLC,
-      based in the United States. Google participates in the EU-US Data Privacy Framework and
-      implements standard contractual clauses as safeguards.
-      See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
-      Google's privacy policy</a> for more detail.
+      <strong>International transfers:</strong> Google Analytics data is processed by Google LLC (USA).
+      Google participates in the EU-US Data Privacy Framework and implements standard contractual clauses
+      as safeguards. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's privacy policy</a>.
     </p>
 
-    <!-- Consent management widget -->
     <div class="priv-consent-card">
       <div>
         <p>Manage your analytics cookie preference:</p>
@@ -392,13 +370,12 @@
   <section class="priv-section">
     <h2>How long we keep data</h2>
     <p>
-      Google Analytics data is retained for <strong>26 months</strong> (the default GA4 retention
-      period). You can request earlier deletion — see "Your rights" below.
+      Google Analytics data is retained for <strong>26 months</strong> (the default GA4 retention period).
+      You can request earlier deletion — see "Your rights" below.
     </p>
     <p>
       Account credentials (email + password hash) are kept for as long as you have an account.
-      You can request account deletion by emailing
-      <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+      You can request account deletion by emailing <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
     </p>
   </section>
 
@@ -415,9 +392,8 @@
       <li><strong>Right to data portability</strong> — receive your data in a portable format</li>
       <li><strong>Right to withdraw consent</strong> — withdraw analytics consent at any time (see above)</li>
     </ul>
-    <p style="margin-top:1rem;">
-      To exercise any of these rights, email us at
-      <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+    <p style="margin-top:1rem">
+      To exercise any of these rights, email <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
       We will respond within <strong>30 days</strong>.
     </p>
   </section>
@@ -430,9 +406,7 @@
       the <strong>Information Commissioner's Office (ICO)</strong>, the UK's data protection regulator.
     </p>
     <p>
-      <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener noreferrer">
-        ico.org.uk/make-a-complaint
-      </a>
+      <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener noreferrer">ico.org.uk/make-a-complaint</a>
       &ensp;·&ensp; Helpline: 0303 123 1113
     </p>
     <p>
@@ -452,21 +426,121 @@
 
 </main>
 
+<!-- ═══ FOOTER ═══ -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <a href="/" class="brand-lockup" style="margin-bottom:var(--space-3);display:inline-flex">
+        <div class="brand-mark" style="width:32px;height:32px">
+          <img src="/assets/ayupgee-honey_drips_112x112.png"
+               style="width:22px;height:22px;object-fit:contain" alt="AyUpGee bee"
+               onerror="this.style.display='none';this.parentNode.innerHTML='🐝'" />
+        </div>
+        <span class="brand-wm">AyUpGee</span>
+      </a>
+      <p class="site-footer__tagline">
+        Cosy gaming from Manchester. A warm corner of the internet where you can grab a brew and settle in. 🫖
+      </p>
+      <div class="site-footer__socials">
+        <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener" class="footer-social">
+          <img src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" /> Twitch
+        </a>
+        <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener" class="footer-social">
+          <img src="https://cdn.simpleicons.org/youtube/white" alt="" loading="lazy" decoding="async" /> YouTube
+        </a>
+        <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener" class="footer-social">
+          <img src="https://cdn.simpleicons.org/tiktok/white" alt="" loading="lazy" decoding="async" /> TikTok
+        </a>
+        <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener" class="footer-social">
+          <img src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" /> Instagram
+        </a>
+        <a href="https://discord.gg/uAhZtzkKDU" target="_blank" rel="noopener" class="footer-social">
+          <img src="https://cdn.simpleicons.org/discord/white" alt="" loading="lazy" decoding="async" /> Discord
+        </a>
+        <a href="https://throne.com/ayupgee" target="_blank" rel="noopener" class="footer-social">
+          👑 Throne
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="site-footer__col-title">Navigate</p>
+      <div class="site-footer__links">
+        <a href="/#twitch">Live stream</a>
+        <a href="/#schedule">Schedule</a>
+        <a href="/#videos">Videos</a>
+        <a href="/#tiktok">TikTok</a>
+        <a href="/#instagram">Instagram</a>
+        <a href="/#community">Community</a>
+      </div>
+    </div>
+
+    <div>
+      <p class="site-footer__col-title">Connect</p>
+      <div class="site-footer__links">
+        <a href="/#about">About Gee</a>
+        <a href="/#partnerships">Partnerships</a>
+        <a href="https://twitch.tv/ayupgee/subscribe" target="_blank" rel="noopener">Subscribe on Twitch</a>
+        <a href="https://throne.com/ayupgee" target="_blank" rel="noopener">Throne wishlist</a>
+        <a href="mailto:hello@ayupgee.com">Business enquiries</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer__base">
+    <span>© 2026 AyUpGee. All rights reserved.</span>
+    <span>Made with 💛 and honey 🍯 from Manchester, UK</span>
+  </div>
+</footer>
+
 <script>
+// ── Lucide icons ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide) lucide.createIcons();
+});
+
+// ── Theme toggle ──────────────────────────────────────────
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const NIGHT = 'night';
+
+function applyTheme(night) {
+  if (night) {
+    html.setAttribute('data-theme', NIGHT);
+    themeToggle.querySelector('i').setAttribute('data-lucide', 'sun');
+  } else {
+    html.removeAttribute('data-theme');
+    themeToggle.querySelector('i').setAttribute('data-lucide', 'moon-star');
+  }
+  if (window.lucide) lucide.createIcons();
+  localStorage.setItem('ayg-theme', night ? NIGHT : 'day');
+}
+
+themeToggle.addEventListener('click', () => {
+  applyTheme(!html.hasAttribute('data-theme'));
+});
+
+(function () {
+  const saved = localStorage.getItem('ayg-theme');
+  if (saved === 'day') applyTheme(false);
+  // default is night (already set on html tag)
+})();
+
+// ── Consent widget ────────────────────────────────────────
 (function () {
   const KEY = 'ayg_cookie_consent';
-  const statusEl  = document.getElementById('consentStatus');
-  const acceptBtn = document.getElementById('consentAccept');
+  const statusEl   = document.getElementById('consentStatus');
+  const acceptBtn  = document.getElementById('consentAccept');
   const declineBtn = document.getElementById('consentDecline');
 
   function updateStatus() {
     const val = localStorage.getItem(KEY);
     if (val === 'granted') {
-      statusEl.innerHTML = 'Current status: <span>Analytics accepted</span>';
+      statusEl.innerHTML = 'Current status: <span class="granted">Analytics accepted</span>';
     } else if (val === 'denied') {
-      statusEl.innerHTML = 'Current status: <span style="color:#eeb5ea">Analytics declined</span>';
+      statusEl.innerHTML = 'Current status: <span class="denied">Analytics declined</span>';
     } else {
-      statusEl.innerHTML = 'Current status: <span style="color:#837fa8">No choice recorded yet</span>';
+      statusEl.innerHTML = 'Current status: <span class="none">No choice recorded yet</span>';
     }
   }
 
@@ -486,5 +560,7 @@
 })();
 </script>
 
+<!-- Cookie consent banner -->
+<script src="/assets/js/cookie-consent.js" defer></script>
 </body>
 </html>
