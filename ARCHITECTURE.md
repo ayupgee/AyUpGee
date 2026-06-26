@@ -260,7 +260,7 @@ Also replace `TURNSTILE_SITE_KEY_HERE` in `login.html` with the actual site key.
 
 ### 6. Create first admin account
 ```bash
-curl -X POST https://ayupgee.pages.dev/api/auth/setup \
+curl -X POST https://ayupgee.com/api/auth/setup \
   -H 'Content-Type: application/json' \
   -d '{
     "setupToken": "<your ADMIN_SETUP_TOKEN>",
