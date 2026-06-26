@@ -308,6 +308,168 @@ ul{list-style:none}
 @keyframes bee-spin{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.1)}}
 .admin-loading__text { font:600 1rem var(--font-display);color:var(--text-muted) }
 
+/* ── View switching ─────────────────────────────────────────────────────────── */
+.view { display:none }
+.view.active { display:block }
+
+/* ── Social Integrations panel ──────────────────────────────────────────────── */
+.social-panel-header {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5);
+}
+.social-panel-header h2 {
+  font-family:var(--font-display);font-size:1.4rem;font-weight:600;
+}
+.refresh-status {
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.8rem;color:var(--text-faint);
+}
+.refresh-dot {
+  width:7px;height:7px;border-radius:50%;background:var(--meadow-400);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:.35} }
+
+.social-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  gap:var(--space-5);
+}
+
+/* Provider card */
+.provider-card {
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:border-color var(--dur-base) var(--ease-soft);
+}
+.provider-card.status-online  { border-color:rgba(70,168,102,.4) }
+.provider-card.status-warning { border-color:rgba(245,189,63,.4) }
+.provider-card.status-offline { border-color:rgba(232,95,147,.4) }
+
+.provider-header {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--space-4) var(--space-5);
+  border-bottom:1.5px solid var(--border);
+  gap:var(--space-3);
+}
+.provider-header__left {
+  display:flex;align-items:center;gap:.6rem;
+}
+.provider-icon {
+  width:38px;height:38px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  flex-shrink:0;
+}
+.provider-name {
+  font-family:var(--font-display);font-size:1rem;font-weight:600;
+}
+.provider-sub {
+  font-size:.72rem;color:var(--text-faint);margin-top:.05rem;
+}
+
+/* Status badge */
+.status-badge {
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:.25rem .65rem;border-radius:999px;white-space:nowrap;
+}
+.status-badge::before {
+  content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;
+}
+.status-badge--online  { background:rgba(70,168,102,.15);color:var(--meadow-300);border:1px solid rgba(70,168,102,.3) }
+.status-badge--warning { background:rgba(245,189,63,.15);color:var(--moon-300);border:1px solid rgba(245,189,63,.3) }
+.status-badge--offline { background:rgba(232,95,147,.15);color:var(--blossom-300);border:1px solid rgba(232,95,147,.3) }
+.status-badge--unknown { background:rgba(111,107,160,.15);color:var(--ink-400);border:1px solid rgba(111,107,160,.3) }
+
+/* Metrics grid */
+.provider-metrics {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;
+  border-bottom:1.5px solid var(--border);
+}
+.metric {
+  padding:var(--space-3) var(--space-4);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.metric:nth-child(even) { border-right:none }
+.metric:nth-last-child(-n+2) { border-bottom:none }
+.metric__label {
+  font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:.2rem;
+}
+.metric__value {
+  font-size:.875rem;font-weight:600;color:var(--text);
+}
+.metric__value--muted { color:var(--text-faint) }
+.metric__value--error { color:var(--blossom-300);font-size:.8rem }
+
+/* Activity log */
+.provider-activity {
+  flex:1;padding:var(--space-4) var(--space-5);
+  border-bottom:1.5px solid var(--border);
+}
+.provider-activity__title {
+  font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:var(--space-3);
+}
+.log-list {
+  display:flex;flex-direction:column;gap:.4rem;
+  max-height:180px;overflow-y:auto;
+}
+.log-list::-webkit-scrollbar { width:4px }
+.log-list::-webkit-scrollbar-thumb { background:var(--night-600);border-radius:999px }
+.log-entry {
+  display:flex;gap:.5rem;align-items:flex-start;
+  font-size:.78rem;line-height:1.4;
+}
+.log-entry__time {
+  color:var(--text-faint);white-space:nowrap;flex-shrink:0;font-variant-numeric:tabular-nums;
+}
+.log-entry__dot {
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:.35rem;
+}
+.log-entry__dot--success { background:var(--meadow-400) }
+.log-entry__dot--error   { background:var(--blossom-400) }
+.log-entry__dot--info    { background:var(--sky-400) }
+.log-entry__msg { color:var(--text-muted) }
+.log-empty { font-size:.8rem;color:var(--text-faint);font-style:italic }
+
+/* Provider actions */
+.provider-actions {
+  display:flex;gap:var(--space-2);padding:var(--space-4) var(--space-5);
+  flex-wrap:wrap;
+}
+.btn-sm {
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-size:.8rem;font-weight:600;font-family:var(--font-body);
+  padding:.4rem .85rem;border-radius:var(--radius-sm);
+  border:1.5px solid var(--border);
+  background:var(--surface-soft);color:var(--text-muted);
+  cursor:pointer;
+  transition:background var(--dur-fast),color var(--dur-fast),border-color var(--dur-fast);
+}
+.btn-sm:hover { background:var(--brand-soft);color:var(--brand);border-color:var(--brand) }
+.btn-sm--primary {
+  background:rgba(95,212,214,.12);color:var(--sky-300);border-color:rgba(95,212,214,.3);
+}
+.btn-sm--primary:hover { background:rgba(95,212,214,.22) }
+.btn-sm:disabled {
+  opacity:.45;cursor:not-allowed;pointer-events:none;
+}
+.btn-sm i { width:13px;height:13px }
+
+/* Skeleton / loading state */
+.provider-skeleton {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);
+  padding:var(--space-5);
+  animation:skel-fade 1.4s ease-in-out infinite;
+}
+@keyframes skel-fade { 0%,100%{opacity:1}50%{opacity:.5} }
+
 /* ── Mobile ─────────────────────────────────────────────────────────────────── */
 .sidebar-overlay {
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40;
@@ -436,6 +598,9 @@ ul{list-style:none}
 
     <!-- Page content -->
     <main class="admin-content" id="adminContent">
+
+    <!-- ═══ DASHBOARD VIEW ═══════════════════════════════════════════════════ -->
+    <div id="dashboardView" class="view active">
 
       <!-- Welcome -->
       <div class="welcome-banner">
@@ -635,6 +800,28 @@ ul{list-style:none}
 
       </div><!-- /admin-grid -->
 
+    </div><!-- /dashboardView -->
+
+    <!-- ═══ SOCIAL INTEGRATIONS VIEW ════════════════════════════════════════ -->
+    <div id="socialView" class="view">
+
+      <div class="social-panel-header">
+        <h2>Social Integrations</h2>
+        <div class="refresh-status">
+          <span class="refresh-dot" id="refreshDot"></span>
+          <span id="refreshLabel">Loading…</span>
+        </div>
+      </div>
+
+      <div class="social-grid" id="socialGrid">
+        <!-- Skeleton placeholders -->
+        <div class="provider-skeleton" style="height:380px"></div>
+        <div class="provider-skeleton" style="height:380px"></div>
+        <div class="provider-skeleton" style="height:380px"></div>
+      </div>
+
+    </div><!-- /socialView -->
+
     </main><!-- /admin-content -->
   </div><!-- /admin-main -->
 </div><!-- /admin-shell -->
@@ -677,14 +864,22 @@ ul{list-style:none}
     if (window.lucide) lucide.createIcons();
     if (window.lucide) setTimeout(() => lucide.createIcons(), 300);
 
-    // Sidebar nav active state
+    // Sidebar nav — handle view switching
     document.querySelectorAll('.sidebar__item[data-section]').forEach(el => {
       el.addEventListener('click', function (e) {
-        if (this.getAttribute('href')?.startsWith('#')) {
-          document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('active'));
-          this.classList.add('active');
-        }
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
         closeSidebar();
+
+        if (['twitch','instagram','tiktok'].includes(section)) {
+          e.preventDefault();
+          showView('social');
+        } else if (section === 'schedule') {
+          e.preventDefault();
+          showView('dashboard');
+          openModule('schedule');
+        }
       });
     });
 
@@ -716,30 +911,275 @@ ul{list-style:none}
     document.getElementById('sidebarOverlay').classList.remove('open');
   }
 
-  // Module click handler
+  // ── View switching ──────────────────────────────────────────────────────
+  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok']);
+  const COMING_SOON    = new Set(['blog','media','youtube','users','partnerships','analytics','settings']);
+
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const view = document.getElementById(name + 'View');
+    if (view) view.classList.add('active');
+
+    // Update topbar title
+    const titles = { dashboard: 'Dashboard', social: 'Social Integrations' };
+    document.getElementById('topbarTitle').textContent = titles[name] ?? 'Dashboard';
+
+    if (name === 'social') {
+      startSocialRefresh();
+    } else {
+      stopSocialRefresh();
+    }
+  }
+
   window.openModule = function (name) {
-    const coming = ['blog','media','tiktok','instagram','youtube','users','partnerships','analytics','settings'];
-    if (coming.includes(name)) {
-      const banner = document.createElement('div');
-      banner.style.cssText = `
-        position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
-        background:var(--night-700);border:1.5px solid var(--border);
-        border-radius:var(--radius-lg);padding:.75rem 1.5rem;
-        font-size:.875rem;color:var(--text-muted);
-        box-shadow:var(--shadow-lg);z-index:9999;
-        display:flex;align-items:center;gap:.5rem;
-        animation:slideUp .25s cubic-bezier(.34,1.56,.64,1) both;
-      `;
-      banner.innerHTML = `<span>🚧</span> <strong style="color:var(--text)">${name.charAt(0).toUpperCase()+name.slice(1)}</strong> module is coming in a future phase`;
-      document.body.appendChild(banner);
-      const style = document.createElement('style');
-      style.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(1rem)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
-      document.head.appendChild(style);
-      setTimeout(() => banner.remove(), 3000);
+    if (SOCIAL_MODULES.has(name)) {
+      // All social modules share the Social Integrations view
+      document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('active'));
+      const sidebarItem = document.querySelector(`.sidebar__item[data-section="${name}"]`);
+      if (sidebarItem) sidebarItem.classList.add('active');
+      showView('social');
       return;
     }
-    console.log('Opening module:', name);
+
+    if (COMING_SOON.has(name)) {
+      const banner = document.createElement('div');
+      banner.style.cssText = [
+        'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);',
+        'background:var(--night-700);border:1.5px solid var(--border);',
+        'border-radius:var(--radius-lg);padding:.75rem 1.5rem;',
+        'font-size:.875rem;color:var(--text-muted);',
+        'box-shadow:var(--shadow-lg);z-index:9999;',
+        'display:flex;align-items:center;gap:.5rem;',
+        'animation:slideUp .25s cubic-bezier(.34,1.56,.64,1) both;',
+      ].join('');
+      banner.innerHTML = `<span>🚧</span> <strong style="color:var(--text)">${name.charAt(0).toUpperCase()+name.slice(1)}</strong> module is coming in a future phase`;
+      document.body.appendChild(banner);
+      if (!document.getElementById('slideUpStyle')) {
+        const s = document.createElement('style');
+        s.id = 'slideUpStyle';
+        s.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(1rem)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+        document.head.appendChild(s);
+      }
+      setTimeout(() => banner.remove(), 3000);
+    }
   };
+
+  // ── Social Integrations ─────────────────────────────────────────────────
+  let _refreshTimer    = null;
+  let _countdownTimer  = null;
+  let _countdown       = 30;
+  let _syncing         = false;
+
+  function startSocialRefresh() {
+    loadSocialStatus();
+    clearInterval(_refreshTimer);
+    _refreshTimer = setInterval(() => { loadSocialStatus(); }, 30_000);
+    startCountdown();
+  }
+
+  function stopSocialRefresh() {
+    clearInterval(_refreshTimer);
+    clearInterval(_countdownTimer);
+    _refreshTimer = null;
+  }
+
+  function startCountdown() {
+    clearInterval(_countdownTimer);
+    _countdown = 30;
+    updateCountdownLabel();
+    _countdownTimer = setInterval(() => {
+      _countdown = Math.max(0, _countdown - 1);
+      updateCountdownLabel();
+      if (_countdown === 0) _countdown = 30; // reset after load fires
+    }, 1000);
+  }
+
+  function updateCountdownLabel() {
+    const el = document.getElementById('refreshLabel');
+    if (el) el.textContent = `Auto-refresh in ${_countdown}s`;
+  }
+
+  async function loadSocialStatus() {
+    const dot = document.getElementById('refreshDot');
+    if (dot) dot.style.background = 'var(--moon-400)'; // yellow = loading
+
+    try {
+      const res  = await fetch('/api/admin/social/status', { credentials: 'same-origin' });
+      const data = await res.json();
+
+      if (!data.ok) throw new Error(data.error ?? 'Unknown error');
+
+      renderSocialGrid(data.providers);
+      if (dot) dot.style.background = 'var(--meadow-400)'; // green = ok
+      startCountdown(); // reset countdown after successful load
+    } catch (e) {
+      console.error('[social-status]', e);
+      if (dot) dot.style.background = 'var(--blossom-400)'; // red = error
+      const grid = document.getElementById('socialGrid');
+      if (grid) grid.innerHTML = `<div style="grid-column:1/-1;padding:var(--space-5);color:var(--blossom-300);font-size:.9rem">
+        Unable to load provider status. <button class="btn-sm" onclick="loadSocialStatus()" style="margin-left:.5rem">Retry</button>
+      </div>`;
+    }
+  }
+
+  function renderSocialGrid(providers) {
+    const grid = document.getElementById('socialGrid');
+    if (!grid) return;
+
+    const cards = [
+      renderProviderCard('twitch',    providers.twitch),
+      renderProviderCard('instagram', providers.instagram),
+      renderProviderCard('tiktok',    providers.tiktok),
+    ];
+
+    grid.innerHTML = cards.join('');
+    if (window.lucide) lucide.createIcons({ nodes: grid.querySelectorAll('[data-lucide]') });
+  }
+
+  function renderProviderCard(id, p) {
+    if (!p) return `<div class="provider-card"><div style="padding:var(--space-5);color:var(--text-faint)">Provider unavailable</div></div>`;
+
+    const statusLabel = { online:'🟢 Online', warning:'🟠 Warning', offline:'🔴 Offline', unknown:'🟡 Connecting' };
+    const badgeClass  = { online:'status-badge--online', warning:'status-badge--warning', offline:'status-badge--offline', unknown:'status-badge--unknown' };
+    const icons       = { twitch:'tv-2', instagram:'camera', tiktok:'music-2' };
+    const iconBgs     = { twitch:'rgba(145,71,255,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)' };
+    const iconEmojis  = { twitch:'🟣', instagram:'📸', tiktok:'🎵' };
+
+    const status = p.status ?? 'unknown';
+    const lastSync = p.lastSync ? relativeTime(p.lastSync) : '—';
+    const rt       = p.responseTime ? `${p.responseTime}ms` : '—';
+    const items    = p.itemCount != null ? p.itemCount : '—';
+    const lastErr  = p.lastError ?? 'None';
+    const subLabel = { twitch:'ayupgee-social-sync.workers.dev', instagram:'behold.so', tiktok:'tikhub.io' }[id] ?? '';
+    const canSync  = id === 'twitch'; // worker handles all syncs
+
+    const logsHtml = (p.logs ?? []).length === 0
+      ? '<div class="log-empty">No activity yet</div>'
+      : (p.logs ?? []).slice(0, 20).map(l => {
+          const dotClass = l.event?.includes('error') ? 'log-entry__dot--error'
+                         : l.event?.includes('success') ? 'log-entry__dot--success'
+                         : 'log-entry__dot--info';
+          return `<div class="log-entry">
+            <span class="log-entry__time">${formatLogTime(l.created_at)}</span>
+            <span class="log-entry__dot ${dotClass}"></span>
+            <span class="log-entry__msg">${esc(l.message)}</span>
+          </div>`;
+        }).join('');
+
+    return `
+      <div class="provider-card status-${status}" id="card-${id}">
+        <div class="provider-header">
+          <div class="provider-header__left">
+            <div class="provider-icon" style="background:${iconBgs[id]}">${iconEmojis[id]}</div>
+            <div>
+              <div class="provider-name">${esc(p.name ?? id)}</div>
+              <div class="provider-sub">${subLabel}</div>
+            </div>
+          </div>
+          <span class="status-badge ${badgeClass[status] ?? 'status-badge--unknown'}">${statusLabel[status] ?? status}</span>
+        </div>
+
+        <div class="provider-metrics">
+          <div class="metric">
+            <div class="metric__label">Last Sync</div>
+            <div class="metric__value">${lastSync}</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Response Time</div>
+            <div class="metric__value">${rt}</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Items Synced</div>
+            <div class="metric__value">${items}</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Last Error</div>
+            <div class="metric__value ${lastErr === 'None' ? 'metric__value--muted' : 'metric__value--error'}">${esc(lastErr)}</div>
+          </div>
+        </div>
+
+        <div class="provider-activity">
+          <div class="provider-activity__title">Recent Activity</div>
+          <div class="log-list">${logsHtml}</div>
+        </div>
+
+        <div class="provider-actions">
+          <button class="btn-sm btn-sm--primary" onclick="refreshProvider('${id}')">
+            <i data-lucide="refresh-cw"></i> Refresh
+          </button>
+          ${canSync ? `<button class="btn-sm" id="syncBtn-${id}" onclick="triggerSync('${id}')">
+            <i data-lucide="zap"></i> Manual Sync
+          </button>` : ''}
+          <a class="btn-sm" href="${esc(p.dashboardUrl ?? '#')}" target="_blank" rel="noopener">
+            <i data-lucide="external-link"></i> Open Dashboard
+          </a>
+        </div>
+      </div>`;
+  }
+
+  window.refreshProvider = function (id) {
+    loadSocialStatus();
+  };
+
+  window.triggerSync = async function (id) {
+    if (_syncing) return;
+    _syncing = true;
+    const btn = document.getElementById(`syncBtn-${id}`);
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Syncing…'; lucide.createIcons({ nodes: [btn] }); }
+
+    try {
+      const res  = await fetch('/api/admin/social/sync', { method: 'POST', credentials: 'same-origin' });
+      const data = await res.json();
+      if (data.ok) {
+        showToast('✅ Sync complete — refreshing status…');
+        setTimeout(() => loadSocialStatus(), 1500);
+      } else {
+        showToast(`❌ ${data.error ?? 'Sync failed'}`, true);
+      }
+    } catch {
+      showToast('❌ Unable to contact sync worker', true);
+    } finally {
+      _syncing = false;
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="zap"></i> Manual Sync'; lucide.createIcons({ nodes: [btn] }); }
+    }
+  };
+
+  // ── Utilities ───────────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function relativeTime(iso) {
+    if (!iso) return '—';
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60_000);
+    if (m < 1)  return 'just now';
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    return `${Math.floor(h / 24)}d ago`;
+  }
+
+  function formatLogTime(iso) {
+    if (!iso) return '–:–';
+    const d = new Date(iso);
+    return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function showToast(msg, isError = false) {
+    const t = document.createElement('div');
+    t.style.cssText = [
+      'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);',
+      `background:${isError ? 'rgba(232,95,147,.15)' : 'var(--night-700)'};`,
+      `border:1.5px solid ${isError ? 'var(--blossom-400)' : 'var(--border)'};`,
+      'border-radius:var(--radius-lg);padding:.75rem 1.5rem;',
+      'font-size:.875rem;color:var(--text);box-shadow:var(--shadow-lg);z-index:9999;',
+      'animation:slideUp .25s cubic-bezier(.34,1.56,.64,1) both;',
+    ].join('');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 4000);
+  }
 
 })();
 </script>

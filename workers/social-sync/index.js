@@ -12,15 +12,36 @@
  *   BEHOLD_FEED_ID    — Feed ID from behold.so dashboard
  *   TIKHUB_API_KEY    — API key from user.tikhub.io (scope: /api/v1/tiktok/web/)
  *
- * ─── How to test manually ──────────────────────────────────────────────────────
- *   Visit: https://ayupgee-social-sync.YOUR_SUBDOMAIN.workers.dev/sync
+ * ─── Endpoints ─────────────────────────────────────────────────────────────────
+ *   GET /          → health status + D1 stats (no auth required)
+ *   GET /sync      → trigger a manual full sync
  */
 
+const VERSION = '1.1.0';
+
+// ── D1 log writer ──────────────────────────────────────────────────────────────
+async function writeLog(env, platform, event, message, extra = {}) {
+  try {
+    await env.DB.prepare(`
+      INSERT INTO sync_logs
+        (id, platform, event, message, items_synced, error_message, response_time_ms, created_at)
+      VALUES
+        (lower(hex(randomblob(8))), ?, ?, ?, ?, ?, ?, datetime('now'))
+    `).bind(
+      platform,
+      event,
+      message,
+      extra.items_synced     ?? 0,
+      extra.error_message    ?? null,
+      extra.response_time_ms ?? null,
+    ).run();
+  } catch (e) {
+    // Never let logging failures break the sync
+    console.error('[log] Failed to write sync_log:', e.message);
+  }
+}
+
 // ── Instagram via Behold.so ────────────────────────────────────────────────────
-// Behold response shape: { username, posts: [...], ... }
-// Each post has: id, permalink, timestamp, mediaType, caption, prunedCaption,
-//                sizes: { small, medium, large, full: { mediaUrl, width, height } }
-// prunedCaption is already stripped of hashtags by Behold — no need to clean it ourselves.
 async function syncInstagram(env) {
   if (!env.BEHOLD_FEED_ID) {
     console.log('[instagram] BEHOLD_FEED_ID not set — skipping');
@@ -28,45 +49,43 @@ async function syncInstagram(env) {
   }
 
   console.log('[instagram] Fetching from Behold.so...');
+  const start = Date.now();
 
   const res = await fetch(`https://feeds.behold.so/${env.BEHOLD_FEED_ID}`, {
     headers: { 'User-Agent': 'AyUpGee-SocialSync/1.0' },
   });
 
   if (!res.ok) {
-    throw new Error(`Behold API returned ${res.status}`);
+    const msg = `Behold API returned ${res.status}`;
+    await writeLog(env, 'instagram', 'sync_error', 'Instagram sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
   }
 
   const data = await res.json();
-  // Response is { username, posts: [...] } not a bare array
   const posts = data.posts ?? data;
   if (!Array.isArray(posts) || posts.length === 0) {
     console.log('[instagram] No posts returned');
     return { synced: 0, skipped: 0 };
   }
 
-  // Free plan caps at 6 posts; slice defensively in case plan changes
   const latest = posts.slice(0, 8);
   let synced = 0;
   let skipped = 0;
 
   for (const post of latest) {
     try {
-      const id = String(post.id);
+      const id  = String(post.id);
       const url = post.permalink || 'https://instagram.com/ayupgee';
-
-      // prunedCaption has hashtags already removed by Behold
       const caption = (post.prunedCaption || post.caption || '').trim();
       const title   = caption || 'View on Instagram';
-
-      // Use Behold's CDN-hosted medium size (WebP, optimised, stable URLs)
-      const thumbnailUrl = post.sizes?.medium?.mediaUrl
-        || post.sizes?.large?.mediaUrl
-        || post.sizes?.small?.mediaUrl
-        || post.thumbnailUrl   // VIDEO posts: original thumbnail
-        || post.mediaUrl       // fallback to raw Instagram URL
-        || null;
-
+      const thumbnailUrl =
+        post.sizes?.medium?.mediaUrl ||
+        post.sizes?.large?.mediaUrl  ||
+        post.sizes?.small?.mediaUrl  ||
+        post.thumbnailUrl || post.mediaUrl || null;
       const publishedAt = post.timestamp
         ? new Date(post.timestamp).toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
@@ -74,8 +93,7 @@ async function syncInstagram(env) {
       await env.DB.prepare(`
         INSERT INTO social_posts
           (id, platform, url, title, thumbnail_url, caption_raw, published_at, created_at, updated_at)
-        VALUES
-          (?, 'instagram', ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        VALUES (?, 'instagram', ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
         ON CONFLICT(id) DO UPDATE SET
           url           = excluded.url,
           title         = excluded.title,
@@ -92,24 +110,24 @@ async function syncInstagram(env) {
     }
   }
 
-  console.log(`[instagram] Done — ${synced} synced, ${skipped} skipped`);
+  const elapsed = Date.now() - start;
+  await writeLog(env, 'instagram', 'sync_success',
+    `Synced ${synced} post${synced !== 1 ? 's' : ''} from Instagram`, {
+      items_synced: synced,
+      response_time_ms: elapsed,
+    });
+
+  console.log(`[instagram] Done — ${synced} synced, ${skipped} skipped (${elapsed}ms)`);
   return { synced, skipped };
 }
 
 // ── Caption cleaner ────────────────────────────────────────────────────────────
-// TikHub returns raw captions — strip hashtags and tidy whitespace.
-// "Cosy night in ✨ #DDLV #DisneyDreamlightValley" → "Cosy night in ✨"
 function cleanCaption(caption) {
   if (!caption) return '';
-  return caption
-    .replace(/(^|\s)#\S+/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  return caption.replace(/(^|\s)#\S+/g, '').replace(/\s{2,}/g, ' ').trim();
 }
 
 // ── TikTok via TikHub.io ───────────────────────────────────────────────────────
-// Step 1: fetch_user_profile to get secUid (TikTok's internal user ID)
-// Step 2: fetch_user_post with both unique_id + secUid to get videos
 async function syncTikTok(env) {
   if (!env.TIKHUB_API_KEY) {
     console.log('[tiktok] TIKHUB_API_KEY not set — skipping');
@@ -117,77 +135,76 @@ async function syncTikTok(env) {
   }
 
   console.log('[tiktok] Fetching from TikHub...');
+  const start = Date.now();
 
   const headers = {
     'Authorization': `Bearer ${env.TIKHUB_API_KEY}`,
     'User-Agent': 'AyUpGee-SocialSync/1.0',
   };
 
-  // Step 1 — get secUid (try two endpoint names TikHub uses)
-  let secUid = null;
-  const profileEndpoints = [
-    'https://api.tikhub.io/api/v1/tiktok/web/fetch_user_info?unique_id=ayupgee',
-    'https://api.tikhub.io/api/v1/tiktok/web/fetch_user_profile?unique_id=ayupgee',
-  ];
-  for (const endpoint of profileEndpoints) {
-    const r = await fetch(endpoint, { headers });
-    if (!r.ok) {
-      console.log(`[tiktok] ${endpoint} returned ${r.status} - trying next`);
-      continue;
-    }
-    const j = await r.json();
-    secUid = j?.data?.userInfo?.user?.secUid
-      || j?.data?.user?.secUid
-      || j?.data?.secUid
-      || j?.data?.userInfo?.secUid;
-    if (secUid) { console.log('[tiktok] Got secUid from', endpoint); break; }
-    console.log('[tiktok] No secUid in response:', JSON.stringify(j).slice(0, 300));
-  }
-  if (!secUid) throw new Error('Could not resolve secUid - check Worker logs for response shape');
+  // Step 1 — resolve secUid
+  const secUidRes = await fetch(
+    'https://api.tikhub.io/api/v1/tiktok/web/get_sec_user_id?url=https://www.tiktok.com/@ayupgee',
+    { headers }
+  );
 
-  // Step 2 — fetch latest 4 videos
+  let secUid = null;
+  if (secUidRes.ok) {
+    const secUidJson = await secUidRes.json();
+    secUid = secUidJson?.data ?? null;
+  }
+
+  if (!secUid) {
+    const msg = 'Could not resolve TikTok secUid';
+    await writeLog(env, 'tiktok', 'sync_error', 'TikTok sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
+  }
+
+  // Step 2 — fetch latest videos
   const res = await fetch(
     `https://api.tikhub.io/api/v1/tiktok/web/fetch_user_post?unique_id=ayupgee&secUid=${encodeURIComponent(secUid)}&count=4`,
     { headers }
   );
 
   if (!res.ok) {
-    throw new Error(`TikHub returned ${res.status}: ${await res.text()}`);
+    const msg = `TikHub returned ${res.status}`;
+    await writeLog(env, 'tiktok', 'sync_error', 'TikTok sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(`${msg}: ${await res.text()}`);
   }
 
-  const json = await res.json();
-
-  // TikHub wraps responses: { code, data: { aweme_list: [...] } }
+  const json   = await res.json();
   const videos = json?.data?.aweme_list ?? [];
+
   if (videos.length === 0) {
     console.log('[tiktok] No videos returned');
     return { synced: 0, skipped: 0 };
   }
 
-  let synced = 0;
+  let synced  = 0;
   let skipped = 0;
 
   for (const v of videos) {
     try {
-      const id          = String(v.aweme_id);
-      const caption     = cleanCaption(v.desc || '');
-      const title       = caption || 'Watch on TikTok';
-      // Construct a reliable permalink from the video ID
-      const url         = v.share_url
-        || `https://www.tiktok.com/@ayupgee/video/${id}`;
-      // cover.url_list can contain multiple resolutions — first is usually fine
+      const id           = String(v.aweme_id);
+      const caption      = cleanCaption(v.desc || '');
+      const title        = caption || 'Watch on TikTok';
+      const url          = v.share_url || `https://www.tiktok.com/@ayupgee/video/${id}`;
       const thumbnailUrl = v.video?.cover?.url_list?.[0]
-        || v.video?.origin_cover?.url_list?.[0]
-        || null;
-      const publishedAt = v.create_time
+        || v.video?.origin_cover?.url_list?.[0] || null;
+      const publishedAt  = v.create_time
         ? new Date(v.create_time * 1000).toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
 
       await env.DB.prepare(`
         INSERT INTO social_posts
           (id, platform, url, title, thumbnail_url, caption_raw, published_at, created_at, updated_at)
-        VALUES
-          (?, 'tiktok', ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        VALUES (?, 'tiktok', ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
         ON CONFLICT(id) DO UPDATE SET
           url           = excluded.url,
           title         = excluded.title,
@@ -204,50 +221,87 @@ async function syncTikTok(env) {
     }
   }
 
-  console.log(`[tiktok] Done — ${synced} synced, ${skipped} skipped`);
+  const elapsed = Date.now() - start;
+  await writeLog(env, 'tiktok', 'sync_success',
+    `Synced ${synced} video${synced !== 1 ? 's' : ''} from TikTok`, {
+      items_synced: synced,
+      response_time_ms: elapsed,
+    });
+
+  console.log(`[tiktok] Done — ${synced} synced, ${skipped} skipped (${elapsed}ms)`);
   return { synced, skipped };
 }
 
-// ── Main scheduled handler ─────────────────────────────────────────────────────
+// ── Response helper ────────────────────────────────────────────────────────────
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data, null, 2), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+// ── Main ───────────────────────────────────────────────────────────────────────
 export default {
+  // Cron trigger — runs every hour
   async scheduled(event, env, ctx) {
-    console.log(`[social-sync] Running at ${new Date().toISOString()}`);
-
+    console.log(`[social-sync] Cron running at ${new Date().toISOString()}`);
     const results = {};
-
-    try {
-      results.instagram = await syncInstagram(env);
-    } catch (e) {
-      console.error('[instagram] Sync failed:', e.message);
-      results.instagram = { error: e.message };
-    }
-
-    try {
-      results.tiktok = await syncTikTok(env);
-    } catch (e) {
-      console.error('[tiktok] Sync failed:', e.message);
-      results.tiktok = { error: e.message };
-    }
-
+    try { results.instagram = await syncInstagram(env); }
+    catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
+    try { results.tiktok    = await syncTikTok(env); }
+    catch (e) { console.error('[tiktok] Sync failed:', e.message); results.tiktok = { error: e.message }; }
     console.log('[social-sync] Complete:', JSON.stringify(results));
   },
 
-  // Also handle HTTP requests so you can trigger a manual sync from the browser
-  // or test with: curl https://ayupgee-social-sync.YOUR_SUBDOMAIN.workers.dev/sync
+  // HTTP handler
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    if (url.pathname === '/sync') {
-      const results = {};
-      try { results.instagram = await syncInstagram(env); } catch (e) { results.instagram = { error: e.message }; }
-      try { results.tiktok    = await syncTikTok(env);    } catch (e) { results.tiktok    = { error: e.message }; }
-      return new Response(JSON.stringify({ ok: true, results }, null, 2), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+    // ── GET /  — health + D1 stats (public, no secrets exposed) ──────────
+    if (url.pathname === '/' || url.pathname === '') {
+      try {
+        const rows = await env.DB.prepare(`
+          SELECT platform, MAX(updated_at) AS last_sync, COUNT(*) AS item_count
+          FROM social_posts
+          GROUP BY platform
+        `).all();
+
+        const stats = {};
+        for (const row of rows.results ?? []) {
+          stats[row.platform] = { lastSync: row.last_sync, itemCount: row.item_count };
+        }
+
+        return jsonResponse({
+          ok: true,
+          worker: 'ayupgee-social-sync',
+          version: VERSION,
+          timestamp: new Date().toISOString(),
+          providers: {
+            instagram: stats.instagram ?? { lastSync: null, itemCount: 0 },
+            tiktok:    stats.tiktok    ?? { lastSync: null, itemCount: 0 },
+          },
+        });
+      } catch (e) {
+        return jsonResponse({
+          ok: true,
+          worker: 'ayupgee-social-sync',
+          version: VERSION,
+          timestamp: new Date().toISOString(),
+          error: 'db_unavailable',
+        });
+      }
     }
 
-    return new Response(JSON.stringify({ ok: true, worker: 'ayupgee-social-sync' }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // ── GET /sync  — manual sync trigger ─────────────────────────────────
+    if (url.pathname === '/sync') {
+      const results = {};
+      try { results.instagram = await syncInstagram(env); }
+      catch (e) { results.instagram = { error: e.message }; }
+      try { results.tiktok    = await syncTikTok(env); }
+      catch (e) { results.tiktok    = { error: e.message }; }
+      return jsonResponse({ ok: true, results });
+    }
+
+    return jsonResponse({ ok: true, worker: 'ayupgee-social-sync', version: VERSION });
   },
 };
