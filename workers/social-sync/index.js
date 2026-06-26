@@ -232,6 +232,106 @@ async function syncTikTok(env) {
   return { synced, skipped };
 }
 
+// ── Cache cleanup ──────────────────────────────────────────────────────────────
+
+/**
+ * Keep only the latest N Instagram posts; delete the rest.
+ * Uses a subquery so a single DELETE statement does the work safely.
+ */
+async function cleanupInstagram(env, keep = 6) {
+  const { meta } = await env.DB.prepare(`
+    DELETE FROM social_posts
+    WHERE  platform = 'instagram'
+    AND    id NOT IN (
+      SELECT id FROM social_posts
+      WHERE  platform = 'instagram'
+      ORDER  BY published_at DESC, updated_at DESC
+      LIMIT  ?
+    )
+  `).bind(keep).run();
+
+  const removed = meta?.changes ?? 0;
+  const msg = `Instagram cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
+  console.log(`[cleanup] ${msg}`);
+  await writeLog(env, 'instagram', 'cleanup', msg, { items_synced: 0 });
+  return { kept: keep, removed };
+}
+
+/**
+ * Keep only the latest N TikTok posts; delete the rest.
+ */
+async function cleanupTikTok(env, keep = 4) {
+  const { meta } = await env.DB.prepare(`
+    DELETE FROM social_posts
+    WHERE  platform = 'tiktok'
+    AND    id NOT IN (
+      SELECT id FROM social_posts
+      WHERE  platform = 'tiktok'
+      ORDER  BY published_at DESC, updated_at DESC
+      LIMIT  ?
+    )
+  `).bind(keep).run();
+
+  const removed = meta?.changes ?? 0;
+  const msg = `TikTok cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
+  console.log(`[cleanup] ${msg}`);
+  await writeLog(env, 'tiktok', 'cleanup', msg, { items_synced: 0 });
+  return { kept: keep, removed };
+}
+
+/**
+ * Twitch: this worker does not maintain a persistent Twitch content cache.
+ * Sync logs older than 30 days are pruned across all platforms.
+ */
+async function cleanupSyncLogs(env, keepDays = 30) {
+  const { meta } = await env.DB.prepare(`
+    DELETE FROM sync_logs
+    WHERE created_at < datetime('now', ? )
+  `).bind(`-${keepDays} days`).run();
+
+  const removed = meta?.changes ?? 0;
+  const msg = `Sync log cleanup: removed ${removed} entr${removed !== 1 ? 'ies' : 'y'} older than ${keepDays} days.`;
+  console.log(`[cleanup] ${msg}`);
+  // Write the log after pruning (so this entry itself is fresh)
+  await writeLog(env, 'system', 'cleanup', msg, { items_synced: 0 });
+  return { removed };
+}
+
+/**
+ * Run all cleanup jobs and return a summary.
+ * Each step is wrapped so a failure in one does not abort the rest.
+ */
+async function runCleanup(env) {
+  console.log('[cleanup] Starting weekly cleanup…');
+  const results = {};
+
+  try { results.instagram = await cleanupInstagram(env); }
+  catch (e) {
+    console.error('[cleanup] Instagram cleanup failed:', e.message);
+    results.instagram = { error: e.message };
+  }
+
+  try { results.tiktok = await cleanupTikTok(env); }
+  catch (e) {
+    console.error('[cleanup] TikTok cleanup failed:', e.message);
+    results.tiktok = { error: e.message };
+  }
+
+  try { results.logs = await cleanupSyncLogs(env); }
+  catch (e) {
+    console.error('[cleanup] Log cleanup failed:', e.message);
+    results.logs = { error: e.message };
+  }
+
+  results.twitch = {
+    removed: 0,
+    note: 'No Twitch cleanup required. Worker does not store persistent Twitch cache records.',
+  };
+
+  console.log('[cleanup] Complete:', JSON.stringify(results));
+  return results;
+}
+
 // ── Response helper ────────────────────────────────────────────────────────────
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
@@ -242,15 +342,22 @@ function jsonResponse(data, status = 200) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default {
-  // Cron trigger — runs every hour
+  // Cron trigger — hourly sync OR weekly cleanup depending on schedule
   async scheduled(event, env, ctx) {
-    console.log(`[social-sync] Cron running at ${new Date().toISOString()}`);
-    const results = {};
-    try { results.instagram = await syncInstagram(env); }
-    catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
-    try { results.tiktok    = await syncTikTok(env); }
-    catch (e) { console.error('[tiktok] Sync failed:', e.message); results.tiktok = { error: e.message }; }
-    console.log('[social-sync] Complete:', JSON.stringify(results));
+    console.log(`[social-sync] Cron "${event.cron}" firing at ${new Date().toISOString()}`);
+
+    if (event.cron === '0 3 * * 0') {
+      // Weekly Sunday 03:00 UTC — run cache cleanup
+      await runCleanup(env);
+    } else {
+      // Every other cron (hourly) — run social sync
+      const results = {};
+      try { results.instagram = await syncInstagram(env); }
+      catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
+      try { results.tiktok    = await syncTikTok(env); }
+      catch (e) { console.error('[tiktok] Sync failed:', e.message); results.tiktok = { error: e.message }; }
+      console.log('[social-sync] Sync complete:', JSON.stringify(results));
+    }
   },
 
   // HTTP handler
@@ -290,6 +397,12 @@ export default {
           error: 'db_unavailable',
         });
       }
+    }
+
+    // ── GET /cleanup  — manual cleanup trigger ───────────────────────────
+    if (url.pathname === '/cleanup') {
+      const results = await runCleanup(env);
+      return jsonResponse({ ok: true, results });
     }
 
     // ── GET /sync  — manual sync trigger ─────────────────────────────────

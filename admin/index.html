@@ -470,6 +470,37 @@ ul{list-style:none}
 }
 @keyframes skel-fade { 0%,100%{opacity:1}50%{opacity:.5} }
 
+/* ── Cleanup section ────────────────────────────────────────────────────────── */
+.cleanup-section { margin-top:var(--space-6) }
+.cleanup-card {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);
+  padding:var(--space-5);
+}
+.cleanup-header {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-4);
+}
+.cleanup-title {
+  font-family:var(--font-display);font-size:1rem;font-weight:600;
+  display:flex;align-items:center;gap:.4rem;
+}
+.cleanup-stats-grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-3);
+  margin-bottom:var(--space-4);
+}
+.cleanup-stat {
+  background:var(--surface-soft);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:var(--space-3) var(--space-4);
+}
+.cleanup-stat__label { font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.25rem }
+.cleanup-stat__value { font-size:.9rem;font-weight:600;color:var(--text) }
+.cleanup-stat__value--muted { color:var(--text-faint) }
+.cleanup-last-messages { display:flex;flex-direction:column;gap:.35rem;margin-bottom:var(--space-4) }
+.cleanup-msg { font-size:.8rem;color:var(--text-muted);padding:.3rem .5rem;border-left:2px solid var(--border);padding-left:.7rem }
+.cleanup-msg--ok   { border-color:var(--meadow-400) }
+.cleanup-msg--note { border-color:var(--sky-400) }
+.cleanup-msg--error { border-color:var(--blossom-400);color:var(--blossom-300) }
+
 /* ── Mobile ─────────────────────────────────────────────────────────────────── */
 .sidebar-overlay {
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40;
@@ -532,17 +563,8 @@ ul{list-style:none}
       </a>
 
       <div class="sidebar__section-label" style="margin-top:.75rem">Social</div>
-      <a class="sidebar__item" href="#twitch" data-section="twitch">
-        <i data-lucide="tv-2"></i> Twitch
-      </a>
-      <a class="sidebar__item" href="#tiktok" data-section="tiktok">
-        <i data-lucide="music-2"></i> TikTok
-      </a>
-      <a class="sidebar__item" href="#instagram" data-section="instagram">
-        <i data-lucide="camera"></i> Instagram
-      </a>
-      <a class="sidebar__item" href="#youtube" data-section="youtube">
-        <i data-lucide="youtube"></i> YouTube
+      <a class="sidebar__item" href="#social" data-section="social">
+        <i data-lucide="share-2"></i> Social Integrations
       </a>
 
       <div class="sidebar__section-label" style="margin-top:.75rem">Management</div>
@@ -820,6 +842,48 @@ ul{list-style:none}
         <div class="provider-skeleton" style="height:380px"></div>
       </div>
 
+      <!-- Cleanup panel -->
+      <div class="cleanup-section">
+        <div class="section-heading">🧹 Cache Cleanup</div>
+        <div class="cleanup-card">
+          <div class="cleanup-header">
+            <div class="cleanup-title">Database Cleanup Rules</div>
+            <button class="btn-sm btn-sm--primary" id="cleanupBtn" onclick="runCleanupNow()">
+              <i data-lucide="trash-2"></i> Run Cleanup Now
+            </button>
+          </div>
+          <div class="cleanup-stats-grid">
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Last Run</div>
+              <div class="cleanup-stat__value cleanup-stat__value--muted" id="cleanupLastRun">Loading…</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Instagram Rule</div>
+              <div class="cleanup-stat__value">Keep latest 6</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">TikTok Rule</div>
+              <div class="cleanup-stat__value">Keep latest 4</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Log Retention</div>
+              <div class="cleanup-stat__value">30 days</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Next Scheduled</div>
+              <div class="cleanup-stat__value">Sunday 03:00 UTC</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Twitch Cache</div>
+              <div class="cleanup-stat__value cleanup-stat__value--muted">No cleanup needed</div>
+            </div>
+          </div>
+          <div class="cleanup-last-messages" id="cleanupMessages">
+            <div class="cleanup-msg cleanup-stat__value--muted" style="font-style:italic;font-size:.8rem">No cleanup history yet.</div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /socialView -->
 
     </main><!-- /admin-content -->
@@ -872,7 +936,7 @@ ul{list-style:none}
         this.classList.add('active');
         closeSidebar();
 
-        if (['twitch','instagram','tiktok'].includes(section)) {
+        if (['twitch','instagram','tiktok','social'].includes(section)) {
           e.preventDefault();
           showView('social');
         } else if (section === 'schedule') {
@@ -912,7 +976,7 @@ ul{list-style:none}
   }
 
   // ── View switching ──────────────────────────────────────────────────────
-  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok']);
+  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok','social']);
   const COMING_SOON    = new Set(['blog','media','youtube','users','partnerships','analytics','settings']);
 
   function showView(name) {
@@ -926,6 +990,7 @@ ul{list-style:none}
 
     if (name === 'social') {
       startSocialRefresh();
+      loadCleanupStats();
     } else {
       stopSocialRefresh();
     }
@@ -1119,6 +1184,62 @@ ul{list-style:none}
 
   window.refreshProvider = function (id) {
     loadSocialStatus();
+  };
+
+  // ── Cleanup ─────────────────────────────────────────────────────────────
+  async function loadCleanupStats() {
+    try {
+      const res  = await fetch('/api/admin/social/cleanup', { credentials: 'same-origin' });
+      const data = await res.json();
+      if (!data.ok) return;
+
+      const lastRunEl = document.getElementById('cleanupLastRun');
+      if (lastRunEl) {
+        lastRunEl.textContent = data.lastRun ? relativeTime(data.lastRun) : 'Never';
+        lastRunEl.classList.toggle('cleanup-stat__value--muted', !data.lastRun);
+      }
+
+      const msgs = document.getElementById('cleanupMessages');
+      if (msgs && data.byPlatform) {
+        const entries = Object.entries(data.byPlatform);
+        if (entries.length === 0) return;
+        msgs.innerHTML = entries.map(([platform, info]) =>
+          `<div class="cleanup-msg cleanup-msg--ok">
+            <strong style="text-transform:capitalize">${esc(platform)}</strong>
+            — ${esc(info.message)}
+            <span style="color:var(--text-faint);font-size:.72rem;margin-left:.4rem">${formatLogTime(info.at)}</span>
+          </div>`
+        ).join('');
+      }
+    } catch { /* fail silently — stats are non-critical */ }
+  }
+
+  let _cleaning = false;
+  window.runCleanupNow = async function () {
+    if (_cleaning) return;
+    _cleaning = true;
+    const btn = document.getElementById('cleanupBtn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader"></i> Cleaning…'; lucide.createIcons({ nodes: [btn] }); }
+
+    try {
+      const res  = await fetch('/api/admin/social/cleanup', { method: 'POST', credentials: 'same-origin' });
+      const data = await res.json();
+
+      if (data.ok) {
+        const r = data.results ?? {};
+        const ig = r.instagram?.removed ?? 0;
+        const tt = r.tiktok?.removed    ?? 0;
+        showToast(`✅ Cleanup complete — removed ${ig} Instagram, ${tt} TikTok item${tt !== 1 ? 's' : ''}`);
+        loadCleanupStats();
+      } else {
+        showToast(`❌ ${data.error ?? 'Cleanup failed'}`, true);
+      }
+    } catch {
+      showToast('❌ Unable to run cleanup', true);
+    } finally {
+      _cleaning = false;
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="trash-2"></i> Run Cleanup Now'; lucide.createIcons({ nodes: [btn] }); }
+    }
   };
 
   window.triggerSync = async function (id) {
