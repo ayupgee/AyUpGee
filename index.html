@@ -1617,7 +1617,7 @@ function renderTikTokItems(items) {
       <a href="${url}" target="_blank" rel="noopener noreferrer"
          class="clip" aria-label="${title} — Watch on TikTok">
         ${hasThumbnail
-          ? `<img class="clip__img" src="${_esc(item.thumbnailUrl)}" alt="${title}" loading="lazy" decoding="async" />`
+          ? `<img class="clip__img" src="/api/social/tiktok-thumb?url=${encodeURIComponent(item.thumbnailUrl)}" alt="${title}" loading="lazy" decoding="async" />`
           : `<div class="clip__bg" style="background:${gradient}"></div>`
         }
         <div class="clip__scrim"></div>
