@@ -127,7 +127,7 @@
   banner.innerHTML = `
     <div class="ayg-cb__text">
       🍪 We use cookies to see how people find and enjoy our site. No ads, no cross-site tracking, just basic analytics.
-      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/privacy">Privacy Policy</a>
     </div>
     <div class="ayg-cb__actions">
       <button class="ayg-cb__btn ayg-cb__btn--decline" id="ayg-cookie-decline">Decline</button>
