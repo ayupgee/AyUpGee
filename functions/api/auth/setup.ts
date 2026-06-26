@@ -29,9 +29,23 @@ const MIN_PASSWORD_LENGTH = 12;
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
+  try {
+    return await handleSetup(request, env);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return err('internal_error', `Setup failed: ${message}`, 500);
+  }
+};
+
+async function handleSetup(request: Request, env: Env): Promise<Response> {
   // ── Guard: setup token must be configured ─────────────────────────────────
   if (!env.ADMIN_SETUP_TOKEN) {
     return err('setup_disabled', 'Setup endpoint is not configured', 404);
+  }
+
+  // ── Guard: DB binding must exist ──────────────────────────────────────────
+  if (!env.DB) {
+    return err('configuration_error', 'Database binding (DB) is not configured in Pages dashboard', 503);
   }
 
   // ── Parse body ─────────────────────────────────────────────────────────────
@@ -95,7 +109,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     { message: 'Admin account created. Remove ADMIN_SETUP_TOKEN from your environment variables now.' },
     201
   );
-};
+}
 
 export const onRequestGet:    PagesFunction = () => methodNotAllowed();
 export const onRequestPut:    PagesFunction = () => methodNotAllowed();
