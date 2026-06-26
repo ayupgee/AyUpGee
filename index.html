@@ -336,9 +336,9 @@ ul,ol{list-style:none}
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:var(--night-900)}
 [data-theme="night"] .hero{background:var(--night-900)}
 :not([data-theme="night"]) .hero{background:var(--cream-50)}
-.hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.38}
-[data-theme="night"] .hero__bg{opacity:.28}
-:not([data-theme="night"]) .hero__bg{opacity:.55}
+.hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:.6}
+[data-theme="night"] .hero__bg{opacity:.5}
+:not([data-theme="night"]) .hero__bg{opacity:.75}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--night-900) 35%,transparent) 0%,color-mix(in srgb,var(--night-900) 75%,transparent) 60%,var(--night-900) 100%)}
 :not([data-theme="night"]) .hero__scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--cream-50) 20%,transparent) 0%,color-mix(in srgb,var(--cream-50) 65%,transparent) 60%,var(--cream-50) 100%)}
 /* Honeycomb tile — subtle honey-gold pattern */
@@ -351,11 +351,6 @@ ul,ol{list-style:none}
 .hero__orb--a{width:520px;height:520px;background:var(--dream-400);top:-140px;left:-160px;opacity:.22;animation:ayg-float 9s var(--ease-soft) infinite}
 .hero__orb--b{width:380px;height:380px;background:var(--moon-400);bottom:-80px;right:-100px;opacity:.18;animation:ayg-float 11s var(--ease-soft) infinite reverse}
 .hero__orb--c{width:260px;height:260px;background:var(--sky-400);top:40%;left:52%;opacity:.12;animation:ayg-float 13s var(--ease-soft) infinite 2s}
-/* Floating bee mascot */
-.hero__bee{position:absolute;right:8%;top:12%;width:96px;height:96px;filter:drop-shadow(var(--glow-moon));animation:ayg-bee-float 5s var(--ease-soft) infinite;pointer-events:none;z-index:2}
-@keyframes ayg-bee-float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
-@media(prefers-reduced-motion:reduce){.hero__bee{animation:none}}
-@media(max-width:860px){.hero__bee{display:none}}
 .hero__stars{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .star{position:absolute;border-radius:50%;background:#fff;animation:ayg-twinkle var(--dur,3s) var(--ease-soft) infinite var(--delay,0s)}
 @keyframes ayg-twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
@@ -691,8 +686,6 @@ ul,ol{list-style:none}
     <div class="hero__orb hero__orb--a"></div>
     <div class="hero__orb hero__orb--b"></div>
     <div class="hero__orb hero__orb--c"></div>
-    <!-- Floating bee mascot -->
-    <img class="hero__bee" src="assets/ayupgee-honey_drips_112x112.png" alt="" />
     <!-- Stars (injected by JS) -->
     <div class="hero__stars" id="heroStars"></div>
 
