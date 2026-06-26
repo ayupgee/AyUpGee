@@ -367,7 +367,8 @@ ul,ol{list-style:none}
 .hero__browser-bar{display:flex;align-items:center;gap:var(--space-3);padding:.65rem var(--space-5);background:color-mix(in srgb,var(--surface-sunken) 80%,transparent);border-bottom:var(--border-thin) solid color-mix(in srgb,var(--white) 12%,transparent)}
 .hero__browser-dots{display:flex;gap:6px;flex:none}
 .hero__browser-dot{width:10px;height:10px;border-radius:50%}
-.hero__browser-url{flex:1;text-align:center;font-size:var(--text-xs);color:var(--text-faint);font-family:monospace;background:color-mix(in srgb,var(--white) 8%,transparent);border:var(--border-thin) solid color-mix(in srgb,var(--white) 12%,transparent);border-radius:var(--radius-pill);padding:.2rem .8rem}
+.hero__browser-url{flex:1;text-align:center;font-size:var(--text-xs);color:var(--text-faint);font-family:monospace;background:color-mix(in srgb,var(--white) 8%,transparent);border:var(--border-thin) solid color-mix(in srgb,var(--white) 12%,transparent);border-radius:var(--radius-pill);padding:.2rem .8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){.hero__browser-url{display:none}}
 /* Card body — centred */
 .hero__body{padding:var(--space-6);text-align:center}
 .hero__top{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
@@ -600,7 +601,7 @@ ul,ol{list-style:none}
   .hero__orb--c{display:none}
   .hero::before{background-size:42px 74px}
   .hero__cta{flex-direction:column}
-  .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%}
+  .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%;justify-content:center}
   .hero__body{padding:var(--space-4)}
   .video-grid{grid-template-columns:1fr}
   .clip-row{grid-template-columns:repeat(2,1fr)}
@@ -697,7 +698,7 @@ ul,ol{list-style:none}
               <span class="hero__browser-dot" style="background:#ffbd2e"></span>
               <span class="hero__browser-dot" style="background:#28ca41"></span>
             </div>
-            <div class="hero__browser-url">ayupgee.pages.dev</div>
+            <div class="hero__browser-url">ayupgee.com</div>
           </div>
           <!-- Card body -->
           <div class="hero__body">
