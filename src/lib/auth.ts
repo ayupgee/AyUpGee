@@ -10,7 +10,7 @@
  * hashPassword / verifyPassword — the rest of the codebase is unchanged.
  */
 
-const PBKDF2_ITERATIONS = 600_000;
+const PBKDF2_ITERATIONS = 100_000; // Cloudflare Workers maximum for PBKDF2-SHA256
 const KEY_LENGTH_BYTES   = 32; // 256-bit output
 
 // ─── Password hashing ─────────────────────────────────────────────────────────
