@@ -590,14 +590,14 @@ ul,ol{list-style:none}
    PARTNERSHIPS SECTION
    ═══════════════════════════════════════════════════════ */
 #partnerships{background:var(--bg)}
-.partnerships-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--space-8);align-items:center}
+.partnerships-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--space-8);align-items:stretch}
 .partnerships-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
 .partnership-item{background:var(--surface);border:var(--border-thin) solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-sm);transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
 .partnership-item:hover{transform:translateY(-3px);border-color:var(--border-brand);box-shadow:var(--shadow-md),var(--glow-sky)}
 .partnership-item__icon{font-size:1.5rem;margin-bottom:var(--space-3)}
 .partnership-item__title{font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-md);color:var(--text);margin-bottom:.4rem}
 .partnership-item__desc{font:var(--type-caption);color:var(--text-muted);line-height:var(--leading-relaxed)}
-.partnerships-contact{background:var(--surface);border:var(--border-thin) solid var(--border);border-radius:var(--radius-xl);padding:var(--space-7);text-align:center;box-shadow:var(--shadow-md)}
+.partnerships-contact{background:var(--surface);border:var(--border-thin) solid var(--border);border-radius:var(--radius-xl);padding:var(--space-7);text-align:center;box-shadow:var(--shadow-md);display:flex;flex-direction:column;justify-content:center}
 .partnerships-contact__icon{font-size:2.5rem;margin-bottom:var(--space-5)}
 .partnerships-contact__title{font:var(--type-h3);color:var(--text);margin-bottom:var(--space-3)}
 .partnerships-contact__desc{font:var(--type-body);color:var(--text-muted);margin-bottom:var(--space-6);max-width:280px;margin-left:auto;margin-right:auto}
