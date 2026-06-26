@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacy &amp; Cookies – AyUpGee</title>
+<meta name="description" content="Privacy policy and cookie information for AyUpGee." />
+<meta name="robots" content="noindex" />
+
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico" />
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
+<link rel="manifest" href="/assets/favicon/site.webmanifest" />
+<meta name="theme-color" content="#161427" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+<style>
+  /* ── Design tokens ──────────────────────────────────────────────────────── */
+  :root {
+    --bg:          #161427;
+    --surface:     #1e1b35;
+    --surface-2:   #252240;
+    --border:      #34315e;
+    --text:        #f3f1fb;
+    --text-muted:  #b3afd0;
+    --aurora-from: #98e7e1;
+    --aurora-to:   #eeb5ea;
+    --accent:      #98e7e1;
+    --radius:      18px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', system-ui, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Nav ────────────────────────────────────────────────────────────────── */
+  .priv-nav {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .priv-nav__logo {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  }
+  .priv-nav__back {
+    color: var(--text-muted);
+    font-size: .875rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: auto;
+    transition: color .15s;
+  }
+  .priv-nav__back:hover { color: var(--accent); }
+
+  /* ── Page layout ────────────────────────────────────────────────────────── */
+  .priv-page {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .priv-page__eyebrow {
+    font-size: .8125rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: .5rem;
+  }
+
+  .priv-page__title {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: .5rem;
+  }
+
+  .priv-page__updated {
+    font-size: .875rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+  }
+
+  /* ── Content ────────────────────────────────────────────────────────────── */
+  .priv-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .priv-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .priv-section h2 {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: .875rem;
+  }
+
+  .priv-section p {
+    color: var(--text-muted);
+    margin-bottom: .875rem;
+  }
+  .priv-section p:last-child { margin-bottom: 0; }
+
+  .priv-section a {
+    color: var(--accent);
+    text-underline-offset: 2px;
+  }
+  .priv-section a:hover { color: #5fd4d6; }
+
+  /* ── Cookie table ────────────────────────────────────────────────────────── */
+  .priv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+    margin-top: 1rem;
+  }
+  .priv-table th {
+    text-align: left;
+    padding: .625rem .875rem;
+    background: var(--surface-2);
+    color: var(--text);
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  .priv-table th:first-child { border-radius: var(--radius) 0 0 0; }
+  .priv-table th:last-child  { border-radius: 0 var(--radius) 0 0; }
+  .priv-table td {
+    padding: .625rem .875rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .priv-table tr:last-child td { border-bottom: none; }
+  .priv-table code {
+    font-family: 'Courier New', monospace;
+    font-size: .8125rem;
+    background: var(--surface-2);
+    padding: .1em .4em;
+    border-radius: 4px;
+    color: var(--aurora-from);
+  }
+
+  /* ── Rights list ─────────────────────────────────────────────────────────── */
+  .priv-rights {
+    list-style: none;
+    padding: 0;
+    margin-top: .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .priv-rights li {
+    color: var(--text-muted);
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  .priv-rights li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── Consent widget ──────────────────────────────────────────────────────── */
+  .priv-consent-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .priv-consent-card p {
+    margin: 0;
+    font-size: .9rem;
+  }
+  .priv-consent-card .priv-consent-btns {
+    display: flex;
+    gap: .625rem;
+    flex-shrink: 0;
+  }
+  .priv-btn {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    font-size: .9375rem;
+    font-weight: 600;
+    padding: .5rem 1.1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: filter .15s, transform .15s;
+    line-height: 1;
+  }
+  .priv-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .priv-btn--outline {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
+  }
+  .priv-btn--outline:hover { border-color: #6f6ba0; color: var(--text); }
+  .priv-btn--aurora {
+    background: linear-gradient(110deg, var(--aurora-from), var(--aurora-to));
+    color: #1a2e3a;
+    box-shadow: 0 4px 16px rgba(95,212,214,.25);
+  }
+  .priv-consent-status {
+    font-size: .8125rem;
+    color: var(--text-muted);
+    margin-top: .5rem;
+  }
+  .priv-consent-status span { color: var(--aurora-from); font-weight: 700; }
+
+  @media (max-width: 560px) {
+    .priv-table { display: block; overflow-x: auto; }
+    .priv-consent-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="priv-nav">
+  <a class="priv-nav__logo" href="/">AyUpGee 🐝</a>
+  <a class="priv-nav__back" href="/">← Back to site</a>
+</nav>
+
+<main class="priv-page">
+
+  <p class="priv-page__eyebrow">Legal &amp; Privacy</p>
+  <h1 class="priv-page__title">Privacy &amp; Cookies</h1>
+  <p class="priv-page__updated">Last updated: June 2026</p>
+
+  <!-- 1. Who we are -->
+  <section class="priv-section">
+    <h2>Who we are</h2>
+    <p>
+      AyUpGee (<strong>ayupgee.com</strong>) is a personal content-creator website based in Manchester, UK.
+      The site is operated by an individual creator — not a company. For any questions about this policy,
+      please contact us at <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+    </p>
+    <p>
+      We are the data controller for personal data collected through this site.
+    </p>
+  </section>
+
+  <!-- 2. What data we collect -->
+  <section class="priv-section">
+    <h2>What data we collect and why</h2>
+    <p>
+      We collect <strong>minimal data</strong> to understand how visitors find and use our site. We do not
+      sell data, run advertising, or track you across other websites.
+    </p>
+    <p>
+      <strong>Analytics (with your consent)</strong><br />
+      If you accept cookies, we use Google Analytics 4 to collect anonymised usage data — pages visited,
+      scroll depth, outbound link clicks, and similar interactions. This helps us understand what content
+      people enjoy and how the site performs. Google Analytics sets cookies in your browser identified
+      by a random ID; it does not collect your name, email, or any directly identifying information.
+    </p>
+    <p>
+      <strong>Legal basis:</strong> Consent (Article 6(1)(a) UK GDPR). You can withdraw consent at any
+      time by clicking "Withdraw consent" below.
+    </p>
+    <p>
+      <strong>Account data (members &amp; moderators only)</strong><br />
+      If you have a member or moderator account, we store your email address and a hashed (not
+      readable) version of your password in our database. This is required to provide you access
+      to the member area. Legal basis: contract performance (Article 6(1)(b) UK GDPR).
+    </p>
+    <p>
+      <strong>Technical logs</strong><br />
+      Our hosting provider (Cloudflare) may log IP addresses and request metadata for security and
+      abuse prevention purposes. We do not access or process these logs ourselves. See
+      <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">
+        Cloudflare's privacy policy</a>.
+    </p>
+  </section>
+
+  <!-- 3. Cookies -->
+  <section class="priv-section">
+    <h2>Cookies we use</h2>
+    <p>Cookies are small files stored in your browser. Here is exactly what this site uses:</p>
+
+    <table class="priv-table">
+      <thead>
+        <tr>
+          <th>Cookie / storage key</th>
+          <th>Purpose</th>
+          <th>Set by</th>
+          <th>Expires</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ayg_cookie_consent</code></td>
+          <td>Stores your cookie preference (accepted / declined)</td>
+          <td>AyUpGee</td>
+          <td>Persists in localStorage until cleared</td>
+        </tr>
+        <tr>
+          <td><code>ayg_session</code></td>
+          <td>Keeps you signed in (members / moderators only)</td>
+          <td>AyUpGee</td>
+          <td>7 days, or on logout</td>
+        </tr>
+        <tr>
+          <td><code>ayg_csrf</code></td>
+          <td>Prevents cross-site request forgery attacks (members only)</td>
+          <td>AyUpGee</td>
+          <td>Session</td>
+        </tr>
+        <tr>
+          <td><code>_ga</code></td>
+          <td>Google Analytics — distinguishes unique visitors</td>
+          <td>Google</td>
+          <td>2 years</td>
+        </tr>
+        <tr>
+          <td><code>_ga_XXXXXXX</code></td>
+          <td>Google Analytics — maintains session state</td>
+          <td>Google</td>
+          <td>2 years</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:1rem;">
+      The first three cookies are <strong>essential or functional</strong> — they are only set when
+      you sign in or save your cookie preference. The Google Analytics cookies are
+      <strong>optional</strong> and are only set if you accept.
+    </p>
+
+    <p>
+      <strong>International transfers:</strong> Google Analytics data is processed by Google LLC,
+      based in the United States. Google participates in the EU-US Data Privacy Framework and
+      implements standard contractual clauses as safeguards.
+      See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+      Google's privacy policy</a> for more detail.
+    </p>
+
+    <!-- Consent management widget -->
+    <div class="priv-consent-card">
+      <div>
+        <p>Manage your analytics cookie preference:</p>
+        <p class="priv-consent-status" id="consentStatus">Checking…</p>
+      </div>
+      <div class="priv-consent-btns">
+        <button class="priv-btn priv-btn--outline" id="consentDecline">Decline</button>
+        <button class="priv-btn priv-btn--aurora" id="consentAccept">Accept 🐝</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Data retention -->
+  <section class="priv-section">
+    <h2>How long we keep data</h2>
+    <p>
+      Google Analytics data is retained for <strong>26 months</strong> (the default GA4 retention
+      period). You can request earlier deletion — see "Your rights" below.
+    </p>
+    <p>
+      Account credentials (email + password hash) are kept for as long as you have an account.
+      You can request account deletion by emailing
+      <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+    </p>
+  </section>
+
+  <!-- 5. Your rights -->
+  <section class="priv-section">
+    <h2>Your rights under UK GDPR</h2>
+    <p>You have the following rights regarding your personal data:</p>
+    <ul class="priv-rights">
+      <li><strong>Right of access</strong> — request a copy of any data we hold about you</li>
+      <li><strong>Right to erasure</strong> — request that we delete your data ("right to be forgotten")</li>
+      <li><strong>Right to rectification</strong> — ask us to correct inaccurate data</li>
+      <li><strong>Right to restriction</strong> — ask us to pause processing your data</li>
+      <li><strong>Right to object</strong> — object to processing based on legitimate interests</li>
+      <li><strong>Right to data portability</strong> — receive your data in a portable format</li>
+      <li><strong>Right to withdraw consent</strong> — withdraw analytics consent at any time (see above)</li>
+    </ul>
+    <p style="margin-top:1rem;">
+      To exercise any of these rights, email us at
+      <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a>.
+      We will respond within <strong>30 days</strong>.
+    </p>
+  </section>
+
+  <!-- 6. Complaints -->
+  <section class="priv-section">
+    <h2>How to complain</h2>
+    <p>
+      If you are unhappy with how we handle your data, you have the right to lodge a complaint with
+      the <strong>Information Commissioner's Office (ICO)</strong>, the UK's data protection regulator.
+    </p>
+    <p>
+      <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener noreferrer">
+        ico.org.uk/make-a-complaint
+      </a>
+      &ensp;·&ensp; Helpline: 0303 123 1113
+    </p>
+    <p>
+      We'd always prefer to resolve any concerns directly first —
+      <a href="mailto:hello@ayupgee.com">hello@ayupgee.com</a> is the best place to start.
+    </p>
+  </section>
+
+  <!-- 7. Changes -->
+  <section class="priv-section">
+    <h2>Changes to this policy</h2>
+    <p>
+      If we make significant changes, we'll update the "Last updated" date at the top of this page.
+      For anything that materially affects your rights, we'll let members know by email.
+    </p>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  const KEY = 'ayg_cookie_consent';
+  const statusEl  = document.getElementById('consentStatus');
+  const acceptBtn = document.getElementById('consentAccept');
+  const declineBtn = document.getElementById('consentDecline');
+
+  function updateStatus() {
+    const val = localStorage.getItem(KEY);
+    if (val === 'granted') {
+      statusEl.innerHTML = 'Current status: <span>Analytics accepted</span>';
+    } else if (val === 'denied') {
+      statusEl.innerHTML = 'Current status: <span style="color:#eeb5ea">Analytics declined</span>';
+    } else {
+      statusEl.innerHTML = 'Current status: <span style="color:#837fa8">No choice recorded yet</span>';
+    }
+  }
+
+  updateStatus();
+
+  acceptBtn.addEventListener('click', function () {
+    localStorage.setItem(KEY, 'granted');
+    if (typeof gtag === 'function') gtag('consent', 'update', { analytics_storage: 'granted' });
+    updateStatus();
+  });
+
+  declineBtn.addEventListener('click', function () {
+    localStorage.setItem(KEY, 'denied');
+    if (typeof gtag === 'function') gtag('consent', 'update', { analytics_storage: 'denied' });
+    updateStatus();
+  });
+})();
+</script>
+
+</body>
+</html>

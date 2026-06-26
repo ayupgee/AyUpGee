@@ -6,11 +6,25 @@
 <title>AyUpGee – Cosy gaming from Manchester</title>
 <meta name="description" content="Ay up! Cosy gaming creator from Manchester. Dreamlight Valley, Animal Crossing, life sims & the odd bit of Fortnite. Grab a brew and settle in." />
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-STNMT5PNGS"></script>
+<!-- Google Analytics – Consent Mode v2 (UK GDPR compliant) -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+  // Block all tracking by default — only fires after explicit consent
+  gtag('consent', 'default', {
+    analytics_storage: 'denied',
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    wait_for_update: 500
+  });
+  // Restore previous consent if already given
+  if (localStorage.getItem('ayg_cookie_consent') === 'granted') {
+    gtag('consent', 'update', { analytics_storage: 'granted' });
+  }
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-STNMT5PNGS"></script>
+<script>
   gtag('js', new Date());
   gtag('config', 'G-STNMT5PNGS');
 </script>
@@ -1921,5 +1935,7 @@ function switchTab(id, btn) {
 //   To:     parent=yourdomain.com
 </script>
 
+<!-- Cookie consent banner -->
+<script src="/assets/js/cookie-consent.js" defer></script>
 </body>
 </html>
