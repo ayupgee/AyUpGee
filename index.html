@@ -361,18 +361,25 @@ ul,ol{list-style:none}
   background:color-mix(in srgb,var(--surface) 78%,transparent);
   backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);
   border:var(--border-base) solid color-mix(in srgb,var(--white) 30%,transparent);
-  border-radius:var(--radius-2xl);padding:var(--space-6);box-shadow:var(--shadow-xl);
+  border-radius:var(--radius-2xl);padding:0;box-shadow:var(--shadow-xl);overflow:hidden;
 }
-.hero__top{display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4)}
+/* Browser chrome bar */
+.hero__browser-bar{display:flex;align-items:center;gap:var(--space-3);padding:.65rem var(--space-5);background:color-mix(in srgb,var(--surface-sunken) 80%,transparent);border-bottom:var(--border-thin) solid color-mix(in srgb,var(--white) 12%,transparent)}
+.hero__browser-dots{display:flex;gap:6px;flex:none}
+.hero__browser-dot{width:10px;height:10px;border-radius:50%}
+.hero__browser-url{flex:1;text-align:center;font-size:var(--text-xs);color:var(--text-faint);font-family:monospace;background:color-mix(in srgb,var(--white) 8%,transparent);border:var(--border-thin) solid color-mix(in srgb,var(--white) 12%,transparent);border-radius:var(--radius-pill);padding:.2rem .8rem}
+/* Card body — centred */
+.hero__body{padding:var(--space-6);text-align:center}
+.hero__top{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
 .hero__eyebrow{font-size:var(--text-xs);font-weight:var(--fw-extra);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--brand-strong)}
 .hero__title{font:var(--type-h1);margin:2px 0 0;color:var(--text)}
 .hero__lead{font:var(--type-lead);color:var(--text);margin:0 0 var(--space-5)}
 /* Honey-accent tag — for bee-themed pills */
 .ayg-tag--honey{background:color-mix(in srgb,var(--honey) 14%,var(--surface));color:var(--honey-deep);border-color:color-mix(in srgb,var(--honey) 30%,transparent)}
 .ayg-tag--honey:hover{background:color-mix(in srgb,var(--honey) 22%,var(--surface));color:var(--honey-deep);border-color:var(--honey)}
-.hero__cta{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5)}
-.hero__pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5)}
-.hero__stats{display:flex;gap:var(--space-6);padding-top:var(--space-5);border-top:var(--border-thin) solid var(--border)}
+.hero__cta{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5);justify-content:center}
+.hero__pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5);justify-content:center}
+.hero__stats{display:flex;gap:var(--space-6);padding-top:var(--space-5);border-top:var(--border-thin) solid var(--border);justify-content:center}
 
 
 /* ═══════════════════════════════════════════════════════
@@ -593,7 +600,8 @@ ul,ol{list-style:none}
   .hero__orb--c{display:none}
   .hero::before{background-size:42px 74px}
   .hero__cta{flex-direction:column}
-  .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%;justify-content:center}
+  .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%}
+  .hero__body{padding:var(--space-4)}
   .video-grid{grid-template-columns:1fr}
   .clip-row{grid-template-columns:repeat(2,1fr)}
   .insta-grid{grid-template-columns:repeat(2,1fr)}
@@ -682,6 +690,17 @@ ul,ol{list-style:none}
       <div class="hero__inner">
         <!-- Glass intro card -->
         <div class="hero__card">
+          <!-- Browser chrome -->
+          <div class="hero__browser-bar">
+            <div class="hero__browser-dots">
+              <span class="hero__browser-dot" style="background:#ff5f57"></span>
+              <span class="hero__browser-dot" style="background:#ffbd2e"></span>
+              <span class="hero__browser-dot" style="background:#28ca41"></span>
+            </div>
+            <div class="hero__browser-url">ayupgee.pages.dev</div>
+          </div>
+          <!-- Card body -->
+          <div class="hero__body">
           <div class="hero__top">
             <!-- Avatar with aurora ring -->
             <span class="ayg-avatar ayg-avatar--ring" style="width:84px;height:84px">
@@ -748,7 +767,8 @@ ul,ol{list-style:none}
               <span class="ayg-stat__label">Manchester, UK</span>
             </div>
           </div>
-        </div>
+          </div><!-- /.hero__body -->
+        </div><!-- /.hero__card -->
 
       </div>
     </div>
