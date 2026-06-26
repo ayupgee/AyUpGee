@@ -1,0 +1,50 @@
+name = "ayupgee"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "."
+
+# ─── D1 Database ──────────────────────────────────────────────────────────────
+# After creating your D1 database, replace PLACEHOLDER_DATABASE_ID below:
+#   wrangler d1 create ayupgee-db
+[[d1_databases]]
+binding = "DB"
+database_name = "ayupgee-db"
+database_id = "PLACEHOLDER_REPLACE_WITH_ACTUAL_DATABASE_ID"
+
+# ─── KV Namespaces ────────────────────────────────────────────────────────────
+# Used for rate limiting and ephemeral cache.
+# After creating: wrangler kv:namespace create "CACHE"
+[[kv_namespaces]]
+binding = "CACHE"
+id = "PLACEHOLDER_REPLACE_WITH_ACTUAL_KV_ID"
+
+# ─── R2 Buckets (future — uncomment when ready) ───────────────────────────────
+# [[r2_buckets]]
+# binding = "MEDIA"
+# bucket_name = "ayupgee-media"
+
+# ─── Secrets ──────────────────────────────────────────────────────────────────
+# These must NEVER be in this file. Set them via:
+#   wrangler secret put SESSION_SECRET
+#   wrangler secret put CSRF_SECRET
+#   wrangler secret put TURNSTILE_SECRET_KEY
+#   wrangler secret put ADMIN_SETUP_TOKEN
+#
+# Or in Cloudflare Pages dashboard → Settings → Environment Variables.
+#
+# Required secrets:
+#   SESSION_SECRET        - 32+ random bytes (base64), used to sign session tokens
+#   CSRF_SECRET           - 32+ random bytes (base64), used for CSRF validation
+#   TURNSTILE_SECRET_KEY  - from Cloudflare Turnstile dashboard
+#   ADMIN_SETUP_TOKEN     - one-time token to bootstrap the first admin account
+#
+# Public config (not secret — safe to set as plain variables):
+#   TURNSTILE_SITE_KEY    - public key from Cloudflare Turnstile dashboard
+
+# ─── Local dev vars ───────────────────────────────────────────────────────────
+# For local dev, create .dev.vars (gitignored):
+# SESSION_SECRET=dev-session-secret-change-in-production-min32chars
+# CSRF_SECRET=dev-csrf-secret-change-in-production-minimum-32chars
+# TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA   (Turnstile test key)
+# ADMIN_SETUP_TOKEN=dev-setup-token
+# TURNSTILE_SITE_KEY=1x00000000000000000000AA                (Turnstile test key)

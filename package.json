@@ -1,0 +1,20 @@
+{
+  "name": "ayupgee",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AyUpGee – cosy gaming from Manchester",
+  "scripts": {
+    "dev": "wrangler pages dev . --compatibility-date=2024-09-23 --compatibility-flags=nodejs_compat",
+    "type-check": "tsc --noEmit",
+    "db:create": "wrangler d1 create ayupgee-db",
+    "db:migrate": "wrangler d1 migrations apply ayupgee-db --remote",
+    "db:migrate:local": "wrangler d1 migrations apply ayupgee-db --local",
+    "db:studio": "wrangler d1 execute ayupgee-db --local --command='SELECT * FROM users'",
+    "kv:create": "wrangler kv:namespace create CACHE"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.80.0"
+  }
+}

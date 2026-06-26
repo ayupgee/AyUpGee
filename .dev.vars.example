@@ -1,0 +1,12 @@
+# Copy this file to .dev.vars for local development.
+# .dev.vars is gitignored — NEVER commit real secrets.
+#
+# Cloudflare Turnstile test keys (always pass, safe for dev):
+#   Site key:   1x00000000000000000000AA
+#   Secret key: 1x0000000000000000000000000000000AA
+
+SESSION_SECRET=dev-session-secret-change-in-production-minimum-32-chars!!
+CSRF_SECRET=dev-csrf-secret-change-in-production-minimum-32-chars-here!!
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+TURNSTILE_SITE_KEY=1x00000000000000000000AA
+ADMIN_SETUP_TOKEN=my-one-time-setup-token-change-this
