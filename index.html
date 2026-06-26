@@ -1695,22 +1695,55 @@ function closeMenu() {
   }
 
   // ── Render from Twitch API response ──────────────────────────────────────
+  // Shows a full Mon → Sun week. Days with a Twitch entry show stream data;
+  // days with no entry show a rest-day card. Today always gets the glow + badge.
   function renderDynamic(items) {
     list.className = 'schedule-list';
     list.innerHTML = '';
 
+    // Build a date-keyed lookup from Twitch items (UK date string → item)
+    const byDate = {};
     items.forEach(item => {
-      const tag = (item.category && item.category !== item.title) ? item.category : '';
-      const { dow, day, isToday } = ukParts(new Date(item.startTime));
-      list.appendChild(buildCard({
-        dow, day,
-        game:    item.title,
-        timeStr: fmtApiTime(item.startTime),
-        tag,
-        isOff:   false,
-        isToday,
-      }));
+      const key = ukFmt(new Date(item.startTime), { year:'numeric', month:'2-digit', day:'2-digit' });
+      if (!byDate[key]) byDate[key] = item; // first item wins if multiple on same day
     });
+
+    // Walk Mon (offset 0) → Sun (offset 6) of the current week
+    const now = new Date();
+    const daysSinceMon = now.getDay() === 0 ? 6 : now.getDay() - 1;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - daysSinceMon);
+    monday.setHours(12, 0, 0, 0); // noon avoids DST edge cases
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+
+      const { dow, day, isToday } = ukParts(d);
+      const key  = ukFmt(d, { year:'numeric', month:'2-digit', day:'2-digit' });
+      const item = byDate[key];
+
+      if (item) {
+        const tag = (item.category && item.category !== item.title) ? item.category : '';
+        list.appendChild(buildCard({
+          dow, day,
+          game:    item.title,
+          timeStr: fmtApiTime(item.startTime),
+          tag,
+          isOff:   false,
+          isToday,
+        }));
+      } else {
+        list.appendChild(buildCard({
+          dow, day,
+          game:    'Rest day',
+          timeStr: '',
+          tag:     'Recharging for the week 🌿',
+          isOff:   true,
+          isToday,
+        }));
+      }
+    }
 
     attachReveal();
     if (window.lucide) lucide.createIcons();
