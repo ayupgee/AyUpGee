@@ -433,6 +433,9 @@ ul,ol{list-style:none}
 .schedule-skeleton__line--short{width:45%}
 .schedule-error{padding:var(--space-6);text-align:center;color:var(--text-muted);font:var(--type-body)}
 .schedule-error p{margin-top:var(--space-2)}
+/* Month boundary separator — only appears when schedule crosses into a new month */
+.schedule-month-sep{display:flex;align-items:center;gap:var(--space-3);color:var(--text-faint);font:var(--type-caption);text-transform:uppercase;letter-spacing:var(--tracking-caps);padding:var(--space-1) 0}
+.schedule-month-sep::before,.schedule-month-sep::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* ═══════════════════════════════════════════════════════
    VIDEOS SECTION
@@ -1691,6 +1694,22 @@ function closeMenu() {
     return el;
   }
 
+  // ── Month separator — inserts a divider when the month changes ───────────
+  // Pass the container, the current date, and the previous month string.
+  // Returns the new current month string to track for the next iteration.
+  function maybeMonthSep(container, date, prevMonth) {
+    const month = new Intl.DateTimeFormat('en-GB', {
+      timeZone:'Europe/London', month:'long',
+    }).format(date);
+    if (prevMonth && month !== prevMonth) {
+      const sep = document.createElement('div');
+      sep.className = 'schedule-month-sep';
+      sep.innerHTML = `<span>${month}</span>`;
+      container.appendChild(sep);
+    }
+    return month;
+  }
+
   // ── Wire up scroll-reveal for dynamically added cards ───────────────────
   function attachReveal() {
     const obs = new IntersectionObserver(
@@ -1719,10 +1738,13 @@ function closeMenu() {
     const cur    = new Date(sorted[0] + 'T12:00:00');
     const end    = new Date(sorted[sorted.length - 1] + 'T12:00:00');
 
+    let prevMonth = null;
     while (cur <= end) {
       const key              = ukISODate(cur);
       const { dow, day, isToday } = ukParts(cur);
       const item             = byDate[key];
+
+      prevMonth = maybeMonthSep(list, cur, prevMonth);
 
       if (item) {
         const tag = (item.category && item.category !== item.title) ? item.category : '';
@@ -1791,6 +1813,7 @@ function closeMenu() {
     monday.setHours(12, 0, 0, 0); // noon avoids DST edge cases
 
     // Iterate Mon (offset 0) → Sun (offset 6)
+    let prevMonth = null;
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
@@ -1799,6 +1822,8 @@ function closeMenu() {
       const dowNum = d.getDay(); // 0=Sun … 6=Sat
       const entry  = STATIC_SCHEDULE.find(s => s.dow === dowNum);
       if (!entry) continue;
+
+      prevMonth = maybeMonthSep(list, d, prevMonth);
 
       const { dow, day, isToday } = ukParts(d);
       list.appendChild(buildCard({
