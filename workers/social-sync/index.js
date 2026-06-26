@@ -21,18 +21,11 @@
  *   npx wrangler dev   (runs locally, hit http://localhost:8787/__scheduled)
  */
 
-// ── Caption cleaner ────────────────────────────────────────────────────────────
-// Removes trailing hashtags, collapses whitespace, preserves emojis.
-// "Cosy night in ✨ #DDLV #DisneyDreamlightValley" → "Cosy night in ✨"
-function cleanCaption(caption) {
-  if (!caption) return '';
-  return caption
-    .replace(/(^|\s)#\S+/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-}
-
 // ── Instagram via Behold.so ────────────────────────────────────────────────────
+// Behold response shape: { username, posts: [...], ... }
+// Each post has: id, permalink, timestamp, mediaType, caption, prunedCaption,
+//                sizes: { small, medium, large, full: { mediaUrl, width, height } }
+// prunedCaption is already stripped of hashtags by Behold — no need to clean it ourselves.
 async function syncInstagram(env) {
   if (!env.BEHOLD_FEED_ID) {
     console.log('[instagram] BEHOLD_FEED_ID not set — skipping');
@@ -49,29 +42,37 @@ async function syncInstagram(env) {
     throw new Error(`Behold API returned ${res.status}`);
   }
 
-  const posts = await res.json();
+  const data = await res.json();
+  // Response is { username, posts: [...] } not a bare array
+  const posts = data.posts ?? data;
   if (!Array.isArray(posts) || posts.length === 0) {
     console.log('[instagram] No posts returned');
     return { synced: 0, skipped: 0 };
   }
 
-  // Take the latest 8 posts
+  // Free plan caps at 6 posts; slice defensively in case plan changes
   const latest = posts.slice(0, 8);
   let synced = 0;
   let skipped = 0;
 
   for (const post of latest) {
     try {
-      const id           = String(post.id);
-      const url          = post.permalink || `https://instagram.com/ayupgee`;
-      const caption      = cleanCaption(post.caption || '');
-      const title        = caption || 'View on Instagram';
-      // Behold provides paginatedImages[0].mediaUrl or mediaUrl for the image
-      const thumbnailUrl = post.sizes?.large?.mediaUrl
-        || post.sizes?.medium?.mediaUrl
-        || post.mediaUrl
+      const id = String(post.id);
+      const url = post.permalink || 'https://instagram.com/ayupgee';
+
+      // prunedCaption has hashtags already removed by Behold
+      const caption = (post.prunedCaption || post.caption || '').trim();
+      const title   = caption || 'View on Instagram';
+
+      // Use Behold's CDN-hosted medium size (WebP, optimised, stable URLs)
+      const thumbnailUrl = post.sizes?.medium?.mediaUrl
+        || post.sizes?.large?.mediaUrl
+        || post.sizes?.small?.mediaUrl
+        || post.thumbnailUrl   // VIDEO posts: original thumbnail
+        || post.mediaUrl       // fallback to raw Instagram URL
         || null;
-      const publishedAt  = post.timestamp
+
+      const publishedAt = post.timestamp
         ? new Date(post.timestamp).toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
 
