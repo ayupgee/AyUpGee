@@ -156,6 +156,17 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
 .site-footer__links a:hover{color:#fff}
 .site-footer__base{max-width:var(--container);margin:0 auto;padding:var(--space-4) var(--gutter);border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;font-size:var(--text-xs);color:rgba(255,255,255,.45)}
 
+/* ── Back link ───────────────────────────────────────────── */
+.back-link{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:var(--text-sm);font-weight:var(--fw-semibold);
+  color:var(--text-muted);text-decoration:none;
+  margin-bottom:var(--space-6);
+  transition:color var(--dur-base);
+}
+.back-link:hover{color:var(--text);text-decoration:none}
+.back-link svg{width:15px;height:15px;flex-shrink:0}
+
 /* ── Privacy page content ─────────────────────────────────── */
 .priv-page{
   max-width:740px;
@@ -246,6 +257,22 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
 
 <!-- ═══ CONTENT ═══ -->
 <main class="priv-page">
+
+  <a href="/" class="back-link" id="backLink">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </a>
+  <script>
+    // Go back if there's a previous page in history, otherwise link to homepage
+    (function(){
+      const a = document.getElementById('backLink');
+      if (document.referrer && new URL(document.referrer).origin === location.origin) {
+        a.addEventListener('click', function(e){ e.preventDefault(); history.back(); });
+        a.textContent = '';
+        a.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Back');
+      }
+    }());
+  </script>
 
   <p class="priv-page__eyebrow">Legal &amp; Privacy</p>
   <h1 class="priv-page__title">Privacy &amp; Cookies</h1>
