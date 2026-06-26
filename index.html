@@ -1699,10 +1699,8 @@ function closeMenu() {
     list.className = 'schedule-list';
     list.innerHTML = '';
 
-    if (!items.length) {
-      list.innerHTML = `<div class="schedule-error"><p style="font-size:1.8rem">📅</p><p>No upcoming streams are scheduled yet. Check back soon, or follow on Twitch for notifications! 🌙</p></div>`;
-      return;
-    }
+    // No Twitch schedule configured yet — fall back to static pattern
+    if (!items.length) { renderStatic(); return; }
 
     items.forEach(item => {
       const tag = (item.category && item.category !== item.title) ? item.category : '';
