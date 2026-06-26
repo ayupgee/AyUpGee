@@ -1,55 +1,71 @@
 /**
- * GET /api/social/tiktok-thumb?url=ENCODED_CDN_URL
+ * GET /api/social/tiktok-thumb?id=VIDEO_ID
  *
- * Proxies TikTok CDN thumbnail images server-side.
- * TikTok's CDN blocks direct browser requests (hotlink protection),
- * but allows server-to-server fetches with a TikTok referer header.
+ * Proxies TikTok video thumbnails server-side.
  *
- * Only proxies URLs from known TikTok CDN domains for security.
+ * Why: TikTok CDN URLs are signed with an expiry (~hours), so storing them
+ * in D1 and serving them directly doesn't work reliably. Instead, we call
+ * TikTok's public oembed API to get a fresh signed URL on each request,
+ * then proxy the image with the required Referer header.
+ *
+ * The oembed endpoint is public and requires no API key.
  */
 
-const ALLOWED_DOMAINS = [
-  'tiktokcdn.com',
-  'tiktokcdn-us.com',
-  'tiktok.com',
-];
+const TIKTOK_OEMBED = 'https://www.tiktok.com/oembed';
+const TIKTOK_ALLOWED = ['tiktokcdn.com', 'tiktokcdn-us.com', 'tiktok.com', 'tiktokv.com'];
 
 function isTikTokCdn(urlString) {
   try {
     const { hostname } = new URL(urlString);
-    return ALLOWED_DOMAINS.some(d => hostname === d || hostname.endsWith(`.${d}`));
+    return TIKTOK_ALLOWED.some(d => hostname === d || hostname.endsWith(`.${d}`));
   } catch {
     return false;
   }
 }
 
 export async function onRequestGet(context) {
-  const raw = new URL(context.request.url).searchParams.get('url');
+  const id = new URL(context.request.url).searchParams.get('id');
 
-  if (!raw) {
-    return new Response('Missing url parameter', { status: 400 });
-  }
-
-  if (!isTikTokCdn(raw)) {
-    return new Response('URL not from an allowed domain', { status: 403 });
+  if (!id || !/^\d+$/.test(id)) {
+    return new Response('Missing or invalid id parameter', { status: 400 });
   }
 
   try {
-    const res = await fetch(raw, {
+    // 1. Fetch fresh signed thumbnail URL from TikTok's public oembed API
+    const videoUrl = `https://www.tiktok.com/@ayupgee/video/${id}`;
+    const oembedRes = await fetch(`${TIKTOK_OEMBED}?url=${encodeURIComponent(videoUrl)}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; AyUpGee/1.0)',
+      },
+    });
+
+    if (!oembedRes.ok) {
+      return new Response('Could not fetch oembed data', { status: 502 });
+    }
+
+    const oembed = await oembedRes.json();
+    const thumbnailUrl = oembed?.thumbnail_url;
+
+    if (!thumbnailUrl || !isTikTokCdn(thumbnailUrl)) {
+      return new Response('No valid thumbnail URL in oembed response', { status: 404 });
+    }
+
+    // 2. Proxy the image server-side with TikTok Referer to bypass hotlink protection
+    const imgRes = await fetch(thumbnailUrl, {
       headers: {
         'Referer': 'https://www.tiktok.com/',
         'User-Agent': 'Mozilla/5.0 (compatible; AyUpGee/1.0)',
       },
     });
 
-    if (!res.ok) {
+    if (!imgRes.ok) {
       return new Response('Thumbnail not found', { status: 404 });
     }
 
-    return new Response(res.body, {
+    return new Response(imgRes.body, {
       headers: {
-        'Content-Type': res.headers.get('Content-Type') || 'image/jpeg',
-        'Cache-Control': 'public, max-age=86400', // cache 24 hours at the edge
+        'Content-Type': imgRes.headers.get('Content-Type') || 'image/jpeg',
+        'Cache-Control': 'public, max-age=3600', // 1 hour — oembed URLs expire
         'Access-Control-Allow-Origin': '*',
       },
     });
