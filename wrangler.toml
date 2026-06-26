@@ -4,19 +4,21 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "."
 
 # ─── D1 Database ──────────────────────────────────────────────────────────────
-# After creating your D1 database, replace PLACEHOLDER_DATABASE_ID below:
-#   wrangler d1 create ayupgee-db
-[[d1_databases]]
-binding = "DB"
-database_name = "ayupgee-db"
-database_id = "PLACEHOLDER_REPLACE_WITH_ACTUAL_DATABASE_ID"
+# Binding is configured in Cloudflare Pages dashboard:
+#   Pages → Settings → Functions → D1 database bindings → variable name: DB
+# Uncomment and add your database_id here if using wrangler CLI locally:
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "ayupgee-db"
+# database_id = "YOUR_DATABASE_ID_HERE"
 
 # ─── KV Namespaces ────────────────────────────────────────────────────────────
-# Used for rate limiting and ephemeral cache.
-# After creating: wrangler kv:namespace create "CACHE"
-[[kv_namespaces]]
-binding = "CACHE"
-id = "PLACEHOLDER_REPLACE_WITH_ACTUAL_KV_ID"
+# Binding is configured in Cloudflare Pages dashboard:
+#   Pages → Settings → Functions → KV namespace bindings → variable name: CACHE
+# Uncomment and add your namespace id here if using wrangler CLI locally:
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "YOUR_KV_NAMESPACE_ID_HERE"
 
 # ─── R2 Buckets (future — uncomment when ready) ───────────────────────────────
 # [[r2_buckets]]
