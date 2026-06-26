@@ -423,6 +423,17 @@ ul,ol{list-style:none}
 .schedule-note{display:flex;align-items:center;gap:.5em;margin-top:var(--space-5);color:var(--text-muted);font:var(--type-label)}
 .schedule-note i{width:15px;height:15px}
 
+/* Schedule: loading skeleton & error state */
+@keyframes ayg-shimmer{0%,100%{opacity:.38}50%{opacity:.75}}
+.schedule-skeleton{display:flex;flex-direction:column;gap:var(--space-3)}
+.schedule-skeleton__item{display:flex;align-items:center;gap:var(--space-4);background:var(--surface);border:var(--border-thin) solid var(--border);border-radius:var(--radius-lg);padding:var(--space-4)}
+.schedule-skeleton__date{flex:none;width:62px;height:76px;border-radius:var(--radius-md);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.schedule-skeleton__lines{flex:1;display:flex;flex-direction:column;gap:.65rem}
+.schedule-skeleton__line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.schedule-skeleton__line--short{width:45%}
+.schedule-error{padding:var(--space-6);text-align:center;color:var(--text-muted);font:var(--type-body)}
+.schedule-error p{margin-top:var(--space-2)}
+
 /* ═══════════════════════════════════════════════════════
    VIDEOS SECTION
    *** UPDATE video cards below ***
@@ -872,9 +883,9 @@ ul,ol{list-style:none}
 
 <!-- ═══════════════════════════════════════════════════════
      SCHEDULE SECTION
-     *** UPDATE SCHEDULE: edit data-* attributes below ***
-     data-day, data-date, data-game, data-time, data-tag,
-     data-off="true" for rest days, data-today="true" for today
+     Live data pulled from /api/twitch/schedule (Cloudflare Pages Function).
+     Update your schedule on Twitch and it appears here automatically.
+     Static fallback activates automatically if the API is unavailable.
      ═══════════════════════════════════════════════════════ -->
 <section id="schedule" class="section">
   <div class="container">
@@ -884,42 +895,8 @@ ul,ol{list-style:none}
       <p class="section-desc">All times are UK time. My schedule can occasionally change, so Twitch notifications and Discord are the best places to keep up with any updates ✨</p>
     </div>
 
-    <!-- Schedule items — rendered by JS below -->
-    <div class="schedule-list" id="scheduleList">
-
-      <!-- ══════════════════════════════════════════
-           SCHEDULE ITEMS — edit these to update your weekly schedule.
-           data-dow   = short day name shown on the date tile (MON, TUE…)
-           data-date  = number or text shown large on the tile
-           data-day   = full day name used to detect "today"
-           data-game  = game / activity title
-           data-time  = time string (UK time)
-           data-tag   = platform or extra note
-           data-off   = "true" for rest days
-      ══════════════════════════════════════════ -->
-
-      <div class="sched-item" data-dow="MON" data-date="Mon" data-day="Monday"
-           data-game="Rest day" data-time="" data-tag="Recharging for the week 🌿" data-off="true"></div>
-
-      <div class="sched-item" data-dow="TUE" data-date="Tue" data-day="Tuesday"
-           data-game="Disney Dreamlight Valley" data-time="7:30 PM UK" data-tag="Twitch · cosy evening session 🌙"></div>
-
-      <div class="sched-item" data-dow="WED" data-date="Wed" data-day="Wednesday"
-           data-game="Cosy game variety" data-time="7:30 PM UK" data-tag="Twitch · Animal Crossing / Stardew / Palia 🎮"></div>
-
-      <div class="sched-item" data-dow="THU" data-date="Thu" data-day="Thursday"
-           data-game="Content creation day" data-time="" data-tag="Editing & recording 📹" data-off="true"></div>
-
-      <div class="sched-item" data-dow="FRI" data-date="Fri" data-day="Friday"
-           data-game="Disney Dreamlight Valley" data-time="8:00 PM UK" data-tag="Twitch · Friday night vibes 🍵"></div>
-
-      <div class="sched-item" data-dow="SAT" data-date="Sat" data-day="Saturday"
-           data-game="Variety / Fortnite / Special" data-time="3:00 PM UK" data-tag="Twitch · longer weekend session 🌟"></div>
-
-      <div class="sched-item" data-dow="SUN" data-date="Sun" data-day="Sunday"
-           data-game="Flex day" data-time="" data-tag="Sometimes I pop on, so watch socials 📱" data-off="true"></div>
-
-    </div>
+    <!-- Schedule items — populated dynamically by /api/twitch/schedule (see JS below) -->
+    <div class="schedule-list" id="scheduleList"></div>
 
     <p class="schedule-note reveal">
       <i data-lucide="bell"></i>
@@ -1629,39 +1606,169 @@ function closeMenu() {
 })();
 
 // ── Schedule renderer ─────────────────────────────────────
-(function() {
+// Fetches live data from /api/twitch/schedule (Cloudflare Pages Function).
+// Falls back to a static pattern if the API is unavailable.
+//
+// Phase 2 TODO: merge /api/admin/schedule-overrides (Cloudflare D1) before rendering
+// Phase 3 TODO: show a "LIVE NOW" badge if current time falls inside a segment window
+(function () {
   const list = document.getElementById('scheduleList');
   if (!list) return;
-  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const today = days[new Date().getDay()];
 
-  list.querySelectorAll('.sched-item').forEach(item => {
-    const { dow, date, day, game, time, tag } = item.dataset;
-    const isOff    = item.hasAttribute('data-off');
-    const isToday  = day === today;
+  // ── Static fallback: next 7 days using the fixed weekly pattern ──────────
+  // Update these if your regular schedule changes. Times are 24h UK local.
+  // dow: 0=Sun, 1=Mon … 6=Sat
+  const STATIC_SCHEDULE = [
+    { dow:0, game:'Flex day',                      time:'',      tag:'Sometimes I pop on, so watch socials 📱', off:true },
+    { dow:1, game:'Rest day',                      time:'',      tag:'Recharging for the week 🌿',             off:true },
+    { dow:2, game:'Disney Dreamlight Valley',      time:'19:30', tag:'Cosy evening session 🌙' },
+    { dow:3, game:'Cosy game variety',             time:'19:30', tag:'Animal Crossing / Stardew / Palia 🎮' },
+    { dow:4, game:'Content creation day',          time:'',      tag:'Editing & recording 📹',                off:true },
+    { dow:5, game:'Disney Dreamlight Valley',      time:'20:00', tag:'Friday night vibes 🍵' },
+    { dow:6, game:'Variety / Fortnite / Special',  time:'15:00', tag:'Longer weekend session 🌟' },
+  ];
 
-    const classes = ['ayg-sched', isOff ? 'ayg-sched--off' : '', isToday ? 'ayg-sched--today' : ''].filter(Boolean).join(' ');
+  // ── UK-timezone helpers ──────────────────────────────────────────────────
+  function ukFmt(date, opts) {
+    return new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', ...opts }).format(date);
+  }
+  function ukParts(date) {
+    const day     = ukFmt(date, { day:'numeric' });
+    const dowStr  = ukFmt(date, { weekday:'short' }).replace('.','').slice(0,3).toUpperCase();
+    const dateKey = ukFmt(date, { year:'numeric', month:'2-digit', day:'2-digit' });
+    const todayKey= ukFmt(new Date(), { year:'numeric', month:'2-digit', day:'2-digit' });
+    return { dow: dowStr, day, isToday: dateKey === todayKey };
+  }
+  function ukDowNum(date) {
+    // 0=Sun … 6=Sat in Europe/London
+    const short = ukFmt(date, { weekday:'short' }).replace('.','').slice(0,3);
+    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].indexOf(short);
+  }
+  function fmtApiTime(iso) {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone:'Europe/London', hour:'numeric', minute:'2-digit', hour12:true,
+    }).format(new Date(iso)) + ' UK';
+  }
+  function fmtStaticTime(hhmm) {
+    if (!hhmm) return '';
+    const [h, m] = hhmm.split(':').map(Number);
+    const hh = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${hh}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'} UK`;
+  }
 
-    const dateStyle = isOff ? '' : 'background:var(--grad-aurora);color:#1c2b3a';
-    const dateInactive = isOff ? 'background:var(--surface-sunken);color:var(--text-faint)' : '';
+  // ── Build a single .ayg-sched card (DOM element) ─────────────────────────
+  function buildCard({ dow, day, game, timeStr, tag, isOff, isToday }) {
+    const el = document.createElement('div');
+    el.className = ['ayg-sched reveal',
+      isOff   ? 'ayg-sched--off'   : '',
+      isToday ? 'ayg-sched--today' : '',
+    ].filter(Boolean).join(' ');
 
-    item.className = classes;
-    item.innerHTML = `
-      <div class="ayg-sched__date" style="${isOff ? dateInactive : dateStyle}">
+    const dateSty = isOff
+      ? 'background:var(--surface-sunken);color:var(--text-faint)'
+      : 'background:var(--grad-aurora);color:#1c2b3a';
+
+    el.innerHTML = `
+      <div class="ayg-sched__date" style="${dateSty}">
         <div class="ayg-sched__dow">${dow}</div>
-        <div class="ayg-sched__day">${date}</div>
+        <div class="ayg-sched__day">${day}</div>
       </div>
       <div class="ayg-sched__body">
         <div class="ayg-sched__game">${game}</div>
-        ${time || tag ? `<div class="ayg-sched__meta">
-          ${time ? `<span><i data-lucide="clock"></i>${time}</span>` : ''}
-          ${tag  ? `<span><i data-lucide="gamepad-2"></i>${tag}</span>` : ''}
+        ${timeStr || tag ? `<div class="ayg-sched__meta">
+          ${timeStr ? `<span><i data-lucide="clock"></i>${timeStr}</span>` : ''}
+          ${tag     ? `<span><i data-lucide="gamepad-2"></i>${tag}</span>` : ''}
         </div>` : ''}
       </div>
       ${isToday ? `<div class="ayg-sched__trailing"><span class="ayg-badge ayg-badge--brand">Today</span></div>` : ''}
     `;
-  });
-  if (window.lucide) lucide.createIcons();
+    return el;
+  }
+
+  // ── Wire up scroll-reveal for dynamically added cards ───────────────────
+  function attachReveal() {
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold:0.08, rootMargin:'0px 0px -32px 0px' }
+    );
+    list.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
+  // ── Render from Twitch API response ──────────────────────────────────────
+  function renderDynamic(items) {
+    list.className = 'schedule-list';
+    list.innerHTML = '';
+
+    if (!items.length) {
+      list.innerHTML = `<div class="schedule-error"><p style="font-size:1.8rem">📅</p><p>No upcoming streams are scheduled yet. Check back soon, or follow on Twitch for notifications! 🌙</p></div>`;
+      return;
+    }
+
+    items.forEach(item => {
+      const tag = (item.category && item.category !== item.title) ? item.category : '';
+      const { dow, day, isToday } = ukParts(new Date(item.startTime));
+      list.appendChild(buildCard({
+        dow, day,
+        game:    item.title,
+        timeStr: fmtApiTime(item.startTime),
+        tag,
+        isOff:   false,
+        isToday,
+      }));
+    });
+
+    attachReveal();
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // ── Render static fallback (next 7 days, fixed weekly pattern) ───────────
+  function renderStatic() {
+    list.className = 'schedule-list';
+    list.innerHTML = '';
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const entry = STATIC_SCHEDULE.find(s => s.dow === ukDowNum(d));
+      if (!entry) continue;
+      const { dow, day, isToday } = ukParts(d);
+      list.appendChild(buildCard({
+        dow, day,
+        game:    entry.game,
+        timeStr: fmtStaticTime(entry.time),
+        tag:     entry.tag,
+        isOff:   !!entry.off,
+        isToday,
+      }));
+    }
+
+    attachReveal();
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // ── Loading skeleton ──────────────────────────────────────────────────────
+  function showSkeleton() {
+    list.className = 'schedule-list schedule-skeleton';
+    list.innerHTML = Array(4).fill(`
+      <div class="schedule-skeleton__item">
+        <div class="schedule-skeleton__date"></div>
+        <div class="schedule-skeleton__lines">
+          <div class="schedule-skeleton__line"></div>
+          <div class="schedule-skeleton__line schedule-skeleton__line--short"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── Kick off ──────────────────────────────────────────────────────────────
+  showSkeleton();
+  fetch('/api/twitch/schedule')
+    .then(r => { if (!r.ok) throw new Error('api_error'); return r.json(); })
+    .then(data => {
+      if (data.error || !Array.isArray(data.items)) throw new Error('bad_response');
+      renderDynamic(data.items);
+    })
+    .catch(() => renderStatic());
 })();
 
 // ── Video tabs ────────────────────────────────────────────
