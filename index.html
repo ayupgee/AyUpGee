@@ -343,7 +343,10 @@ ul,ol{list-style:none}
   background:color-mix(in srgb,var(--bg) 80%,transparent);
   backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);
   border-bottom:var(--border-thin) solid var(--border);
+  transform:translateY(0);
+  transition:transform .3s var(--ease-soft);
 }
+.site-header--hidden{transform:translateY(-110%)}
 .brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none;flex:none}
 .brand-mark{width:36px;height:36px;border-radius:50%;flex:none;background:var(--grad-aurora);display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-dream)}
 .brand-mark img{width:26px;height:26px;object-fit:contain}
@@ -1713,6 +1716,30 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTikTokFeed();
   loadInstagramFeed();
 });
+
+// ── Hide nav on scroll down, reveal on scroll up ──────────
+(function() {
+  const header = document.getElementById('siteHeader');
+  if (!header) return;
+  let lastY = 0;
+  let ticking = false;
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      // Don't hide while within the first 80px (top of page)
+      if (y > 80) {
+        header.classList.toggle('site-header--hidden', y > lastY);
+      } else {
+        header.classList.remove('site-header--hidden');
+      }
+      lastY = y;
+      ticking = false;
+    });
+  }, { passive: true });
+}());
 
 // ── Starfield ─────────────────────────────────────────────
 (function() {
