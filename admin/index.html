@@ -1270,9 +1270,16 @@ ul{list-style:none}
     return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // D1 datetime('now') returns UTC without a timezone marker (e.g. "2026-06-27 23:16:00").
+  // Without the trailing Z, JS parsers treat it as local time — 1h off for BST users.
+  function utcDate(iso) {
+    if (!iso) return new Date(NaN);
+    return new Date(iso.endsWith('Z') ? iso : iso.replace(' ', 'T') + 'Z');
+  }
+
   function relativeTime(iso) {
     if (!iso) return '—';
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = Date.now() - utcDate(iso).getTime();
     const m = Math.floor(diff / 60_000);
     if (m < 1)  return 'just now';
     if (m < 60) return `${m}m ago`;
@@ -1283,8 +1290,7 @@ ul{list-style:none}
 
   function formatLogTime(iso) {
     if (!iso) return '–:–';
-    const d = new Date(iso);
-    return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    return utcDate(iso).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   }
 
   function showToast(msg, isError = false) {
