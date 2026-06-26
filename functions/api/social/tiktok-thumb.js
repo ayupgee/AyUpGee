@@ -12,12 +12,12 @@
  */
 
 const TIKTOK_OEMBED = 'https://www.tiktok.com/oembed';
-const TIKTOK_ALLOWED = ['tiktokcdn.com', 'tiktokcdn-us.com', 'tiktok.com', 'tiktokv.com'];
 
+// Covers all regional CDN variants: tiktokcdn.com, tiktokcdn-us.com, tiktokcdn-eu.com, tiktokv.com, tiktok.com
 function isTikTokCdn(urlString) {
   try {
     const { hostname } = new URL(urlString);
-    return TIKTOK_ALLOWED.some(d => hostname === d || hostname.endsWith(`.${d}`));
+    return /\.(tiktokcdn(-[a-z0-9]+)?|tiktokv|tiktok)\.com$/i.test(hostname);
   } catch {
     return false;
   }
