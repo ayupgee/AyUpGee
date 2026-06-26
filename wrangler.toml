@@ -4,21 +4,15 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "."
 
 # ─── D1 Database ──────────────────────────────────────────────────────────────
-# Binding is configured in Cloudflare Pages dashboard:
-#   Pages → Settings → Functions → D1 database bindings → variable name: DB
-# Uncomment and add your database_id here if using wrangler CLI locally:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "ayupgee-db"
-# database_id = "YOUR_DATABASE_ID_HERE"
+[[d1_databases]]
+binding = "DB"
+database_name = "ayupgee-db"
+database_id = "3de6c874-0367-409a-8164-f7fb547a6d49"
 
 # ─── KV Namespaces ────────────────────────────────────────────────────────────
-# Binding is configured in Cloudflare Pages dashboard:
-#   Pages → Settings → Functions → KV namespace bindings → variable name: CACHE
-# Uncomment and add your namespace id here if using wrangler CLI locally:
-# [[kv_namespaces]]
-# binding = "CACHE"
-# id = "YOUR_KV_NAMESPACE_ID_HERE"
+[[kv_namespaces]]
+binding = "CACHE"
+id = "daaaeec77dbc4e6990018058e6129e33"
 
 # ─── R2 Buckets (future — uncomment when ready) ───────────────────────────────
 # [[r2_buckets]]
