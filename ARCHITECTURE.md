@@ -44,7 +44,12 @@
 ├── migrations/
 │   └── 0001_initial_schema.sql         # D1 schema: users, sessions, posts, schedule, etc.
 │
-├── wrangler.toml                       # Cloudflare configuration
+├── workers/
+│   └── social-sync/
+│       ├── wrangler.toml               # Standalone Worker config (cron triggers)
+│       └── index.js                    # Hourly sync: Instagram (Behold.so) → D1
+│
+├── wrangler.toml                       # Cloudflare Pages configuration
 ├── package.json                        # Dev dependencies + scripts
 ├── tsconfig.json                       # TypeScript config
 ├── .dev.vars.example                   # Copy to .dev.vars for local development
@@ -313,6 +318,7 @@ export const onRequestPost: PagesFunction = () => methodNotAllowed();
 |-------|---------------------------------------------------------------|------------|
 | 1     | Static site → WebP hero, Twitch Schedule API                  | ✅ Done    |
 | 2     | Auth, roles, admin dashboard, D1 schema                       | ✅ Done    |
+| 2.5   | Dynamic social feeds, cookie consent, privacy policy          | ✅ Done    |
 | 3     | Blog CRUD, media library (R2), schedule admin UI              | Planned    |
 | 4     | Member portal, loyalty points, achievements                   | Planned    |
 | 5     | Connected accounts (Twitch OAuth), community features         | Planned    |
