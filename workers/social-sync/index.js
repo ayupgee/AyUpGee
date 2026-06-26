@@ -342,7 +342,7 @@ function jsonResponse(data, status = 200) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default {
-  // Cron trigger — hourly sync OR weekly cleanup depending on schedule
+  // Cron trigger — 12-hourly sync (06:00 + 18:00 UTC) OR weekly cleanup (Sun 03:00 UTC)
   async scheduled(event, env, ctx) {
     console.log(`[social-sync] Cron "${event.cron}" firing at ${new Date().toISOString()}`);
 

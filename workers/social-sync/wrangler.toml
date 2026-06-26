@@ -3,9 +3,9 @@ main            = "index.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-# Hourly social sync + weekly Sunday 03:00 UTC cache cleanup
+# Every 12 hours (06:00 + 18:00 UTC) + weekly Sunday 03:00 UTC cache cleanup
 [triggers]
-crons = ["0 * * * *", "0 3 * * 0"]
+crons = ["0 6,18 * * *", "0 3 * * 0"]
 
 # Shares the same D1 database as the Pages site
 [[d1_databases]]
