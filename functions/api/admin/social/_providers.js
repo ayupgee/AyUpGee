@@ -344,9 +344,9 @@ export const TwitchScheduleProvider = {
     return { reachable, responseTime, status, lastSync, itemCount, lastError, lastErrorAt: null, version: null };
   },
 
-  async getLogs(env) {
-    // Schedule doesn't write to sync_logs; return recent Twitch VOD logs as a proxy
-    return getLogs(env, 'twitch');
+  async getLogs(_env) {
+    // Schedule is fetched live from Twitch on every page load — no sync history in D1
+    return [];
   },
   async sync() { return { ok: false, error: 'Schedule is read from Twitch in real time — no sync needed.' }; },
 };
