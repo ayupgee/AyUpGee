@@ -1662,15 +1662,17 @@ const themeToggle = document.getElementById('themeToggle');
 const NIGHT = 'night';
 
 function applyTheme(night) {
+  // Save first — before any icon/lucide work that could throw
+  localStorage.setItem('aug-theme', night ? NIGHT : 'day');
   if (night) {
     html.setAttribute('data-theme', NIGHT);
-    themeToggle.querySelector('i').setAttribute('data-lucide', 'sun');
   } else {
     html.removeAttribute('data-theme');
-    themeToggle.querySelector('i').setAttribute('data-lucide', 'moon-star');
   }
-  if (window.lucide) lucide.createIcons();
-  localStorage.setItem('aug-theme', night ? NIGHT : 'day');
+  try {
+    themeToggle.querySelector('i').setAttribute('data-lucide', night ? 'sun' : 'moon-star');
+    if (window.lucide) lucide.createIcons();
+  } catch (e) {}
 }
 
 themeToggle.addEventListener('click', () => {
