@@ -228,9 +228,67 @@ export const TikTokProvider = {
   async sync()       { return { ok: false, error: 'Use the Twitch Sync Worker to trigger a full sync.' }; },
 };
 
+// ── Twitch VODs Provider ───────────────────────────────────────────────────────
+export const TwitchVODsProvider = {
+  id:           'twitchvods',
+  name:         'Twitch VODs',
+  dashboardUrl: 'https://dev.twitch.tv/console',
+  providerUrl:  'https://www.twitch.tv/ayupgee/videos',
+
+  async getStatus(env) {
+    const ping      = await pingUrl('https://api.twitch.tv/');
+    const stats     = await getPostStats(env, 'twitch');
+    const lastError = await getLastError(env, 'twitch');
+    const status    = computeStatus(ping.reachable, stats.lastSync);
+    return {
+      reachable:    ping.reachable,
+      responseTime: ping.responseTime,
+      status,
+      lastSync:     stats.lastSync,
+      itemCount:    stats.itemCount,
+      lastError:    lastError?.message ?? null,
+      lastErrorAt:  lastError?.at      ?? null,
+      version:      null,
+    };
+  },
+
+  async getLogs(env) { return getLogs(env, 'twitch'); },
+  async sync()       { return { ok: false, error: 'Trigger via the social-sync worker /sync endpoint.' }; },
+};
+
+// ── YouTube Provider ───────────────────────────────────────────────────────────
+export const YouTubeProvider = {
+  id:           'youtube',
+  name:         'YouTube',
+  dashboardUrl: 'https://console.cloud.google.com',
+  providerUrl:  'https://www.youtube.com/@AyUpGee',
+
+  async getStatus(env) {
+    const ping      = await pingUrl('https://www.googleapis.com/');
+    const stats     = await getPostStats(env, 'youtube');
+    const lastError = await getLastError(env, 'youtube');
+    const status    = computeStatus(ping.reachable, stats.lastSync);
+    return {
+      reachable:    ping.reachable,
+      responseTime: ping.responseTime,
+      status,
+      lastSync:     stats.lastSync,
+      itemCount:    stats.itemCount,
+      lastError:    lastError?.message ?? null,
+      lastErrorAt:  lastError?.at      ?? null,
+      version:      null,
+    };
+  },
+
+  async getLogs(env) { return getLogs(env, 'youtube'); },
+  async sync()       { return { ok: false, error: 'Trigger via the social-sync worker /sync endpoint.' }; },
+};
+
 // ── Registry ───────────────────────────────────────────────────────────────────
 export const PROVIDERS = {
-  twitch:    TwitchProvider,
-  instagram: InstagramProvider,
-  tiktok:    TikTokProvider,
+  twitch:     TwitchProvider,      // social-sync worker health (manages Instagram + TikTok)
+  instagram:  InstagramProvider,
+  tiktok:     TikTokProvider,
+  twitchvods: TwitchVODsProvider,  // Twitch VODs sync status
+  youtube:    YouTubeProvider,     // YouTube videos sync status
 };

@@ -542,6 +542,25 @@ ul,ol{list-style:none}
 .social-error__icon{font-size:2.5rem;line-height:1;opacity:.55}
 .social-error p{font-size:var(--text-sm);max-width:260px}
 
+/* ── Video card: thumbnail image (live/dynamic) ── */
+.video-thumb__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease-out)}
+.video-card:hover .video-thumb__img{transform:scale(1.04)}
+
+/* ── Video card: platform badge (top-left of thumbnail) ── */
+.video-thumb__platform{position:absolute;left:10px;top:10px;background:rgba(20,18,38,.78);color:#fff;font:var(--type-caption);font-weight:var(--fw-bold);padding:.25em .6em;border-radius:var(--radius-xs);display:flex;align-items:center;gap:.35em;line-height:1;z-index:1;white-space:nowrap}
+.video-thumb__platform img{width:10px;height:10px;flex:none;display:block}
+
+/* ── Video card: placeholder for missing slots ── */
+.video-card--placeholder{opacity:.65;border-style:dashed}
+.video-card--placeholder:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--border)}
+.video-card--placeholder .video-thumb__ph{opacity:.5}
+
+/* ── Video card: loading skeleton ── */
+.video-card--skeleton .video-thumb{background:var(--surface-soft)}
+.video-skel-line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.video-skel-line+.video-skel-line{margin-top:.5rem}
+@media(prefers-reduced-motion:reduce){.video-skel-line{animation:none;opacity:.5}}
+
 /* ═══════════════════════════════════════════════════════
    COMMUNITY / DISCORD SECTION
    ═══════════════════════════════════════════════════════ */
@@ -982,127 +1001,67 @@ ul,ol{list-style:none}
       </button>
     </div>
 
-    <!-- Twitch VODs panel -->
-    <!-- *** UPDATE: Replace placeholder content with real VOD titles, dates, links *** -->
+    <!-- Twitch VODs panel — populated dynamically by loadTwitchVods() -->
     <div class="videos-panel active" id="panel-twitch-vods">
-      <div class="video-grid">
-
-        <div class="video-card reveal reveal-d1">
-          <div class="video-thumb">
-            <div class="video-thumb__ph">🏰</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">3:42:18</span>
-          </div>
+      <div class="video-grid" id="twitchVodGrid" aria-live="polite" aria-label="Twitch VODs">
+        <!-- Skeleton placeholders shown while loading -->
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <!-- UPDATE title and date -->
-            <p class="video-card__title">Dreamlight Valley – valley farming &amp; Star Path grind</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with stream date</p>
-          </div>
-          <div class="video-card__foot">
-            <!-- UPDATE href to real VOD link -->
-            <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch VOD ↗</a>
+            <div class="video-skel-line" style="width:90%"></div>
+            <div class="video-skel-line" style="width:55%"></div>
           </div>
         </div>
-
-        <div class="video-card reveal reveal-d2">
-          <div class="video-thumb">
-            <div class="video-thumb__ph">🏝️</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">2:58:44</span>
-          </div>
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <p class="video-card__title">Animal Crossing – island makeover &amp; terraforming</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with stream date</p>
-          </div>
-          <div class="video-card__foot">
-            <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch VOD ↗</a>
+            <div class="video-skel-line" style="width:80%"></div>
+            <div class="video-skel-line" style="width:48%"></div>
           </div>
         </div>
-
-        <div class="video-card reveal reveal-d3">
-          <div class="video-thumb">
-            <div class="video-thumb__ph">⭐</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">1:30:05</span>
-          </div>
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <p class="video-card__title">Fortnite – cosy duo session with chat</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with stream date</p>
-          </div>
-          <div class="video-card__foot">
-            <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch VOD ↗</a>
+            <div class="video-skel-line" style="width:85%"></div>
+            <div class="video-skel-line" style="width:52%"></div>
           </div>
         </div>
-
       </div>
-      <div style="text-align:center;margin-top:var(--space-6)">
-        <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
+      <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
+        <a href="https://twitch.tv/ayupgee/videos?filter=all&sort=time" target="_blank" rel="noopener"
            class="ayg-btn ayg-btn--ghost ayg-btn--md">
           <i data-lucide="external-link"></i> All Twitch VODs
         </a>
       </div>
     </div>
 
-    <!-- YouTube panel -->
-    <!-- *** UPDATE: Replace placeholder content with real video titles, dates, links *** -->
+    <!-- YouTube panel — populated dynamically by loadYouTubeVideos() -->
     <div class="videos-panel" id="panel-youtube-vids">
-      <div class="video-grid">
-
-        <div class="video-card reveal">
-          <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--twilight-700))">
-            <div class="video-thumb__ph">🌟</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">18:42</span>
-          </div>
+      <div class="video-grid" id="youtubeVideoGrid" aria-live="polite" aria-label="YouTube videos">
+        <!-- Skeleton placeholders shown while loading -->
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <!-- UPDATE title and date -->
-            <p class="video-card__title">Best Dreamlight Valley tips for new players</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with upload date</p>
-          </div>
-          <div class="video-card__foot">
-            <!-- UPDATE href to real YouTube link -->
-            <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch ↗</a>
+            <div class="video-skel-line" style="width:90%"></div>
+            <div class="video-skel-line" style="width:55%"></div>
           </div>
         </div>
-
-        <div class="video-card reveal reveal-d1">
-          <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--dream-700))">
-            <div class="video-thumb__ph">🍃</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">22:15</span>
-          </div>
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <p class="video-card__title">Animal Crossing island tour – dreamy nature design</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with upload date</p>
-          </div>
-          <div class="video-card__foot">
-            <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch ↗</a>
+            <div class="video-skel-line" style="width:80%"></div>
+            <div class="video-skel-line" style="width:48%"></div>
           </div>
         </div>
-
-        <div class="video-card reveal reveal-d2">
-          <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--sky-700))">
-            <div class="video-thumb__ph">🏡</div>
-            <div class="video-thumb__play"><i data-lucide="play"></i></div>
-            <span class="video-thumb__len">31:07</span>
-          </div>
+        <div class="video-card video-card--skeleton" aria-hidden="true">
+          <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
-            <p class="video-card__title">Top 10 cosy games you need in your life</p>
-            <p class="video-card__meta"><i data-lucide="calendar"></i> Replace with upload date</p>
-          </div>
-          <div class="video-card__foot">
-            <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch ↗</a>
+            <div class="video-skel-line" style="width:85%"></div>
+            <div class="video-skel-line" style="width:52%"></div>
           </div>
         </div>
-
       </div>
-      <div style="text-align:center;margin-top:var(--space-6)">
+      <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
         <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
            class="ayg-btn ayg-btn--ghost ayg-btn--md">
           <i data-lucide="external-link"></i> YouTube channel
@@ -1715,7 +1674,219 @@ async function loadInstagramFeed() {
 document.addEventListener('DOMContentLoaded', () => {
   loadTikTokFeed();
   loadInstagramFeed();
+  loadTwitchVods();
+  loadYouTubeVideos();
 });
+
+// ── Shared video helpers ──────────────────────────────────
+
+/** Format an ISO date string to "1 Jan 2025" */
+function _fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric',
+    }).format(new Date(iso));
+  } catch { return ''; }
+}
+
+/** Render 3 skeleton cards into a container while loading */
+function _renderVideoSkeleton(container) {
+  const widths = [['90%','55%'], ['80%','48%'], ['85%','52%']];
+  container.innerHTML = widths.map(([w1, w2]) => `
+    <div class="video-card video-card--skeleton" aria-hidden="true">
+      <div class="video-thumb"><div class="skel-pulse"></div></div>
+      <div class="video-card__body">
+        <div class="video-skel-line" style="width:${w1}"></div>
+        <div class="video-skel-line" style="width:${w2}"></div>
+      </div>
+    </div>`).join('');
+}
+
+/** Animate reveal on newly injected cards */
+function _revealCards(container) {
+  if (window.lucide) lucide.createIcons({ nodes: container.querySelectorAll('[data-lucide]') });
+  container.querySelectorAll('.reveal').forEach(el => {
+    setTimeout(() => el.classList.add('visible'), 60);
+  });
+}
+
+// ── Twitch VODs ───────────────────────────────────────────
+
+function renderTwitchVodItems(items) {
+  const container = document.getElementById('twitchVodGrid');
+  if (!container) return;
+
+  if (!items || !items.length) {
+    container.innerHTML = `
+      <div class="social-error">
+        <div class="social-error__icon">🟣</div>
+        <p>No VODs yet — <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener noreferrer">check Twitch</a></p>
+      </div>`;
+    return;
+  }
+
+  const delays = ['reveal-d1', 'reveal-d2', 'reveal-d3'];
+  container.innerHTML = items.slice(0, 3).map((item, i) => {
+    const title    = _esc(item.title || 'Twitch VOD');
+    const url      = _esc(item.url   || 'https://twitch.tv/ayupgee/videos');
+    const date     = _esc(_fmtDate(item.publishedAt));
+    const duration = _esc(item.duration || '');
+    const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl) : '';
+
+    return `
+      <div class="video-card reveal ${delays[i] ?? ''}">
+        <div class="video-thumb">
+          ${thumb
+            ? `<img class="video-thumb__img" src="${thumb}" alt="" loading="lazy" decoding="async"
+                    onerror="this.style.display='none'" />`
+            : '<div class="video-thumb__ph">🟣</div>'
+          }
+          <div class="video-thumb__play" aria-hidden="true"><i data-lucide="play"></i></div>
+          ${duration ? `<span class="video-thumb__len">${duration}</span>` : ''}
+          <span class="video-thumb__platform" aria-hidden="true" style="background:rgba(145,70,255,.85)">
+            <img src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" />
+            Twitch
+          </span>
+        </div>
+        <div class="video-card__body">
+          <p class="video-card__title">${title}</p>
+          <p class="video-card__meta"><i data-lucide="calendar"></i> ${date || 'Recent stream'}</p>
+        </div>
+        <div class="video-card__foot">
+          <a href="${url}" target="_blank" rel="noopener noreferrer"
+             class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch on Twitch ↗</a>
+        </div>
+      </div>`;
+  }).join('');
+
+  _revealCards(container);
+}
+
+function renderTwitchVodError() {
+  const container = document.getElementById('twitchVodGrid');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="social-error">
+      <div class="social-error__icon">🟣</div>
+      <p>Couldn't load VODs right now. <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener noreferrer">Visit Twitch</a></p>
+    </div>`;
+}
+
+async function loadTwitchVods() {
+  const container = document.getElementById('twitchVodGrid');
+  if (!container) return;
+  _renderVideoSkeleton(container);
+  try {
+    const res = await fetch('/api/social/twitch-vods');
+    if (!res.ok) { renderTwitchVodError(); return; }
+    const data = await res.json();
+    if (!data.ok) { renderTwitchVodError(); return; }
+    renderTwitchVodItems(data.items);
+  } catch {
+    renderTwitchVodError();
+  }
+}
+
+// ── YouTube Videos ────────────────────────────────────────
+
+const _ytPlaceholder = `
+  <div class="video-card video-card--placeholder">
+    <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--night-700))">
+      <div class="video-thumb__ph">✨</div>
+    </div>
+    <div class="video-card__body">
+      <p class="video-card__title" style="color:var(--text-faint)">More cosy videos coming soon</p>
+      <p class="video-card__meta" style="color:var(--text-faint)"><i data-lucide="sparkles"></i> Stay tuned 🐝</p>
+    </div>
+    <div class="video-card__foot">
+      <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener noreferrer"
+         class="ayg-btn ayg-btn--secondary ayg-btn--sm" style="opacity:.65">
+        YouTube channel ↗
+      </a>
+    </div>
+  </div>`;
+
+function renderYouTubeItems(items) {
+  const container = document.getElementById('youtubeVideoGrid');
+  if (!container) return;
+
+  if (!items || !items.length) {
+    container.innerHTML = `
+      <div class="social-error">
+        <div class="social-error__icon">▶️</div>
+        <p>No videos yet — <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener noreferrer">check YouTube</a></p>
+      </div>`;
+    return;
+  }
+
+  const delays = ['reveal', 'reveal reveal-d1', 'reveal reveal-d2'];
+  let html = items.slice(0, 3).map((item, i) => {
+    const title    = _esc(item.title || 'YouTube Video');
+    const url      = _esc(item.url   || 'https://youtube.com/@ayupgee');
+    const date     = _esc(_fmtDate(item.publishedAt));
+    const duration = _esc(item.duration || '');
+    const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl) : '';
+
+    return `
+      <div class="video-card ${delays[i] ?? 'reveal'}">
+        <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--twilight-700))">
+          ${thumb
+            ? `<img class="video-thumb__img" src="${thumb}" alt="" loading="lazy" decoding="async"
+                    onerror="this.style.display='none'" />`
+            : '<div class="video-thumb__ph">▶️</div>'
+          }
+          <div class="video-thumb__play" aria-hidden="true"><i data-lucide="play"></i></div>
+          ${duration ? `<span class="video-thumb__len">${duration}</span>` : ''}
+          <span class="video-thumb__platform" aria-hidden="true" style="background:rgba(200,0,0,.85)">
+            <img src="https://cdn.simpleicons.org/youtube/white" alt="" loading="lazy" decoding="async" />
+            YouTube
+          </span>
+        </div>
+        <div class="video-card__body">
+          <p class="video-card__title">${title}</p>
+          <p class="video-card__meta"><i data-lucide="calendar"></i> ${date || 'Recent upload'}</p>
+        </div>
+        <div class="video-card__foot">
+          <a href="${url}" target="_blank" rel="noopener noreferrer"
+             class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch on YouTube ↗</a>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Pad to 3 cards with a "coming soon" placeholder if fewer than 3 videos
+  for (let j = items.length; j < 3; j++) {
+    html += _ytPlaceholder;
+  }
+
+  container.innerHTML = html;
+  _revealCards(container);
+}
+
+function renderYouTubeError() {
+  const container = document.getElementById('youtubeVideoGrid');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="social-error">
+      <div class="social-error__icon">▶️</div>
+      <p>Couldn't load videos right now. <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener noreferrer">Visit YouTube</a></p>
+    </div>`;
+}
+
+async function loadYouTubeVideos() {
+  const container = document.getElementById('youtubeVideoGrid');
+  if (!container) return;
+  _renderVideoSkeleton(container);
+  try {
+    const res = await fetch('/api/social/youtube');
+    if (!res.ok) { renderYouTubeError(); return; }
+    const data = await res.json();
+    if (!data.ok) { renderYouTubeError(); return; }
+    renderYouTubeItems(data.items);
+  } catch {
+    renderYouTubeError();
+  }
+}
 
 // ── Hide nav on scroll down, reveal on scroll up ──────────
 (function() {

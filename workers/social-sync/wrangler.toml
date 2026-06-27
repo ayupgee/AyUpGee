@@ -14,8 +14,24 @@ database_name = "ayupgee-db"
 database_id  = "3de6c874-0367-409a-8164-f7fb547a6d49"
 
 # ─── Required secrets ──────────────────────────────────────────────────────────
-# Set via: wrangler secret put BEHOLD_FEED_ID  (from your Behold.so dashboard)
+# Set each secret with:  wrangler secret put <SECRET_NAME>  (run from workers/social-sync/)
 #
-# ─── Future TikTok secrets (add when API is approved) ──────────────────────────
-# wrangler secret put TIKTOK_ACCESS_TOKEN
-# wrangler secret put TIKTOK_CLIENT_KEY
+# Instagram (via Behold.so):
+#   BEHOLD_FEED_ID            — Feed ID from https://behold.so dashboard
+#
+# TikTok (via TikHub.io):
+#   TIKHUB_API_KEY            — API key from https://user.tikhub.io (scope: /api/v1/tiktok/web/)
+#
+# Twitch VODs (official Helix API — https://dev.twitch.tv/console):
+#   TWITCH_CLIENT_ID          — Client ID of your registered Twitch app
+#   TWITCH_CLIENT_SECRET      — Client Secret of your registered Twitch app
+#   TWITCH_BROADCASTER_ID     — Numeric user ID for twitch.tv/ayupgee
+#                               Find it: GET /helix/users?login=ayupgee (with any client token)
+#
+# YouTube Videos (YouTube Data API v3 — https://console.cloud.google.com):
+#   YOUTUBE_API_KEY           — API key with YouTube Data API v3 enabled
+#
+# ─── Optional secrets ──────────────────────────────────────────────────────────
+#   YOUTUBE_UPLOADS_PLAYLIST_ID — Skips one API call per sync run.
+#                                 Get it once: channels?part=contentDetails&forHandle=AyUpGee&key=…
+#                                 Value looks like "UUxxxxxxxxxxxxxxxxxxxxxxxxxx"

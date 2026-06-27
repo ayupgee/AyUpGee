@@ -10,3 +10,32 @@ CSRF_SECRET=dev-csrf-secret-change-in-production-minimum-32-chars-here!!
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 TURNSTILE_SITE_KEY=1x00000000000000000000AA
 ADMIN_SETUP_TOKEN=my-one-time-setup-token-change-this
+
+# ── Twitch (Pages Function: /api/twitch/schedule and sync worker: Twitch VODs) ──
+# Register an app at https://dev.twitch.tv/console → Applications → Register Your Application
+# Set OAuth Redirect URL to: http://localhost (not used for client credentials flow)
+# Grant type: Client Credentials (no user login required for public VODs/schedule)
+TWITCH_CLIENT_ID=your-twitch-client-id
+TWITCH_CLIENT_SECRET=your-twitch-client-secret
+# Numeric broadcaster ID for twitch.tv/ayupgee
+# Find it: curl -H "Authorization: Bearer <token>" -H "Client-Id: <id>" \
+#          "https://api.twitch.tv/helix/users?login=ayupgee" | jq .data[0].id
+TWITCH_BROADCASTER_ID=your-twitch-broadcaster-id
+
+# ── YouTube (sync worker: YouTube Videos) ────────────────────────────────────
+# 1. Go to https://console.cloud.google.com → APIs & Services → Library
+# 2. Enable "YouTube Data API v3"
+# 3. Create an API key under Credentials (restrict to YouTube Data API v3)
+YOUTUBE_API_KEY=your-youtube-data-api-v3-key
+# Optional: skip the channels API lookup on every sync by pre-filling the uploads playlist ID
+# Get it once: GET /youtube/v3/channels?part=contentDetails&forHandle=AyUpGee&key=<KEY>
+# Look for: items[0].contentDetails.relatedPlaylists.uploads
+# YOUTUBE_UPLOADS_PLAYLIST_ID=UUxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# ── Instagram (sync worker) ──────────────────────────────────────────────────
+# Register a free feed at https://behold.so and link your Instagram account
+# BEHOLD_FEED_ID=your-behold-feed-id
+
+# ── TikTok (sync worker) ─────────────────────────────────────────────────────
+# Sign up at https://user.tikhub.io (pay-as-you-go, ~$0.001/request)
+# TIKHUB_API_KEY=your-tikhub-api-key

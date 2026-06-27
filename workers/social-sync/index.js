@@ -1,23 +1,34 @@
 /**
  * AyUpGee Social Sync Worker
  *
- * Runs on a cron schedule (every hour) and syncs social media posts into D1.
+ * Runs on a cron schedule (every 12 hours) and syncs social media posts into D1.
  * The homepage reads from D1 — so once this runs, posts appear automatically.
  *
  * ─── Platforms ─────────────────────────────────────────────────────────────────
  *   Instagram  → Behold.so (free, handles all Meta OAuth complexity)
  *   TikTok     → TikHub.io (unofficial REST API, pay-as-you-go ~$0.001/request)
+ *   Twitch     → Twitch Helix API (official, client credentials OAuth)
+ *   YouTube    → YouTube Data API v3 (official, API key only)
  *
  * ─── Required secrets ──────────────────────────────────────────────────────────
- *   BEHOLD_FEED_ID    — Feed ID from behold.so dashboard
- *   TIKHUB_API_KEY    — API key from user.tikhub.io (scope: /api/v1/tiktok/web/)
+ *   BEHOLD_FEED_ID          — Feed ID from behold.so dashboard
+ *   TIKHUB_API_KEY          — API key from user.tikhub.io (scope: /api/v1/tiktok/web/)
+ *   TWITCH_CLIENT_ID        — from https://dev.twitch.tv/console
+ *   TWITCH_CLIENT_SECRET    — from https://dev.twitch.tv/console
+ *   TWITCH_BROADCASTER_ID   — numeric user ID for twitch.tv/ayupgee
+ *   YOUTUBE_API_KEY         — from https://console.cloud.google.com (YouTube Data API v3)
+ *
+ * ─── Optional secrets ──────────────────────────────────────────────────────────
+ *   YOUTUBE_UPLOADS_PLAYLIST_ID — skip the channels API call (e.g. "UU...")
+ *                                 Find it once: channels?part=contentDetails&forHandle=AyUpGee
  *
  * ─── Endpoints ─────────────────────────────────────────────────────────────────
  *   GET /          → health status + D1 stats (no auth required)
  *   GET /sync      → trigger a manual full sync
+ *   GET /cleanup   → trigger a manual cleanup run
  */
 
-const VERSION = '1.1.0';
+const VERSION = '2.0.0';
 
 // ── D1 log writer ──────────────────────────────────────────────────────────────
 async function writeLog(env, platform, event, message, extra = {}) {
@@ -36,7 +47,6 @@ async function writeLog(env, platform, event, message, extra = {}) {
       extra.response_time_ms ?? null,
     ).run();
   } catch (e) {
-    // Never let logging failures break the sync
     console.error('[log] Failed to write sync_log:', e.message);
   }
 }
@@ -52,7 +62,7 @@ async function syncInstagram(env) {
   const start = Date.now();
 
   const res = await fetch(`https://feeds.behold.so/${env.BEHOLD_FEED_ID}`, {
-    headers: { 'User-Agent': 'AyUpGee-SocialSync/1.0' },
+    headers: { 'User-Agent': 'AyUpGee-SocialSync/2.0' },
   });
 
   if (!res.ok) {
@@ -139,7 +149,7 @@ async function syncTikTok(env) {
 
   const headers = {
     'Authorization': `Bearer ${env.TIKHUB_API_KEY}`,
-    'User-Agent': 'AyUpGee-SocialSync/1.0',
+    'User-Agent': 'AyUpGee-SocialSync/2.0',
   };
 
   // Step 1 — resolve secUid
@@ -232,12 +242,311 @@ async function syncTikTok(env) {
   return { synced, skipped };
 }
 
-// ── Cache cleanup ──────────────────────────────────────────────────────────────
+// ── Twitch VODs ────────────────────────────────────────────────────────────────
 
 /**
- * Keep only the latest N Instagram posts; delete the rest.
- * Uses a subquery so a single DELETE statement does the work safely.
+ * Fetch a short-lived Twitch app access token using client credentials.
+ * This token is NOT stored — it is used for one sync run and discarded.
  */
+async function getTwitchToken(env) {
+  const res = await fetch('https://id.twitch.tv/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id:     env.TWITCH_CLIENT_ID,
+      client_secret: env.TWITCH_CLIENT_SECRET,
+      grant_type:    'client_credentials',
+    }),
+  });
+  if (!res.ok) throw new Error(`Twitch token request failed: ${res.status}`);
+  const { access_token } = await res.json();
+  return access_token;
+}
+
+/**
+ * Format a Twitch duration string into HH:MM:SS or MM:SS.
+ * Input examples: "3h42m18s", "58m30s", "45s"
+ */
+function formatTwitchDuration(dur) {
+  if (!dur) return '';
+  const h = dur.match(/(\d+)h/)?.[1];
+  const m = dur.match(/(\d+)m/)?.[1];
+  const s = dur.match(/(\d+)s/)?.[1];
+  const hours = parseInt(h ?? 0);
+  const mins  = parseInt(m ?? 0);
+  const secs  = parseInt(s ?? 0);
+  if (hours > 0) {
+    return `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+async function syncTwitch(env) {
+  if (!env.TWITCH_CLIENT_ID || !env.TWITCH_CLIENT_SECRET || !env.TWITCH_BROADCASTER_ID) {
+    console.log('[twitch-vods] TWITCH credentials not set — skipping');
+    return { synced: 0, skipped: 0 };
+  }
+
+  console.log('[twitch-vods] Fetching latest VODs from Twitch Helix API...');
+  const start = Date.now();
+
+  // App-access token (client credentials — no user scope needed for public VODs)
+  let token;
+  try {
+    token = await getTwitchToken(env);
+  } catch (e) {
+    const msg = `Token error: ${e.message}`;
+    await writeLog(env, 'twitch', 'sync_error', 'Twitch VODs sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
+  }
+
+  // Fetch latest archive VODs (type=archive excludes highlights/uploads)
+  const vodsUrl = new URL('https://api.twitch.tv/helix/videos');
+  vodsUrl.searchParams.set('user_id', env.TWITCH_BROADCASTER_ID);
+  vodsUrl.searchParams.set('type', 'archive');
+  vodsUrl.searchParams.set('first', '6'); // fetch buffer; cleanup will trim to 6
+
+  const res = await fetch(vodsUrl.toString(), {
+    headers: {
+      'Client-Id':     env.TWITCH_CLIENT_ID,
+      'Authorization': `Bearer ${token}`,
+      'User-Agent':    'AyUpGee-SocialSync/2.0',
+    },
+  });
+
+  if (!res.ok) {
+    const msg = `Twitch Helix /videos returned ${res.status}`;
+    await writeLog(env, 'twitch', 'sync_error', 'Twitch VODs sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
+  }
+
+  const { data: videos } = await res.json();
+
+  if (!Array.isArray(videos) || videos.length === 0) {
+    console.log('[twitch-vods] No VODs returned');
+    return { synced: 0, skipped: 0 };
+  }
+
+  let synced  = 0;
+  let skipped = 0;
+
+  for (const v of videos) {
+    try {
+      const id    = `twitch_${v.id}`;
+      const title = v.title || 'Twitch VOD';
+      const url   = v.url   || `https://www.twitch.tv/videos/${v.id}`;
+
+      // Twitch thumbnail URLs use %{width}x%{height} placeholders
+      const thumbnailUrl = v.thumbnail_url
+        ? v.thumbnail_url.replace('%{width}', '640').replace('%{height}', '360')
+        : null;
+
+      const publishedAt = v.published_at
+        ? new Date(v.published_at).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
+
+      const duration = formatTwitchDuration(v.duration);
+
+      await env.DB.prepare(`
+        INSERT INTO social_posts
+          (id, platform, url, title, thumbnail_url, caption_raw, published_at, duration, created_at, updated_at)
+        VALUES (?, 'twitch', ?, ?, ?, '', ?, ?, datetime('now'), datetime('now'))
+        ON CONFLICT(id) DO UPDATE SET
+          url           = excluded.url,
+          title         = excluded.title,
+          thumbnail_url = excluded.thumbnail_url,
+          published_at  = excluded.published_at,
+          duration      = excluded.duration,
+          updated_at    = datetime('now')
+      `).bind(id, url, title, thumbnailUrl, publishedAt, duration).run();
+
+      synced++;
+    } catch (e) {
+      console.error('[twitch-vods] Failed to save VOD:', e.message);
+      skipped++;
+    }
+  }
+
+  const elapsed = Date.now() - start;
+  await writeLog(env, 'twitch', 'sync_success',
+    `Synced ${synced} VOD${synced !== 1 ? 's' : ''} from Twitch`, {
+      items_synced: synced,
+      response_time_ms: elapsed,
+    });
+
+  console.log(`[twitch-vods] Done — ${synced} synced, ${skipped} skipped (${elapsed}ms)`);
+  return { synced, skipped };
+}
+
+// ── YouTube Videos ─────────────────────────────────────────────────────────────
+
+/**
+ * Parse an ISO 8601 duration (e.g. "PT1H3M17S") into a display string ("1:03:17").
+ * Short videos: "PT18M42S" → "18:42". Very short: "PT45S" → "0:45".
+ */
+function formatYouTubeDuration(iso) {
+  if (!iso) return '';
+  const h = iso.match(/(\d+)H/)?.[1];
+  const m = iso.match(/(\d+)M/)?.[1];
+  const s = iso.match(/(\d+)S/)?.[1];
+  const hours = parseInt(h ?? 0);
+  const mins  = parseInt(m ?? 0);
+  const secs  = parseInt(s ?? 0);
+  if (hours > 0) {
+    return `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+async function syncYouTube(env) {
+  if (!env.YOUTUBE_API_KEY) {
+    console.log('[youtube] YOUTUBE_API_KEY not set — skipping');
+    return { synced: 0, skipped: 0 };
+  }
+
+  console.log('[youtube] Fetching latest videos from YouTube Data API v3...');
+  const start = Date.now();
+  const key   = env.YOUTUBE_API_KEY;
+  const ua    = 'AyUpGee-SocialSync/2.0';
+
+  // ── Step 1: resolve uploads playlist ID ─────────────────────────────────────
+  // YOUTUBE_UPLOADS_PLAYLIST_ID can be cached in secrets to skip this API call.
+  let uploadsPlaylistId = env.YOUTUBE_UPLOADS_PLAYLIST_ID ?? null;
+
+  if (!uploadsPlaylistId) {
+    const chanRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=AyUpGee&key=${key}`,
+      { headers: { 'User-Agent': ua } }
+    );
+    if (!chanRes.ok) {
+      const msg = `YouTube channels API returned ${chanRes.status}`;
+      await writeLog(env, 'youtube', 'sync_error', 'YouTube sync failed', {
+        error_message: msg,
+        response_time_ms: Date.now() - start,
+      });
+      throw new Error(msg);
+    }
+    const chanData = await chanRes.json();
+    uploadsPlaylistId =
+      chanData?.items?.[0]?.contentDetails?.relatedPlaylists?.uploads ?? null;
+
+    if (!uploadsPlaylistId) {
+      const msg = 'Could not resolve YouTube uploads playlist ID';
+      await writeLog(env, 'youtube', 'sync_error', 'YouTube sync failed', {
+        error_message: msg,
+        response_time_ms: Date.now() - start,
+      });
+      throw new Error(msg);
+    }
+  }
+
+  // ── Step 2: fetch latest video IDs + snippets from uploads playlist ──────────
+  const listRes = await fetch(
+    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=6&key=${key}`,
+    { headers: { 'User-Agent': ua } }
+  );
+  if (!listRes.ok) {
+    const msg = `YouTube playlistItems API returned ${listRes.status}`;
+    await writeLog(env, 'youtube', 'sync_error', 'YouTube sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
+  }
+
+  const listData = await listRes.json();
+  const items    = listData?.items ?? [];
+
+  if (items.length === 0) {
+    console.log('[youtube] No videos returned');
+    return { synced: 0, skipped: 0 };
+  }
+
+  // ── Step 3: fetch video durations (requires a separate API call) ─────────────
+  const videoIds = items
+    .map(i => i.snippet?.resourceId?.videoId)
+    .filter(Boolean);
+
+  const durationMap = {};
+  if (videoIds.length > 0) {
+    const detailRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(',')}&key=${key}`,
+      { headers: { 'User-Agent': ua } }
+    );
+    if (detailRes.ok) {
+      const detailData = await detailRes.json();
+      for (const v of (detailData?.items ?? [])) {
+        durationMap[v.id] = formatYouTubeDuration(v.contentDetails?.duration);
+      }
+    }
+    // Non-fatal if duration fetch fails — cards will render without timestamps
+  }
+
+  // ── Step 4: upsert into D1 ───────────────────────────────────────────────────
+  let synced  = 0;
+  let skipped = 0;
+
+  for (const item of items) {
+    try {
+      const videoId = item.snippet?.resourceId?.videoId;
+      if (!videoId) { skipped++; continue; }
+
+      const id    = `yt_${videoId}`;
+      const title = item.snippet?.title || 'YouTube Video';
+      const url   = `https://www.youtube.com/watch?v=${videoId}`;
+
+      // Prefer high-quality thumbnail; fall through to lower res
+      const thumbnailUrl =
+        item.snippet?.thumbnails?.maxres?.url  ||
+        item.snippet?.thumbnails?.high?.url    ||
+        item.snippet?.thumbnails?.medium?.url  ||
+        item.snippet?.thumbnails?.default?.url || null;
+
+      const publishedAt = item.snippet?.publishedAt
+        ? new Date(item.snippet.publishedAt).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
+
+      const duration = durationMap[videoId] ?? '';
+
+      await env.DB.prepare(`
+        INSERT INTO social_posts
+          (id, platform, url, title, thumbnail_url, caption_raw, published_at, duration, created_at, updated_at)
+        VALUES (?, 'youtube', ?, ?, ?, '', ?, ?, datetime('now'), datetime('now'))
+        ON CONFLICT(id) DO UPDATE SET
+          url           = excluded.url,
+          title         = excluded.title,
+          thumbnail_url = excluded.thumbnail_url,
+          published_at  = excluded.published_at,
+          duration      = excluded.duration,
+          updated_at    = datetime('now')
+      `).bind(id, url, title, thumbnailUrl, publishedAt, duration).run();
+
+      synced++;
+    } catch (e) {
+      console.error('[youtube] Failed to save video:', e.message);
+      skipped++;
+    }
+  }
+
+  const elapsed = Date.now() - start;
+  await writeLog(env, 'youtube', 'sync_success',
+    `Synced ${synced} video${synced !== 1 ? 's' : ''} from YouTube`, {
+      items_synced: synced,
+      response_time_ms: elapsed,
+    });
+
+  console.log(`[youtube] Done — ${synced} synced, ${skipped} skipped (${elapsed}ms)`);
+  return { synced, skipped };
+}
+
+// ── Cache cleanup ──────────────────────────────────────────────────────────────
+
 async function cleanupInstagram(env, keep = 6) {
   const { meta } = await env.DB.prepare(`
     DELETE FROM social_posts
@@ -257,9 +566,6 @@ async function cleanupInstagram(env, keep = 6) {
   return { kept: keep, removed };
 }
 
-/**
- * Keep only the latest N TikTok posts; delete the rest.
- */
 async function cleanupTikTok(env, keep = 4) {
   const { meta } = await env.DB.prepare(`
     DELETE FROM social_posts
@@ -279,10 +585,44 @@ async function cleanupTikTok(env, keep = 4) {
   return { kept: keep, removed };
 }
 
-/**
- * Twitch: this worker does not maintain a persistent Twitch content cache.
- * Sync logs older than 30 days are pruned across all platforms.
- */
+async function cleanupTwitch(env, keep = 6) {
+  const { meta } = await env.DB.prepare(`
+    DELETE FROM social_posts
+    WHERE  platform = 'twitch'
+    AND    id NOT IN (
+      SELECT id FROM social_posts
+      WHERE  platform = 'twitch'
+      ORDER  BY published_at DESC, updated_at DESC
+      LIMIT  ?
+    )
+  `).bind(keep).run();
+
+  const removed = meta?.changes ?? 0;
+  const msg = `Twitch cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
+  console.log(`[cleanup] ${msg}`);
+  await writeLog(env, 'twitch', 'cleanup', msg, { items_synced: 0 });
+  return { kept: keep, removed };
+}
+
+async function cleanupYouTube(env, keep = 6) {
+  const { meta } = await env.DB.prepare(`
+    DELETE FROM social_posts
+    WHERE  platform = 'youtube'
+    AND    id NOT IN (
+      SELECT id FROM social_posts
+      WHERE  platform = 'youtube'
+      ORDER  BY published_at DESC, updated_at DESC
+      LIMIT  ?
+    )
+  `).bind(keep).run();
+
+  const removed = meta?.changes ?? 0;
+  const msg = `YouTube cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
+  console.log(`[cleanup] ${msg}`);
+  await writeLog(env, 'youtube', 'cleanup', msg, { items_synced: 0 });
+  return { kept: keep, removed };
+}
+
 async function cleanupSyncLogs(env, keepDays = 30) {
   const { meta } = await env.DB.prepare(`
     DELETE FROM sync_logs
@@ -292,15 +632,10 @@ async function cleanupSyncLogs(env, keepDays = 30) {
   const removed = meta?.changes ?? 0;
   const msg = `Sync log cleanup: removed ${removed} entr${removed !== 1 ? 'ies' : 'y'} older than ${keepDays} days.`;
   console.log(`[cleanup] ${msg}`);
-  // Write the log after pruning (so this entry itself is fresh)
   await writeLog(env, 'system', 'cleanup', msg, { items_synced: 0 });
   return { removed };
 }
 
-/**
- * Run all cleanup jobs and return a summary.
- * Each step is wrapped so a failure in one does not abort the rest.
- */
 async function runCleanup(env) {
   console.log('[cleanup] Starting weekly cleanup…');
   const results = {};
@@ -317,16 +652,23 @@ async function runCleanup(env) {
     results.tiktok = { error: e.message };
   }
 
+  try { results.twitch = await cleanupTwitch(env); }
+  catch (e) {
+    console.error('[cleanup] Twitch cleanup failed:', e.message);
+    results.twitch = { error: e.message };
+  }
+
+  try { results.youtube = await cleanupYouTube(env); }
+  catch (e) {
+    console.error('[cleanup] YouTube cleanup failed:', e.message);
+    results.youtube = { error: e.message };
+  }
+
   try { results.logs = await cleanupSyncLogs(env); }
   catch (e) {
     console.error('[cleanup] Log cleanup failed:', e.message);
     results.logs = { error: e.message };
   }
-
-  results.twitch = {
-    removed: 0,
-    note: 'No Twitch cleanup required. Worker does not store persistent Twitch cache records.',
-  };
 
   console.log('[cleanup] Complete:', JSON.stringify(results));
   return results;
@@ -350,12 +692,16 @@ export default {
       // Weekly Sunday 03:00 UTC — run cache cleanup
       await runCleanup(env);
     } else {
-      // Every other cron (hourly) — run social sync
+      // Every other cron (12-hourly) — run social sync for all platforms
       const results = {};
       try { results.instagram = await syncInstagram(env); }
       catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
-      try { results.tiktok    = await syncTikTok(env); }
+      try { results.tiktok = await syncTikTok(env); }
       catch (e) { console.error('[tiktok] Sync failed:', e.message); results.tiktok = { error: e.message }; }
+      try { results.twitch = await syncTwitch(env); }
+      catch (e) { console.error('[twitch-vods] Sync failed:', e.message); results.twitch = { error: e.message }; }
+      try { results.youtube = await syncYouTube(env); }
+      catch (e) { console.error('[youtube] Sync failed:', e.message); results.youtube = { error: e.message }; }
       console.log('[social-sync] Sync complete:', JSON.stringify(results));
     }
   },
@@ -386,6 +732,8 @@ export default {
           providers: {
             instagram: stats.instagram ?? { lastSync: null, itemCount: 0 },
             tiktok:    stats.tiktok    ?? { lastSync: null, itemCount: 0 },
+            twitch:    stats.twitch    ?? { lastSync: null, itemCount: 0 },
+            youtube:   stats.youtube   ?? { lastSync: null, itemCount: 0 },
           },
         });
       } catch (e) {
@@ -410,8 +758,12 @@ export default {
       const results = {};
       try { results.instagram = await syncInstagram(env); }
       catch (e) { results.instagram = { error: e.message }; }
-      try { results.tiktok    = await syncTikTok(env); }
+      try { results.tiktok = await syncTikTok(env); }
       catch (e) { results.tiktok    = { error: e.message }; }
+      try { results.twitch = await syncTwitch(env); }
+      catch (e) { results.twitch    = { error: e.message }; }
+      try { results.youtube = await syncYouTube(env); }
+      catch (e) { results.youtube   = { error: e.message }; }
       return jsonResponse({ ok: true, results });
     }
 
