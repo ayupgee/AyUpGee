@@ -263,7 +263,7 @@ ul,ol{list-style:none}
   overflow:hidden;
   background:var(--night-900);
 }
-:not([data-theme="night"]) .gw-hero{background:var(--cream-50)}
+:not([data-theme="night"]) .gw-hero{background:var(--night-900)}
 
 /* ── Background image (shown when image file is present) ── */
 .gw-hero__bg{
@@ -288,9 +288,9 @@ ul,ol{list-style:none}
 }
 :not([data-theme="night"]) .gw-hero__scrim{
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--cream-50) 10%,transparent) 0%,
-    color-mix(in srgb,var(--cream-50) 55%,transparent) 55%,
-    var(--cream-50) 100%);
+    color-mix(in srgb,var(--night-900) 20%,transparent) 0%,
+    color-mix(in srgb,var(--night-900) 55%,transparent) 55%,
+    var(--night-900) 100%);
 }
 /* ── Floating orbs ── */
 .gw-hero__orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(70px)}
@@ -317,7 +317,7 @@ ul,ol{list-style:none}
   font-size:clamp(2.25rem,5vw,3.5rem);line-height:var(--leading-tight);
   color:#fff;margin-bottom:var(--space-4);
 }
-:not([data-theme="night"]) .gw-hero__title{color:var(--ink-900)}
+:not([data-theme="night"]) .gw-hero__title{color:#fff}
 .gw-hero__title span{
   background:linear-gradient(110deg,var(--moon-300),var(--honey-deep));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
@@ -326,7 +326,7 @@ ul,ol{list-style:none}
   font-size:var(--text-lg);line-height:var(--leading-relaxed);
   color:rgba(255,255,255,.8);max-width:540px;margin-bottom:var(--space-6);
 }
-:not([data-theme="night"]) .gw-hero__lead{color:var(--ink-700)}
+:not([data-theme="night"]) .gw-hero__lead{color:rgba(255,255,255,.85)}
 .gw-hero__actions{display:flex;flex-wrap:wrap;gap:var(--space-3)}
 
 /* ── Hero prize card ── */
