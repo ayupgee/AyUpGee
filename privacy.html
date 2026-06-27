@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="night">
 <head>
+<script>if(localStorage.getItem("aug-theme")==="day")document.documentElement.removeAttribute("data-theme");</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Privacy &amp; Cookies | AyUpGee</title>
@@ -547,12 +548,6 @@ function applyTheme(night) {
 themeToggle.addEventListener('click', () => {
   applyTheme(!html.hasAttribute('data-theme'));
 });
-
-(function () {
-  const saved = localStorage.getItem('aug-theme');
-  if (saved === 'day') applyTheme(false);
-  // default is night (already set on html tag)
-})();
 
 // ── Consent widget ────────────────────────────────────────
 (function () {

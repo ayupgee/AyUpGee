@@ -1543,11 +1543,21 @@ ul,ol{list-style:none}
   const mount = document.getElementById('aug-notice-mount');
   if (!mount) return;
 
-  let _notices = [];
-  let _current = 0;
+  let _notices  = [];
+  let _current  = 0;
+  let _timer    = null;
+  const AUTO_MS = 10000;
 
   function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function startTimer() {
+    stopTimer();
+    _timer = setTimeout(function() { next(true); }, AUTO_MS);
+  }
+  function stopTimer() {
+    if (_timer) { clearTimeout(_timer); _timer = null; }
   }
 
   function renderSlide() {
@@ -1568,12 +1578,16 @@ ul,ol{list-style:none}
   }
 
   function prev() {
+    stopTimer();
     _current = (_current - 1 + _notices.length) % _notices.length;
     renderSlide();
+    startTimer();
   }
-  function next() {
+  function next(auto) {
+    if (!auto) stopTimer();
     _current = (_current + 1) % _notices.length;
     renderSlide();
+    startTimer();
   }
 
   function buildNotice() {
@@ -1612,12 +1626,18 @@ ul,ol{list-style:none}
 
     if (multi) {
       document.getElementById('aug-notice-prev').addEventListener('click', prev);
-      document.getElementById('aug-notice-next').addEventListener('click', next);
-      // Keyboard support on the banner itself
+      document.getElementById('aug-notice-next').addEventListener('click', function() { next(false); });
+      // Pause on hover, resume on leave
+      aside.addEventListener('mouseenter', stopTimer);
+      aside.addEventListener('mouseleave', startTimer);
+      aside.addEventListener('focusin',    stopTimer);
+      aside.addEventListener('focusout',   startTimer);
+      // Keyboard support
       aside.addEventListener('keydown', function(e) {
         if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); next(false); }
       });
+      startTimer();
     }
   }
 

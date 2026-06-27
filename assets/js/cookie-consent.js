@@ -140,13 +140,19 @@
   requestAnimationFrame(() => requestAnimationFrame(() => banner.classList.add('visible')));
 
   // ── Actions ────────────────────────────────────────────────────────────────
+  function save(value) {
+    try { localStorage.setItem(KEY, value); } catch (e) { /* storage unavailable */ }
+  }
+
   function dismiss() {
     banner.classList.remove('visible');
-    setTimeout(() => banner.remove(), 450);
+    banner.style.opacity = '0';
+    banner.style.pointerEvents = 'none';
+    setTimeout(() => { try { banner.remove(); } catch (e) {} }, 450);
   }
 
   document.getElementById('aug-cookie-accept').addEventListener('click', function () {
-    localStorage.setItem(KEY, 'granted');
+    save('granted');
     if (typeof gtag === 'function') {
       gtag('consent', 'update', { analytics_storage: 'granted' });
     }
@@ -154,7 +160,7 @@
   });
 
   document.getElementById('aug-cookie-decline').addEventListener('click', function () {
-    localStorage.setItem(KEY, 'denied');
+    save('denied');
     dismiss();
   });
 })();
