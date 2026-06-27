@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="night">
 <head>
+<script>if(localStorage.getItem("aug-theme")==="day")document.documentElement.removeAttribute("data-theme");</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AyUpGee | Cozy Streamer from Manchester</title>
@@ -1564,11 +1565,12 @@ themeToggle.addEventListener('click', () => {
   applyTheme(!html.hasAttribute('data-theme'));
 });
 
-// Restore saved preference
+// Theme already restored in <head> before first paint — just sync the icon
 (function() {
-  const saved = localStorage.getItem('aug-theme');
-  if (saved === 'day') applyTheme(false);
-  // default is night (already set on html tag)
+  if (!html.hasAttribute('data-theme')) {
+    themeToggle.querySelector('i').setAttribute('data-lucide', 'moon-star');
+    if (window.lucide) lucide.createIcons();
+  }
 })();
 
 // ── Mobile hamburger ──────────────────────────────────────
