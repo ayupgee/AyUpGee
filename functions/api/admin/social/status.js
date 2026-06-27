@@ -12,9 +12,11 @@
  *   ok: true,
  *   timestamp: "2026-06-27T…",
  *   providers: {
- *     twitch:    { status, reachable, responseTime, lastSync, itemCount, lastError, logs },
- *     instagram: { … },
- *     tiktok:    { … },
+ *     twitch:     { status, reachable, responseTime, lastSync, itemCount, lastError, logs },
+ *     instagram:  { … },
+ *     tiktok:     { … },
+ *     twitchvods: { … },
+ *     youtube:    { … },
  *   }
  * }
  */
@@ -38,46 +40,37 @@ export async function onRequestGet(context) {
 
   try {
     // Fetch all providers in parallel for speed
-    const [twitchStatus, instagramStatus, tiktokStatus] = await Promise.all([
+    const [twitchStatus, instagramStatus, tiktokStatus, twitchVodsStatus, youtubeStatus] = await Promise.all([
       PROVIDERS.twitch.getStatus(env),
       PROVIDERS.instagram.getStatus(env),
       PROVIDERS.tiktok.getStatus(env),
+      PROVIDERS.twitchvods.getStatus(env),
+      PROVIDERS.youtube.getStatus(env),
     ]);
 
-    const [twitchLogs, instagramLogs, tiktokLogs] = await Promise.all([
+    const [twitchLogs, instagramLogs, tiktokLogs, twitchVodsLogs, youtubeLogs] = await Promise.all([
       PROVIDERS.twitch.getLogs(env),
       PROVIDERS.instagram.getLogs(env),
       PROVIDERS.tiktok.getLogs(env),
+      PROVIDERS.twitchvods.getLogs(env),
+      PROVIDERS.youtube.getLogs(env),
     ]);
+
+    // Strip non-serialisable function properties before spreading
+    const strip = (p) => {
+      const { sync: _s, getStatus: _g, getLogs: _l, ...rest } = p;
+      return rest;
+    };
 
     const payload = {
       ok: true,
       timestamp: new Date().toISOString(),
       providers: {
-        twitch: {
-          ...PROVIDERS.twitch,
-          sync: undefined,   // don't serialise functions
-          getStatus: undefined,
-          getLogs: undefined,
-          ...twitchStatus,
-          logs: twitchLogs,
-        },
-        instagram: {
-          ...PROVIDERS.instagram,
-          sync: undefined,
-          getStatus: undefined,
-          getLogs: undefined,
-          ...instagramStatus,
-          logs: instagramLogs,
-        },
-        tiktok: {
-          ...PROVIDERS.tiktok,
-          sync: undefined,
-          getStatus: undefined,
-          getLogs: undefined,
-          ...tiktokStatus,
-          logs: tiktokLogs,
-        },
+        twitch: { ...strip(PROVIDERS.twitch), ...twitchStatus, logs: twitchLogs },
+        instagram: { ...strip(PROVIDERS.instagram), ...instagramStatus, logs: instagramLogs },
+        tiktok: { ...strip(PROVIDERS.tiktok), ...tiktokStatus, logs: tiktokLogs },
+        twitchvods: { ...strip(PROVIDERS.twitchvods), ...twitchVodsStatus, logs: twitchVodsLogs },
+        youtube: { ...strip(PROVIDERS.youtube), ...youtubeStatus, logs: youtubeLogs },
       },
     };
 

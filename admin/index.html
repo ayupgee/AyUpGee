@@ -708,24 +708,24 @@ ul{list-style:none}
           <div class="admin-card__icon" style="background:rgba(95,212,214,.12)">📡</div>
           <div>
             <div class="admin-card__title">Social Integrations</div>
-            <div class="admin-card__desc">Twitch, Instagram and TikTok — health status, sync logs, cache and cleanup</div>
+            <div class="admin-card__desc">Twitch VODs, YouTube, Instagram and TikTok — health status, sync logs, cache and cleanup</div>
           </div>
           <div class="admin-card__footer">
-            <span class="admin-card__status admin-card__status--live">3 Connected</span>
+            <span class="admin-card__status admin-card__status--live">5 Connected</span>
             <span class="admin-card__action">Manage <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
           </div>
         </div>
 
         <!-- YouTube -->
-        <div class="admin-card" onclick="openModule('youtube')">
+        <div class="admin-card" onclick="openModule('social')">
           <div class="admin-card__icon" style="background:rgba(255,80,80,.12)">🎬</div>
           <div>
             <div class="admin-card__title">YouTube / Videos</div>
-            <div class="admin-card__desc">Feature videos, VOD archive links, and YouTube channel data</div>
+            <div class="admin-card__desc">Latest YouTube videos and Twitch VODs — synced automatically every 12 hours</div>
           </div>
           <div class="admin-card__footer">
-            <span class="admin-card__status admin-card__status--soon">Coming soon</span>
-            <span class="admin-card__action">Preview <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+            <span class="admin-card__status admin-card__status--live">Active</span>
+            <span class="admin-card__action">Manage <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
           </div>
         </div>
 
@@ -814,6 +814,8 @@ ul{list-style:none}
         <div class="provider-skeleton" style="height:380px"></div>
         <div class="provider-skeleton" style="height:380px"></div>
         <div class="provider-skeleton" style="height:380px"></div>
+        <div class="provider-skeleton" style="height:380px"></div>
+        <div class="provider-skeleton" style="height:380px"></div>
       </div>
 
       <!-- Cleanup panel -->
@@ -840,16 +842,20 @@ ul{list-style:none}
               <div class="cleanup-stat__value">Keep latest 4</div>
             </div>
             <div class="cleanup-stat">
+              <div class="cleanup-stat__label">Twitch VODs Rule</div>
+              <div class="cleanup-stat__value">Keep latest 3</div>
+            </div>
+            <div class="cleanup-stat">
+              <div class="cleanup-stat__label">YouTube Rule</div>
+              <div class="cleanup-stat__value">Keep latest 3</div>
+            </div>
+            <div class="cleanup-stat">
               <div class="cleanup-stat__label">Log Retention</div>
               <div class="cleanup-stat__value">30 days</div>
             </div>
             <div class="cleanup-stat">
               <div class="cleanup-stat__label">Next Scheduled</div>
               <div class="cleanup-stat__value">Sunday 03:00 UTC</div>
-            </div>
-            <div class="cleanup-stat">
-              <div class="cleanup-stat__label">Twitch Cache</div>
-              <div class="cleanup-stat__value cleanup-stat__value--muted">No cleanup needed</div>
             </div>
           </div>
           <div class="cleanup-last-messages" id="cleanupMessages">
@@ -910,7 +916,7 @@ ul{list-style:none}
         this.classList.add('active');
         closeSidebar();
 
-        if (['twitch','instagram','tiktok','social'].includes(section)) {
+        if (['twitch','instagram','tiktok','twitchvods','youtube','social'].includes(section)) {
           e.preventDefault();
           showView('social');
         } else if (section === 'schedule') {
@@ -950,8 +956,8 @@ ul{list-style:none}
   }
 
   // ── View switching ──────────────────────────────────────────────────────
-  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok','social']);
-  const COMING_SOON    = new Set(['blog','media','youtube','users','partnerships','analytics','settings']);
+  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok','twitchvods','youtube','social']);
+  const COMING_SOON    = new Set(['blog','media','users','partnerships','analytics','settings']);
 
   function showView(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1066,9 +1072,11 @@ ul{list-style:none}
     if (!grid) return;
 
     const cards = [
-      renderProviderCard('twitch',    providers.twitch),
-      renderProviderCard('instagram', providers.instagram),
-      renderProviderCard('tiktok',    providers.tiktok),
+      renderProviderCard('twitch',     providers.twitch),
+      renderProviderCard('instagram',  providers.instagram),
+      renderProviderCard('tiktok',     providers.tiktok),
+      renderProviderCard('twitchvods', providers.twitchvods),
+      renderProviderCard('youtube',    providers.youtube),
     ];
 
     grid.innerHTML = cards.join('');
@@ -1080,16 +1088,16 @@ ul{list-style:none}
 
     const statusLabel = { online:'🟢 Online', warning:'🟠 Warning', offline:'🔴 Offline', unknown:'🟡 Connecting' };
     const badgeClass  = { online:'status-badge--online', warning:'status-badge--warning', offline:'status-badge--offline', unknown:'status-badge--unknown' };
-    const icons       = { twitch:'tv-2', instagram:'camera', tiktok:'music-2' };
-    const iconBgs     = { twitch:'rgba(145,71,255,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)' };
-    const iconEmojis  = { twitch:'🟣', instagram:'📸', tiktok:'🎵' };
+    const icons       = { twitch:'tv-2', instagram:'camera', tiktok:'music-2', twitchvods:'video', youtube:'youtube' };
+    const iconBgs     = { twitch:'rgba(145,71,255,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)', twitchvods:'rgba(145,71,255,.15)', youtube:'rgba(255,80,80,.15)' };
+    const iconEmojis  = { twitch:'🟣', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬' };
 
     const status = p.status ?? 'unknown';
     const lastSync = p.lastSync ? relativeTime(p.lastSync) : '—';
     const rt       = p.responseTime ? `${p.responseTime}ms` : '—';
     const items    = p.itemCount != null ? p.itemCount : '—';
     const lastErr  = p.lastError ?? 'None';
-    const subLabel = { twitch:'ayupgee-social-sync.workers.dev', instagram:'behold.so', tiktok:'tikhub.io' }[id] ?? '';
+    const subLabel = { twitch:'ayupgee-social-sync.workers.dev', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3' }[id] ?? '';
     const canSync  = id === 'twitch'; // worker handles all syncs
 
     const logsHtml = (p.logs ?? []).length === 0
@@ -1200,10 +1208,12 @@ ul{list-style:none}
       const data = await res.json();
 
       if (data.ok) {
-        const r = data.results ?? {};
-        const ig = r.instagram?.removed ?? 0;
-        const tt = r.tiktok?.removed    ?? 0;
-        showToast(`✅ Cleanup complete — removed ${ig} Instagram, ${tt} TikTok item${tt !== 1 ? 's' : ''}`);
+        const r  = data.results ?? {};
+        const ig = r.instagram?.removed  ?? 0;
+        const tt = r.tiktok?.removed     ?? 0;
+        const tv = r.twitch?.removed     ?? 0;
+        const yt = r.youtube?.removed    ?? 0;
+        showToast(`✅ Cleanup complete — removed ${ig} Instagram, ${tt} TikTok, ${tv} Twitch VOD${tv !== 1 ? 's' : ''}, ${yt} YouTube`);
         loadCleanupStats();
       } else {
         showToast(`❌ ${data.error ?? 'Cleanup failed'}`, true);

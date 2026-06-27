@@ -615,7 +615,7 @@ async function cleanupTikTok(env, keep = 4) {
   return { kept: keep, removed };
 }
 
-async function cleanupTwitch(env, keep = 6) {
+async function cleanupTwitch(env, keep = 3) {
   const { meta } = await env.DB.prepare(`
     DELETE FROM social_posts
     WHERE  platform = 'twitch'
@@ -634,7 +634,7 @@ async function cleanupTwitch(env, keep = 6) {
   return { kept: keep, removed };
 }
 
-async function cleanupYouTube(env, keep = 6) {
+async function cleanupYouTube(env, keep = 3) {
   const { meta } = await env.DB.prepare(`
     DELETE FROM social_posts
     WHERE  platform = 'youtube'

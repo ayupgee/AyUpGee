@@ -5,10 +5,11 @@
  * Auth: admin session required (enforced by _middleware.ts).
  *
  * Cleanup rules (mirrors the Worker's weekly job):
- *   Instagram  → keep latest 6 posts
- *   TikTok     → keep latest 4 posts
- *   sync_logs  → keep 30 days
- *   Twitch     → no persistent cache; documented as no-op
+ *   Instagram   → keep latest 6 posts
+ *   TikTok      → keep latest 4 posts
+ *   Twitch VODs → keep latest 3 VODs
+ *   YouTube     → keep latest 3 videos
+ *   sync_logs   → keep 30 days
  *
  * All DB writes happen server-side. No secrets reach the browser.
  */
@@ -26,39 +27,22 @@ async function writeLog(db, platform, event, message) {
   } catch { /* never let logging break cleanup */ }
 }
 
-async function cleanupInstagram(db, keep = 6) {
+async function cleanupPlatform(db, platform, keep) {
   const { meta } = await db.prepare(`
     DELETE FROM social_posts
-    WHERE  platform = 'instagram'
+    WHERE  platform = ?
     AND    id NOT IN (
       SELECT id FROM social_posts
-      WHERE  platform = 'instagram'
+      WHERE  platform = ?
       ORDER  BY published_at DESC, updated_at DESC
       LIMIT  ?
     )
-  `).bind(keep).run();
+  `).bind(platform, platform, keep).run();
 
   const removed = meta?.changes ?? 0;
-  const msg = `Instagram cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
-  await writeLog(db, 'instagram', 'cleanup', msg);
-  return { kept: keep, removed };
-}
-
-async function cleanupTikTok(db, keep = 4) {
-  const { meta } = await db.prepare(`
-    DELETE FROM social_posts
-    WHERE  platform = 'tiktok'
-    AND    id NOT IN (
-      SELECT id FROM social_posts
-      WHERE  platform = 'tiktok'
-      ORDER  BY published_at DESC, updated_at DESC
-      LIMIT  ?
-    )
-  `).bind(keep).run();
-
-  const removed = meta?.changes ?? 0;
-  const msg = `TikTok cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
-  await writeLog(db, 'tiktok', 'cleanup', msg);
+  const label   = platform.charAt(0).toUpperCase() + platform.slice(1);
+  const msg     = `${label} cleanup completed. Kept latest ${keep} items, removed ${removed} old item${removed !== 1 ? 's' : ''}.`;
+  await writeLog(db, platform, 'cleanup', msg);
   return { kept: keep, removed };
 }
 
@@ -77,7 +61,7 @@ async function cleanupSyncLogs(db, keepDays = 30) {
 
 async function getLastCleanupStats(db) {
   try {
-    const platforms = ['instagram', 'tiktok', 'system'];
+    const platforms = ['instagram', 'tiktok', 'twitch', 'youtube', 'system'];
     const stats = {};
 
     for (const p of platforms) {
@@ -139,28 +123,35 @@ export async function onRequestPost(context) {
 
   const results = {};
 
-  try { results.instagram = await cleanupInstagram(env.DB); }
+  try { results.instagram = await cleanupPlatform(env.DB, 'instagram', 6); }
   catch (e) {
     console.error('[cleanup] Instagram failed:', e.message);
-    results.instagram = { error: 'Cleanup failed for Instagram. Please check server logs.' };
+    results.instagram = { error: 'Cleanup failed. Check server logs.' };
   }
 
-  try { results.tiktok = await cleanupTikTok(env.DB); }
+  try { results.tiktok = await cleanupPlatform(env.DB, 'tiktok', 4); }
   catch (e) {
     console.error('[cleanup] TikTok failed:', e.message);
-    results.tiktok = { error: 'Cleanup failed for TikTok. Please check server logs.' };
+    results.tiktok = { error: 'Cleanup failed. Check server logs.' };
+  }
+
+  try { results.twitch = await cleanupPlatform(env.DB, 'twitch', 3); }
+  catch (e) {
+    console.error('[cleanup] Twitch failed:', e.message);
+    results.twitch = { error: 'Cleanup failed. Check server logs.' };
+  }
+
+  try { results.youtube = await cleanupPlatform(env.DB, 'youtube', 3); }
+  catch (e) {
+    console.error('[cleanup] YouTube failed:', e.message);
+    results.youtube = { error: 'Cleanup failed. Check server logs.' };
   }
 
   try { results.logs = await cleanupSyncLogs(env.DB); }
   catch (e) {
     console.error('[cleanup] Log cleanup failed:', e.message);
-    results.logs = { error: 'Log cleanup failed. Please check server logs.' };
+    results.logs = { error: 'Log cleanup failed. Check server logs.' };
   }
-
-  results.twitch = {
-    removed: 0,
-    note: 'No Twitch cleanup required. Worker does not store persistent Twitch cache records.',
-  };
 
   return new Response(JSON.stringify({ ok: true, results }), { headers: JSON_HEADERS });
 }
