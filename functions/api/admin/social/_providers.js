@@ -298,11 +298,65 @@ export const YouTubeProvider = {
   async sync()       { return { ok: false, error: 'Trigger via the social-sync worker /sync endpoint.' }; },
 };
 
+// ── Twitch Schedule Provider ───────────────────────────────────────────────────
+export const TwitchScheduleProvider = {
+  id:           'twitchschedule',
+  name:         'Twitch Schedule',
+  dashboardUrl: 'https://dashboard.twitch.tv/u/ayupgee/content/schedule',
+  providerUrl:  'https://api.twitch.tv/helix/schedule',
+
+  async getStatus(env) {
+    // Ping our own Pages Function which proxies the Twitch schedule API
+    const start = Date.now();
+    let reachable    = false;
+    let responseTime = null;
+    let lastSync     = null;
+    let itemCount    = 0;
+    let lastError    = null;
+
+    try {
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 8000);
+      // Use the Pages Function URL — relative won't work in a Pages Function context,
+      // so we derive it from the environment or fall back to the production URL.
+      const scheduleUrl = (env.PAGES_BASE_URL ?? 'https://ayupgee.pages.dev') + '/api/twitch/schedule';
+      const res = await fetch(scheduleUrl, {
+        signal: ctrl.signal,
+        headers: { 'User-Agent': 'AyUpGee-HealthCheck/1.0' },
+      });
+      clearTimeout(tid);
+      responseTime = Date.now() - start;
+      reachable    = res.ok;
+
+      if (res.ok) {
+        const data = await res.json();
+        itemCount = data?.items?.length ?? 0;
+        lastSync  = new Date().toISOString(); // schedule endpoint is live, not cached in D1
+      } else {
+        lastError = `Schedule API returned ${res.status}`;
+      }
+    } catch (e) {
+      responseTime = Date.now() - start;
+      lastError    = e.message ?? 'Request failed';
+    }
+
+    const status = reachable ? 'online' : 'offline';
+    return { reachable, responseTime, status, lastSync, itemCount, lastError, lastErrorAt: null, version: null };
+  },
+
+  async getLogs(env) {
+    // Schedule doesn't write to sync_logs; return recent Twitch VOD logs as a proxy
+    return getLogs(env, 'twitch');
+  },
+  async sync() { return { ok: false, error: 'Schedule is read from Twitch in real time — no sync needed.' }; },
+};
+
 // ── Registry ───────────────────────────────────────────────────────────────────
 export const PROVIDERS = {
-  twitch:     TwitchProvider,      // social-sync worker health (manages Instagram + TikTok)
-  instagram:  InstagramProvider,
-  tiktok:     TikTokProvider,
-  twitchvods: TwitchVODsProvider,  // Twitch VODs sync status
-  youtube:    YouTubeProvider,     // YouTube videos sync status
+  twitch:          TwitchProvider,          // social-sync worker overview (all 4 platforms)
+  instagram:       InstagramProvider,
+  tiktok:          TikTokProvider,
+  twitchvods:      TwitchVODsProvider,      // Twitch VODs sync status
+  youtube:         YouTubeProvider,         // YouTube videos sync status
+  twitchschedule:  TwitchScheduleProvider,  // Twitch schedule API health
 };

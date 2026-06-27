@@ -40,20 +40,28 @@ export async function onRequestGet(context) {
 
   try {
     // Fetch all providers in parallel for speed
-    const [twitchStatus, instagramStatus, tiktokStatus, twitchVodsStatus, youtubeStatus] = await Promise.all([
+    const [
+      twitchStatus, instagramStatus, tiktokStatus,
+      twitchVodsStatus, youtubeStatus, twitchScheduleStatus,
+    ] = await Promise.all([
       PROVIDERS.twitch.getStatus(env),
       PROVIDERS.instagram.getStatus(env),
       PROVIDERS.tiktok.getStatus(env),
       PROVIDERS.twitchvods.getStatus(env),
       PROVIDERS.youtube.getStatus(env),
+      PROVIDERS.twitchschedule.getStatus(env),
     ]);
 
-    const [twitchLogs, instagramLogs, tiktokLogs, twitchVodsLogs, youtubeLogs] = await Promise.all([
+    const [
+      twitchLogs, instagramLogs, tiktokLogs,
+      twitchVodsLogs, youtubeLogs, twitchScheduleLogs,
+    ] = await Promise.all([
       PROVIDERS.twitch.getLogs(env),
       PROVIDERS.instagram.getLogs(env),
       PROVIDERS.tiktok.getLogs(env),
       PROVIDERS.twitchvods.getLogs(env),
       PROVIDERS.youtube.getLogs(env),
+      PROVIDERS.twitchschedule.getLogs(env),
     ]);
 
     // Strip non-serialisable function properties before spreading
@@ -66,11 +74,12 @@ export async function onRequestGet(context) {
       ok: true,
       timestamp: new Date().toISOString(),
       providers: {
-        twitch: { ...strip(PROVIDERS.twitch), ...twitchStatus, logs: twitchLogs },
-        instagram: { ...strip(PROVIDERS.instagram), ...instagramStatus, logs: instagramLogs },
-        tiktok: { ...strip(PROVIDERS.tiktok), ...tiktokStatus, logs: tiktokLogs },
-        twitchvods: { ...strip(PROVIDERS.twitchvods), ...twitchVodsStatus, logs: twitchVodsLogs },
-        youtube: { ...strip(PROVIDERS.youtube), ...youtubeStatus, logs: youtubeLogs },
+        twitch:         { ...strip(PROVIDERS.twitch),         ...twitchStatus,         logs: twitchLogs },
+        instagram:      { ...strip(PROVIDERS.instagram),      ...instagramStatus,      logs: instagramLogs },
+        tiktok:         { ...strip(PROVIDERS.tiktok),         ...tiktokStatus,         logs: tiktokLogs },
+        twitchvods:     { ...strip(PROVIDERS.twitchvods),     ...twitchVodsStatus,     logs: twitchVodsLogs },
+        youtube:        { ...strip(PROVIDERS.youtube),        ...youtubeStatus,        logs: youtubeLogs },
+        twitchschedule: { ...strip(PROVIDERS.twitchschedule), ...twitchScheduleStatus, logs: twitchScheduleLogs },
       },
     };
 

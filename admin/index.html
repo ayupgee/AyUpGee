@@ -711,7 +711,7 @@ ul{list-style:none}
             <div class="admin-card__desc">Twitch VODs, YouTube, Instagram and TikTok — health status, sync logs, cache and cleanup</div>
           </div>
           <div class="admin-card__footer">
-            <span class="admin-card__status admin-card__status--live">5 Connected</span>
+            <span class="admin-card__status admin-card__status--live">6 Connected</span>
             <span class="admin-card__action">Manage <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
           </div>
         </div>
@@ -811,6 +811,7 @@ ul{list-style:none}
 
       <div class="social-grid" id="socialGrid">
         <!-- Skeleton placeholders -->
+        <div class="provider-skeleton" style="height:380px"></div>
         <div class="provider-skeleton" style="height:380px"></div>
         <div class="provider-skeleton" style="height:380px"></div>
         <div class="provider-skeleton" style="height:380px"></div>
@@ -956,7 +957,7 @@ ul{list-style:none}
   }
 
   // ── View switching ──────────────────────────────────────────────────────
-  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok','twitchvods','youtube','social']);
+  const SOCIAL_MODULES = new Set(['twitch','instagram','tiktok','twitchvods','youtube','twitchschedule','social']);
   const COMING_SOON    = new Set(['blog','media','users','partnerships','analytics','settings']);
 
   function showView(name) {
@@ -1072,11 +1073,12 @@ ul{list-style:none}
     if (!grid) return;
 
     const cards = [
-      renderProviderCard('twitch',     providers.twitch),
-      renderProviderCard('instagram',  providers.instagram),
-      renderProviderCard('tiktok',     providers.tiktok),
-      renderProviderCard('twitchvods', providers.twitchvods),
-      renderProviderCard('youtube',    providers.youtube),
+      renderProviderCard('twitch',          providers.twitch),
+      renderProviderCard('instagram',       providers.instagram),
+      renderProviderCard('tiktok',          providers.tiktok),
+      renderProviderCard('twitchvods',      providers.twitchvods),
+      renderProviderCard('youtube',         providers.youtube),
+      renderProviderCard('twitchschedule',  providers.twitchschedule),
     ];
 
     grid.innerHTML = cards.join('');
@@ -1088,16 +1090,16 @@ ul{list-style:none}
 
     const statusLabel = { online:'🟢 Online', warning:'🟠 Warning', offline:'🔴 Offline', unknown:'🟡 Connecting' };
     const badgeClass  = { online:'status-badge--online', warning:'status-badge--warning', offline:'status-badge--offline', unknown:'status-badge--unknown' };
-    const icons       = { twitch:'server', instagram:'camera', tiktok:'music-2', twitchvods:'video', youtube:'youtube' };
-    const iconBgs     = { twitch:'rgba(95,212,214,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)', twitchvods:'rgba(145,71,255,.15)', youtube:'rgba(255,80,80,.15)' };
-    const iconEmojis  = { twitch:'⚙️', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬' };
+    const icons       = { twitch:'server', instagram:'camera', tiktok:'music-2', twitchvods:'video', youtube:'youtube', twitchschedule:'calendar' };
+    const iconBgs     = { twitch:'rgba(95,212,214,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)', twitchvods:'rgba(145,71,255,.15)', youtube:'rgba(255,80,80,.15)', twitchschedule:'rgba(145,71,255,.15)' };
+    const iconEmojis  = { twitch:'⚙️', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬', twitchschedule:'📅' };
 
     const status = p.status ?? 'unknown';
     const lastSync = p.lastSync ? relativeTime(p.lastSync) : '—';
     const rt       = p.responseTime ? `${p.responseTime}ms` : '—';
     const items    = p.itemCount != null ? p.itemCount : '—';
     const lastErr  = p.lastError ?? 'None';
-    const subLabel = { twitch:'Sync overview — all 4 platforms', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3' }[id] ?? '';
+    const subLabel = { twitch:'Sync overview — all 4 platforms', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3', twitchschedule:'api.twitch.tv/helix/schedule' }[id] ?? '';
     const canSync  = id === 'twitch'; // worker handles all syncs
 
     const logsHtml = (p.logs ?? []).length === 0

@@ -152,9 +152,41 @@ async function syncTikTok(env) {
     'User-Agent': 'AyUpGee-SocialSync/2.0',
   };
 
-  // Single call — app/v3 endpoint accepts unique_id directly, no secUid resolution needed
+  // Step 1 — get secUid from user profile (more reliable than get_sec_user_id)
+  const profileRes = await fetch(
+    'https://api.tikhub.io/api/v1/tiktok/web/fetch_user_profile?uniqueId=ayupgee',
+    { headers }
+  );
+
+  let secUid = null;
+  if (profileRes.ok) {
+    const profileJson = await profileRes.json().catch(() => null);
+    const user = profileJson?.data?.userInfo?.user ?? profileJson?.data?.user ?? null;
+    // secUid may appear under different keys depending on TikHub version
+    secUid = user?.secUid ?? user?.sec_uid ?? user?.secUID ?? null;
+    // Fallback: check top-level data in case response is flatter
+    if (!secUid) {
+      const d = profileJson?.data;
+      secUid = (typeof d === 'string' ? d : null)
+        ?? d?.secUid ?? d?.sec_uid ?? null;
+    }
+    console.log('[tiktok] secUid resolved:', secUid ? secUid.slice(0, 20) + '…' : 'null');
+  } else {
+    console.warn('[tiktok] fetch_user_profile returned', profileRes.status);
+  }
+
+  if (!secUid) {
+    const msg = 'Could not resolve TikTok secUid from user profile';
+    await writeLog(env, 'tiktok', 'sync_error', 'TikTok sync failed', {
+      error_message: msg,
+      response_time_ms: Date.now() - start,
+    });
+    throw new Error(msg);
+  }
+
+  // Step 2 — fetch latest posts using ONLY secUid (unique_id is not a valid param here)
   const res = await fetch(
-    'https://api.tikhub.io/api/v1/tiktok/app/v3/fetch_user_post_videos?unique_id=ayupgee&count=4',
+    `https://api.tikhub.io/api/v1/tiktok/web/fetch_user_post?secUid=${encodeURIComponent(secUid)}&count=4`,
     { headers }
   );
 
@@ -169,7 +201,6 @@ async function syncTikTok(env) {
   }
 
   const json   = await res.json();
-  // app/v3 returns aweme_list under data.aweme_list (same as web endpoint)
   const videos = json?.data?.aweme_list ?? [];
 
   if (videos.length === 0) {
