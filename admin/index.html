@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin – AyUpGee</title>
+<title>Admin | AyUpGee</title>
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- Favicons -->
@@ -591,7 +591,7 @@ ul{list-style:none}
         <div class="sidebar__avatar" id="userAvatar">🐝</div>
         <div class="sidebar__user-info">
           <div class="sidebar__user-name" id="userName">Loading…</div>
-          <div class="sidebar__user-role" id="userRole">–</div>
+          <div class="sidebar__user-role" id="userRole">-</div>
         </div>
       </div>
       <button class="sidebar__logout" id="logoutBtn">
@@ -640,7 +640,7 @@ ul{list-style:none}
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-card__label">Users</div>
-          <div class="stat-card__value" id="statUsers">–</div>
+          <div class="stat-card__value" id="statUsers">-</div>
           <div class="stat-card__meta">registered members</div>
         </div>
         <div class="stat-card">
@@ -650,7 +650,7 @@ ul{list-style:none}
         </div>
         <div class="stat-card">
           <div class="stat-card__label">Posts</div>
-          <div class="stat-card__value">–</div>
+          <div class="stat-card__value">-</div>
           <div class="stat-card__meta">blog articles</div>
         </div>
         <div class="stat-card">
@@ -708,7 +708,7 @@ ul{list-style:none}
           <div class="admin-card__icon" style="background:rgba(95,212,214,.12)">📡</div>
           <div>
             <div class="admin-card__title">Social Integrations</div>
-            <div class="admin-card__desc">Twitch VODs, YouTube, Instagram and TikTok — health status, sync logs, cache and cleanup</div>
+            <div class="admin-card__desc">Twitch VODs, YouTube, Instagram and TikTok - health status, sync logs, cache and cleanup</div>
           </div>
           <div class="admin-card__footer">
             <span class="admin-card__status admin-card__status--live">6 Connected</span>
@@ -721,7 +721,7 @@ ul{list-style:none}
           <div class="admin-card__icon" style="background:rgba(255,80,80,.12)">🎬</div>
           <div>
             <div class="admin-card__title">YouTube / Videos</div>
-            <div class="admin-card__desc">Latest YouTube videos and Twitch VODs — synced automatically every 12 hours</div>
+            <div class="admin-card__desc">Latest YouTube videos and Twitch VODs, synced automatically every 12 hours</div>
           </div>
           <div class="admin-card__footer">
             <span class="admin-card__status admin-card__status--live">Active</span>
@@ -773,7 +773,7 @@ ul{list-style:none}
           <div class="admin-card__icon" style="background:rgba(174,182,238,.12)">🛡️</div>
           <div>
             <div class="admin-card__title">Audit Log</div>
-            <div class="admin-card__desc">Immutable log of all admin actions — logins, edits, changes</div>
+            <div class="admin-card__desc">Immutable log of all admin actions: logins, edits, changes</div>
           </div>
           <div class="admin-card__footer">
             <span class="admin-card__status admin-card__status--active">Active</span>
@@ -1095,11 +1095,11 @@ ul{list-style:none}
     const iconEmojis  = { twitch:'⚙️', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬', twitchschedule:'📅' };
 
     const status = p.status ?? 'unknown';
-    const lastSync = p.lastSync ? relativeTime(p.lastSync) : '—';
-    const rt       = p.responseTime ? `${p.responseTime}ms` : '—';
-    const items    = p.itemCount != null ? p.itemCount : '—';
+    const lastSync = p.lastSync ? relativeTime(p.lastSync) : '-';
+    const rt       = p.responseTime ? `${p.responseTime}ms` : '-';
+    const items    = p.itemCount != null ? p.itemCount : '-';
     const lastErr  = p.lastError ?? 'None';
-    const subLabel = { twitch:'Sync overview — all 4 platforms', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3', twitchschedule:'api.twitch.tv/helix/schedule' }[id] ?? '';
+    const subLabel = { twitch:'Sync overview - all 4 platforms', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3', twitchschedule:'api.twitch.tv/helix/schedule' }[id] ?? '';
     const canSync  = id === 'twitch'; // worker handles all syncs
 
     const logsHtml = (p.logs ?? []).length === 0
@@ -1190,7 +1190,7 @@ ul{list-style:none}
         msgs.innerHTML = entries.map(([platform, info]) =>
           `<div class="cleanup-msg cleanup-msg--ok">
             <strong style="text-transform:capitalize">${esc(platform)}</strong>
-            — ${esc(info.message)}
+            - ${esc(info.message)}
             <span style="color:var(--text-faint);font-size:.72rem;margin-left:.4rem">${formatLogTime(info.at)}</span>
           </div>`
         ).join('');
@@ -1215,7 +1215,7 @@ ul{list-style:none}
         const tt = r.tiktok?.removed     ?? 0;
         const tv = r.twitch?.removed     ?? 0;
         const yt = r.youtube?.removed    ?? 0;
-        showToast(`✅ Cleanup complete — removed ${ig} Instagram, ${tt} TikTok, ${tv} Twitch VOD${tv !== 1 ? 's' : ''}, ${yt} YouTube`);
+        showToast(`✅ Cleanup complete, removed ${ig} Instagram, ${tt} TikTok, ${tv} Twitch VOD${tv !== 1 ? 's' : ''}, ${yt} YouTube`);
         loadCleanupStats();
       } else {
         showToast(`❌ ${data.error ?? 'Cleanup failed'}`, true);
@@ -1238,7 +1238,7 @@ ul{list-style:none}
       const res  = await fetch('/api/admin/social/sync', { method: 'POST', credentials: 'same-origin' });
       const data = await res.json();
       if (data.ok) {
-        showToast('✅ Sync complete — refreshing status…');
+        showToast('✅ Sync complete, refreshing status…');
         setTimeout(() => loadSocialStatus(), 1500);
       } else {
         showToast(`❌ ${data.error ?? 'Sync failed'}`, true);
@@ -1264,7 +1264,7 @@ ul{list-style:none}
   }
 
   function relativeTime(iso) {
-    if (!iso) return '—';
+    if (!iso) return '-';
     const diff = Date.now() - utcDate(iso).getTime();
     const m = Math.floor(diff / 60_000);
     if (m < 1)  return 'just now';
@@ -1275,7 +1275,7 @@ ul{list-style:none}
   }
 
   function formatLogTime(iso) {
-    if (!iso) return '–:–';
+    if (!iso) return '-:-';
     return utcDate(iso).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   }
 

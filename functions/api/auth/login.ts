@@ -47,7 +47,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const ip = request.headers.get('CF-Connecting-IP');
   const turnstileOk = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, ip);
   if (!turnstileOk) {
-    return err('turnstile_failed', 'Bot check failed — please try again', 400);
+    return err('turnstile_failed', 'Bot check failed, please try again', 400);
   }
 
   // ── Attempt login ─────────────────────────────────────────────────────────

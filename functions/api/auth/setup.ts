@@ -81,7 +81,7 @@ async function handleSetup(request: Request, env: Env): Promise<Response> {
   // ── Guard: only one admin can be created via this endpoint ─────────────────
   const adminCount = await countAdmins(env.DB);
   if (adminCount > 0) {
-    return err('setup_complete', 'Admin account already exists — setup endpoint is disabled', 409);
+    return err('setup_complete', 'Admin account already exists. Setup endpoint is disabled.', 409);
   }
 
   // ── Create admin user ──────────────────────────────────────────────────────

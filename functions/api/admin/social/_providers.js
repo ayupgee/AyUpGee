@@ -348,7 +348,7 @@ export const TwitchScheduleProvider = {
     // Schedule is fetched live from Twitch on every page load — no sync history in D1
     return [];
   },
-  async sync() { return { ok: false, error: 'Schedule is read from Twitch in real time — no sync needed.' }; },
+  async sync() { return { ok: false, error: 'Schedule is read from Twitch in real time, no sync needed.' }; },
 };
 
 // ── Registry ───────────────────────────────────────────────────────────────────
