@@ -1576,7 +1576,7 @@ ul,ol{list-style:none}
       '<span class="aug-notice__icon" aria-hidden="true">' + escHtml(n.emoji) + '</span>' +
       '<div class="aug-notice__content">' +
         '<p class="aug-notice__heading">' + escHtml(n.title) + '</p>' +
-        '<p class="aug-notice__body">'    + escHtml(n.body)  + '</p>' +
+        '<p class="aug-notice__body">'    + n.body           + '</p>' +
       '</div>';
     const counter = document.getElementById('aug-notice-counter');
     if (counter) counter.textContent = (_current + 1) + ' / ' + _notices.length;
@@ -1610,7 +1610,7 @@ ul,ol{list-style:none}
           '<span class="aug-notice__icon" aria-hidden="true">' + escHtml(n0.emoji) + '</span>' +
           '<div class="aug-notice__content">' +
             '<p class="aug-notice__heading">' + escHtml(n0.title) + '</p>' +
-            '<p class="aug-notice__body">'    + escHtml(n0.body)  + '</p>' +
+            '<p class="aug-notice__body">'    + n0.body           + '</p>' +
           '</div>' +
         '</div>' +
         (multi ?
