@@ -726,26 +726,37 @@ function jsonResponse(data, status = 200) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default {
-  // Cron trigger — 12-hourly sync (06:00 + 18:00 UTC) OR weekly cleanup (Sun 03:00 UTC)
+  // Cron trigger routing:
+  //   "0 6 * * *"  — TikTok (once daily) + Instagram/YouTube/Twitch
+  //   "0 18 * * *" — Instagram/YouTube/Twitch only (TikTok skipped to conserve TikHub credits)
+  //   "0 3 * * 0"  — Weekly Sunday cache cleanup only
   async scheduled(event, env, ctx) {
     console.log(`[social-sync] Cron "${event.cron}" firing at ${new Date().toISOString()}`);
 
     if (event.cron === '0 3 * * 0') {
-      // Weekly Sunday 03:00 UTC — run cache cleanup
       await runCleanup(env);
-    } else {
-      // Every other cron (12-hourly) — run social sync for all platforms
-      const results = {};
-      try { results.instagram = await syncInstagram(env); }
-      catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
+      return;
+    }
+
+    const results = {};
+    const includeTikTok = event.cron === '0 6 * * *';
+
+    try { results.instagram = await syncInstagram(env); }
+    catch (e) { console.error('[instagram] Sync failed:', e.message); results.instagram = { error: e.message }; }
+
+    if (includeTikTok) {
       try { results.tiktok = await syncTikTok(env); }
       catch (e) { console.error('[tiktok] Sync failed:', e.message); results.tiktok = { error: e.message }; }
-      try { results.twitch = await syncTwitch(env); }
-      catch (e) { console.error('[twitch-vods] Sync failed:', e.message); results.twitch = { error: e.message }; }
-      try { results.youtube = await syncYouTube(env); }
-      catch (e) { console.error('[youtube] Sync failed:', e.message); results.youtube = { error: e.message }; }
-      console.log('[social-sync] Sync complete:', JSON.stringify(results));
+    } else {
+      results.tiktok = 'skipped (24h cadence)';
     }
+
+    try { results.twitch = await syncTwitch(env); }
+    catch (e) { console.error('[twitch-vods] Sync failed:', e.message); results.twitch = { error: e.message }; }
+    try { results.youtube = await syncYouTube(env); }
+    catch (e) { console.error('[youtube] Sync failed:', e.message); results.youtube = { error: e.message }; }
+
+    console.log('[social-sync] Sync complete:', JSON.stringify(results));
   },
 
   // HTTP handler
