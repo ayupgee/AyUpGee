@@ -7,7 +7,6 @@
 <meta name="description" content="Cozy Twitch streamer from Manchester playing Disney Dreamlight Valley, Animal Crossing, life sims, and cosy games. Relax with wholesome community vibes, live streams, and friendly chats." />
 <link rel="canonical" href="https://ayupgee.com/" />
 
-<!-- Open Graph -->
 <meta property="og:type"        content="website" />
 <meta property="og:url"         content="https://ayupgee.com/" />
 <meta property="og:site_name"   content="AyUpGee" />
@@ -17,7 +16,6 @@
 <meta property="og:image:alt"   content="AyUpGee - Cozy Streamer from Manchester" />
 <meta property="og:locale"      content="en_GB" />
 
-<!-- Twitter / X Card -->
 <meta name="twitter:card"        content="summary_large_image" />
 <meta name="twitter:site"        content="@ayupgee" />
 <meta name="twitter:title"       content="AyUpGee | Cozy Streamer from Manchester" />
@@ -25,7 +23,6 @@
 <meta name="twitter:image"       content="https://ayupgee.com/assets/social-profile.jpg" />
 <meta name="twitter:image:alt"   content="AyUpGee - Cozy Streamer from Manchester" />
 
-<!-- JSON-LD Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -47,7 +44,6 @@
 }
 </script>
 
-<!-- Google Analytics - Consent Mode v2 (UK GDPR compliant) -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -70,7 +66,6 @@
   gtag('config', 'G-STNMT5PNGS');
 </script>
 
-<!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico" />
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
@@ -78,16 +73,13 @@
 <link rel="manifest" href="/assets/favicon/site.webmanifest" />
 <meta name="theme-color" content="#161427" />
 
-<!-- AyUpGee Design System – fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
-<!-- DNS prefetch for external asset CDNs -->
 <link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
 <link rel="dns-prefetch" href="https://unpkg.com" />
 
-<!-- Lucide icons -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 
 <style>
@@ -511,7 +503,6 @@ ul,ol{list-style:none}
 .hero__pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5);justify-content:center}
 .hero__stats{display:flex;gap:var(--space-6);padding-top:var(--space-5);border-top:var(--border-thin) solid var(--border);justify-content:center}
 
-
 /* ═══════════════════════════════════════════════════════
    EYEBROW / SECTION LABELS
    ═══════════════════════════════════════════════════════ */
@@ -809,13 +800,10 @@ ul,ol{list-style:none}
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
-     NAVIGATION
-     ═══════════════════════════════════════════════════════ -->
 <header class="site-header" id="siteHeader">
   <a href="#hero" class="brand-lockup">
     <div class="brand-mark">
-      <!-- Bee mascot logo mark -->
+      
       <img src="assets/ayupgee-honey_drips_112x112.png"
            alt="AyUpGee bee"
            onerror="this.style.display='none';this.parentNode.innerHTML='🐝'" />
@@ -861,31 +849,28 @@ ul,ol{list-style:none}
   <a href="#partnerships" onclick="closeMenu()">🤝 Collab</a>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════════
-     HERO
-     ═══════════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero">
-    <!-- Hero background -->
+    
     <picture>
       <source srcset="assets/ayupgee-bg-hero.webp" type="image/webp" />
       <img class="hero__bg" src="assets/ayupgee-bg-hero.png" alt="" fetchpriority="high" decoding="async" />
     </picture>
     <div class="hero__scrim"></div>
-    <!-- Ambient orbs -->
+    
     <div class="hero__orb hero__orb--a"></div>
     <div class="hero__orb hero__orb--b"></div>
     <div class="hero__orb hero__orb--c"></div>
-    <!-- Stars (injected by JS) -->
+    
     <div class="hero__stars" id="heroStars"></div>
 
     <div class="container">
       <div class="hero__inner">
-        <!-- Announcement notice (rendered by AYG_NOTICE config in script below) -->
+        
         <div id="ayg-notice-mount"></div>
-        <!-- Glass intro card -->
+        
         <div class="hero__card">
-          <!-- Browser chrome -->
+          
           <div class="hero__browser-bar">
             <div class="hero__browser-dots">
               <span class="hero__browser-dot" style="background:#ff5f57"></span>
@@ -894,10 +879,10 @@ ul,ol{list-style:none}
             </div>
             <div class="hero__browser-url">ayupgee.com</div>
           </div>
-          <!-- Card body -->
+          
           <div class="hero__body">
           <div class="hero__top">
-            <!-- Avatar with aurora ring -->
+            
             <span class="ayg-avatar ayg-avatar--ring" style="width:84px;height:84px">
               <img class="ayg-avatar__img"
                    src="assets/social-profile.jpg"
@@ -931,7 +916,7 @@ ul,ol{list-style:none}
             </a>
           </div>
 
-          <!-- Community vibe pills -->
+          
           <div class="hero__pills">
             <span class="ayg-tag">🌿 Lurker-friendly</span>
             <span class="ayg-tag">🏳️‍🌈 LGBTQIA+</span>
@@ -963,18 +948,14 @@ ul,ol{list-style:none}
               <span class="ayg-stat__label">Manchester, UK</span>
             </div>
           </div>
-          </div><!-- /.hero__body -->
-        </div><!-- /.hero__card -->
+          </div>
+        </div>
 
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     TWITCH LIVE SECTION
-     Update: change parent= to your live domain when hosting
-     ═══════════════════════════════════════════════════════ -->
 <section id="twitch" class="section">
   <div class="container">
     <div class="section-head section-head--between reveal">
@@ -991,7 +972,7 @@ ul,ol{list-style:none}
     </div>
 
     <div class="twitch-layout reveal">
-      <!-- Player -->
+      
       <div class="twitch-player-wrap">
         <div class="twitch-player-header">
           <div class="twitch-player-title">
@@ -1004,8 +985,8 @@ ul,ol{list-style:none}
             Follow ↗
           </a>
         </div>
-        <!-- Twitch embed — update parent= to your domain when live -->
-        <!-- UPDATE: change parent=localhost to parent=yourdomain.com -->
+        
+        
         <div class="twitch-embed-ratio">
           <iframe
             src="https://player.twitch.tv/?channel=ayupgee&parent=ayupgee.com&parent=localhost&parent=127.0.0.1&autoplay=false&muted=true"
@@ -1014,7 +995,7 @@ ul,ol{list-style:none}
         </div>
       </div>
 
-      <!-- Sidebar -->
+      
       <div class="twitch-sidebar">
         <div class="ayg-card ayg-card--pad">
           <p style="font-family:var(--font-display);font-weight:var(--fw-semibold);color:var(--dream-400);margin-bottom:var(--space-2)">twitch.tv/ayupgee</p>
@@ -1051,12 +1032,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     SCHEDULE SECTION
-     Live data pulled from /api/twitch/schedule (Cloudflare Pages Function).
-     Update your schedule on Twitch and it appears here automatically.
-     Static fallback activates automatically if the API is unavailable.
-     ═══════════════════════════════════════════════════════ -->
 <section id="schedule" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1065,7 +1040,7 @@ ul,ol{list-style:none}
       <p class="section-desc">All times are UK time. My schedule can occasionally change, so Twitch notifications and Discord are the best places to keep up with any updates ✨</p>
     </div>
 
-    <!-- Schedule items — populated dynamically by /api/twitch/schedule (see JS below) -->
+    
     <div class="schedule-list" id="scheduleList"></div>
 
     <p class="schedule-note reveal">
@@ -1075,10 +1050,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     VIDEOS SECTION (VODs + YouTube)
-     *** UPDATE: replace placeholder title/date/href on each card ***
-     ═══════════════════════════════════════════════════════ -->
 <section id="videos" class="section">
   <div class="container">
     <div class="section-head section-head--between reveal">
@@ -1089,7 +1060,7 @@ ul,ol{list-style:none}
       </div>
     </div>
 
-    <!-- Tabs -->
+    
     <div class="videos-tabs reveal">
       <button class="videos-tab active" onclick="switchTab('twitch-vods',this)">
         🟣 Twitch VODs
@@ -1099,10 +1070,10 @@ ul,ol{list-style:none}
       </button>
     </div>
 
-    <!-- Twitch VODs panel — populated dynamically by loadTwitchVods() -->
+    
     <div class="videos-panel active" id="panel-twitch-vods">
       <div class="video-grid" id="twitchVodGrid" aria-live="polite" aria-label="Twitch VODs">
-        <!-- Skeleton placeholders shown while loading -->
+        
         <div class="video-card video-card--skeleton" aria-hidden="true">
           <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
@@ -1133,10 +1104,10 @@ ul,ol{list-style:none}
       </div>
     </div>
 
-    <!-- YouTube panel — populated dynamically by loadYouTubeVideos() -->
+    
     <div class="videos-panel" id="panel-youtube-vids">
       <div class="video-grid" id="youtubeVideoGrid" aria-live="polite" aria-label="YouTube videos">
-        <!-- Skeleton placeholders shown while loading -->
+        
         <div class="video-card video-card--skeleton" aria-hidden="true">
           <div class="video-thumb"><div class="skel-pulse"></div></div>
           <div class="video-card__body">
@@ -1169,11 +1140,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     TIKTOK SECTION
-     *** UPDATE: edit each clip's data-title and data-emoji ***
-     Replace the href links with real TikTok video URLs
-     ═══════════════════════════════════════════════════════ -->
 <section id="tiktok" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1184,9 +1150,9 @@ ul,ol{list-style:none}
       </p>
     </div>
 
-    <!-- TikTok feed — populated dynamically by loadTikTokFeed() -->
+    
     <div class="clip-row reveal" id="tiktokFeed" aria-live="polite" aria-label="TikTok clips">
-      <!-- Skeleton placeholders shown while loading -->
+      
       <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="clip clip--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
@@ -1203,9 +1169,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     INSTAGRAM SECTION
-     ═══════════════════════════════════════════════════════ -->
 <section id="instagram" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1214,9 +1177,9 @@ ul,ol{list-style:none}
       <p class="section-desc">Behind-the-scenes moments, DreamSnaps, cosy gaming, stream setup updates, and a few snapshots from everyday life.</p>
     </div>
 
-    <!-- Instagram grid — populated dynamically by loadInstagramFeed() -->
+    
     <div class="insta-grid reveal" id="instaFeed" aria-live="polite" aria-label="Instagram posts">
-      <!-- Skeleton placeholders shown while loading -->
+      
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
       <div class="insta-cell insta-cell--skeleton" aria-hidden="true"><div class="skel-pulse"></div></div>
@@ -1226,7 +1189,7 @@ ul,ol{list-style:none}
     </div>
 
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
-      <!-- UPDATE: replace # with your real Instagram URL -->
+      
       <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener"
          class="ayg-social" style="--_c:#E4405F">
         <img class="ayg-social__logo" src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" />
@@ -1236,9 +1199,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     COMMUNITY / DISCORD SECTION
-     ═══════════════════════════════════════════════════════ -->
 <section id="community" class="section">
   <div class="container">
     <div class="community-layout">
@@ -1296,7 +1256,7 @@ ul,ol{list-style:none}
         </div>
       </div>
 
-      <!-- Discord card -->
+      
       <div class="discord-card reveal">
         <div class="discord-card__logo">
           <img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" loading="lazy" decoding="async" />
@@ -1305,7 +1265,7 @@ ul,ol{list-style:none}
         <p class="discord-card__desc">
           A relaxed, friendly server where everyone is kind and the chat is always good. Get the latest updates from Gee, chat about games, share what you're playing, and stay in the loop with stream news and community announcements.
         </p>
-        <!-- UPDATE: replace with your real Discord invite link -->
+        
         <a href="https://discord.gg/uAhZtzkKDU" target="_blank" rel="noopener"
            class="discord-invite-btn">
           <img src="https://cdn.simpleicons.org/discord/5865F2" alt="" style="width:22px;height:22px" loading="lazy" decoding="async" />
@@ -1316,18 +1276,15 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     ABOUT SECTION
-     ═══════════════════════════════════════════════════════ -->
 <section id="about" class="section">
   <div class="container">
     <div class="about-layout">
-      <!-- Avatar -->
+      
       <div class="about-avatar-col">
         <div class="about-avatar-frame">
           <div class="about-avatar-ring-outer"></div>
           <div class="about-avatar-inner">
-            <!-- UPDATE: replace with your real profile photo -->
+            
             <img src="assets/social-profile.jpg"
                  alt="Gee, AyUpGee"
                  loading="lazy" decoding="async"
@@ -1336,7 +1293,7 @@ ul,ol{list-style:none}
         </div>
       </div>
 
-      <!-- Bio -->
+      
       <div class="reveal">
         <p class="eyebrow">👋 About</p>
         <h2 class="section-title">Hey, I'm Gee 🐝</h2>
@@ -1370,7 +1327,7 @@ ul,ol{list-style:none}
       </div>
     </div>
 
-    <!-- Support the hive -->
+    
     <div class="hive reveal">
       <div class="hive__text">
         <h3 class="hive__title">Support the hive 🐝🍯</h3>
@@ -1409,9 +1366,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     PARTNERSHIPS SECTION
-     ═══════════════════════════════════════════════════════ -->
 <section id="partnerships" class="section">
   <div class="container">
     <div class="section-head reveal">
@@ -1456,14 +1410,14 @@ ul,ol{list-style:none}
           </div>
         </div>
 
-      <!-- Contact card -->
+      
       <div class="partnerships-contact reveal reveal-d2">
         <div class="partnerships-contact__icon">✉️</div>
         <h3 class="partnerships-contact__title">Get in touch</h3>
         <p class="partnerships-contact__desc">
           Looking for a cosy gaming creator with genuine community connection? Let's have a chat and see if we're a good fit.
         </p>
-        <!-- UPDATE: replace with your real email address -->
+        
         <a href="mailto:hello@ayupgee.com"
            class="ayg-btn ayg-btn--primary ayg-btn--lg ayg-btn--block">
           <i data-lucide="mail"></i> hello@ayupgee.com
@@ -1478,10 +1432,6 @@ ul,ol{list-style:none}
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════════
-     FOOTER
-     *** UPDATE social links below ***
-     ═══════════════════════════════════════════════════════ -->
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div>
@@ -1497,7 +1447,7 @@ ul,ol{list-style:none}
         A cosy variety streamer from Manchester. A warm corner of the internet where you can grab a drink, settle in, and be yourself.
       </p>
       <div class="site-footer__socials">
-        <!-- UPDATE all href values to your real social URLs -->
+        
         <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener" class="footer-social">
           <img src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" /> Twitch
         </a>
@@ -1538,7 +1488,7 @@ ul,ol{list-style:none}
         <a href="#partnerships">Partnerships</a>
         <a href="https://twitch.tv/ayupgee/subscribe" target="_blank" rel="noopener">Subscribe on Twitch</a>
         <a href="https://throne.com/ayupgee" target="_blank" rel="noopener">Throne wishlist</a>
-        <!-- UPDATE email -->
+        
         <a href="mailto:hello@ayupgee.com">Business enquiries</a>
         <a href="/privacy.html">Privacy Policy</a>
       </div>
@@ -1551,9 +1501,6 @@ ul,ol{list-style:none}
   </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════════════════
-     JAVASCRIPT
-     ═══════════════════════════════════════════════════════ -->
 <script>
 // ══════════════════════════════════════════════════════════
 // ANNOUNCEMENT NOTICE CONFIG
@@ -2355,7 +2302,6 @@ function switchTab(id, btn) {
 //   To:     parent=yourdomain.com
 </script>
 
-<!-- Cookie consent banner -->
 <script src="/assets/js/cookie-consent.js" defer></script>
 </body>
 </html>
