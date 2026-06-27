@@ -18,7 +18,7 @@
     wait_for_update: 500
   });
   // Restore previous consent if already given
-  if (localStorage.getItem('ayg_cookie_consent') === 'granted') {
+  if (localStorage.getItem('aug_cookie_consent') === 'granted') {
     gtag('consent', 'update', { analytics_storage: 'granted' });
   }
 </script>

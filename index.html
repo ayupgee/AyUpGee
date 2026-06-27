@@ -56,7 +56,9 @@
     wait_for_update: 500
   });
   // Restore previous consent if already given
-  if (localStorage.getItem('ayg_cookie_consent') === 'granted') {
+  // Migrate consent key from old ayg_ prefix to aug_
+  (function(){var o=localStorage.getItem('ayg_cookie_consent');if(o!==null){localStorage.setItem('aug_cookie_consent',o);localStorage.removeItem('ayg_cookie_consent');}})();
+  if (localStorage.getItem('aug_cookie_consent') === 'granted') {
     gtag('consent', 'update', { analytics_storage: 'granted' });
   }
 </script>
@@ -235,9 +237,9 @@ ul,ol{list-style:none}
 .section--sm{padding:var(--space-7) 0}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – BUTTON  (.ayg-btn)
+   COMPONENT – BUTTON  (.aug-btn)
    ═══════════════════════════════════════════════════════ */
-.ayg-btn{
+.aug-btn{
   --_bg:var(--brand);--_fg:var(--text-on-brand);--_bd:transparent;
   display:inline-flex;align-items:center;justify-content:center;gap:.5em;
   font-family:var(--font-display);font-weight:var(--fw-semibold);
@@ -249,68 +251,68 @@ ul,ol{list-style:none}
              background var(--dur-base) var(--ease-soft),
              filter var(--dur-base) var(--ease-soft);
 }
-.ayg-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
-.ayg-btn:active{transform:translateY(1px) scale(.98);filter:brightness(.97)}
-.ayg-btn:focus-visible{outline:none;box-shadow:var(--ring)}
-.ayg-btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;filter:none}
-.ayg-btn--sm{font-size:var(--text-sm);padding:.5rem 1rem}
-.ayg-btn--md{font-size:var(--text-md);padding:.7rem 1.4rem}
-.ayg-btn--lg{font-size:var(--text-lg);padding:.95rem 1.9rem}
-.ayg-btn--primary{--_bg:var(--brand);--_fg:var(--text-on-brand);box-shadow:var(--glow-sky)}
-.ayg-btn--accent{--_bg:var(--accent);--_fg:#2c1646;box-shadow:var(--glow-dream)}
-.ayg-btn--blossom{--_bg:var(--highlight);--_fg:#5a1633;box-shadow:var(--glow-blossom)}
-.ayg-btn--secondary{--_bg:var(--surface);--_fg:var(--text);--_bd:var(--border-strong);box-shadow:var(--shadow-sm)}
-.ayg-btn--secondary:hover{--_bd:var(--border-brand);filter:none}
-.ayg-btn--ghost{--_bg:transparent;--_fg:var(--text);box-shadow:none}
-.ayg-btn--ghost:hover{--_bg:var(--brand-soft);filter:none}
-.ayg-btn--block{display:flex;width:100%}
+.aug-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.aug-btn:active{transform:translateY(1px) scale(.98);filter:brightness(.97)}
+.aug-btn:focus-visible{outline:none;box-shadow:var(--ring)}
+.aug-btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+.aug-btn--sm{font-size:var(--text-sm);padding:.5rem 1rem}
+.aug-btn--md{font-size:var(--text-md);padding:.7rem 1.4rem}
+.aug-btn--lg{font-size:var(--text-lg);padding:.95rem 1.9rem}
+.aug-btn--primary{--_bg:var(--brand);--_fg:var(--text-on-brand);box-shadow:var(--glow-sky)}
+.aug-btn--accent{--_bg:var(--accent);--_fg:#2c1646;box-shadow:var(--glow-dream)}
+.aug-btn--blossom{--_bg:var(--highlight);--_fg:#5a1633;box-shadow:var(--glow-blossom)}
+.aug-btn--secondary{--_bg:var(--surface);--_fg:var(--text);--_bd:var(--border-strong);box-shadow:var(--shadow-sm)}
+.aug-btn--secondary:hover{--_bd:var(--border-brand);filter:none}
+.aug-btn--ghost{--_bg:transparent;--_fg:var(--text);box-shadow:none}
+.aug-btn--ghost:hover{--_bg:var(--brand-soft);filter:none}
+.aug-btn--block{display:flex;width:100%}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – BADGE  (.ayg-badge)
+   COMPONENT – BADGE  (.aug-badge)
    ═══════════════════════════════════════════════════════ */
-.ayg-badge{
+.aug-badge{
   display:inline-flex;align-items:center;gap:.4em;
   font-family:var(--font-body);font-weight:var(--fw-bold);
   font-size:var(--text-2xs);letter-spacing:var(--tracking-caps);text-transform:uppercase;
   padding:.32em .7em;border-radius:var(--radius-pill);line-height:1;white-space:nowrap;
 }
-.ayg-badge--brand{background:var(--brand-soft);color:var(--brand-strong)}
-.ayg-badge--accent{background:var(--accent-soft);color:var(--dream-600)}
-.ayg-badge--neutral{background:var(--surface-sunken);color:var(--text-muted)}
-.ayg-badge--live{background:var(--live);color:#fff}
-.ayg-badge--live .ayg-badge__dot{width:.5em;height:.5em;border-radius:50%;background:#fff;animation:ayg-pulse 1.4s var(--ease-soft) infinite}
-@keyframes ayg-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
-@media(prefers-reduced-motion:reduce){.ayg-badge--live .ayg-badge__dot{animation:none}}
+.aug-badge--brand{background:var(--brand-soft);color:var(--brand-strong)}
+.aug-badge--accent{background:var(--accent-soft);color:var(--dream-600)}
+.aug-badge--neutral{background:var(--surface-sunken);color:var(--text-muted)}
+.aug-badge--live{background:var(--live);color:#fff}
+.aug-badge--live .aug-badge__dot{width:.5em;height:.5em;border-radius:50%;background:#fff;animation:aug-pulse 1.4s var(--ease-soft) infinite}
+@keyframes aug-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
+@media(prefers-reduced-motion:reduce){.aug-badge--live .aug-badge__dot{animation:none}}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – CARD  (.ayg-card)
+   COMPONENT – CARD  (.aug-card)
    ═══════════════════════════════════════════════════════ */
-.ayg-card{
+.aug-card{
   background:var(--surface);border:var(--border-thin) solid var(--border);
   border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;
   transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) var(--ease-soft);
 }
-.ayg-card--pad{padding:var(--space-5)}
-.ayg-card--soft{background:var(--surface-soft);box-shadow:none}
-.ayg-card--glass{background:color-mix(in srgb,var(--surface) 72%,transparent);backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);border-color:color-mix(in srgb,var(--white) 30%,transparent)}
-.ayg-card--hover{cursor:pointer}
-.ayg-card--hover:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--border-brand)}
-.ayg-card--feature{border-radius:var(--radius-xl);box-shadow:var(--shadow-md)}
+.aug-card--pad{padding:var(--space-5)}
+.aug-card--soft{background:var(--surface-soft);box-shadow:none}
+.aug-card--glass{background:color-mix(in srgb,var(--surface) 72%,transparent);backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);border-color:color-mix(in srgb,var(--white) 30%,transparent)}
+.aug-card--hover{cursor:pointer}
+.aug-card--hover:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--border-brand)}
+.aug-card--feature{border-radius:var(--radius-xl);box-shadow:var(--shadow-md)}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – AVATAR  (.ayg-avatar)
+   COMPONENT – AVATAR  (.aug-avatar)
    ═══════════════════════════════════════════════════════ */
-.ayg-avatar{position:relative;display:inline-flex;flex:none}
-.ayg-avatar__img{width:100%;height:100%;border-radius:var(--radius-pill);object-fit:cover;display:block;background:var(--grad-aurora)}
-.ayg-avatar--ring .ayg-avatar__img{box-shadow:0 0 0 3px var(--surface),0 0 0 5.5px var(--brand)}
-.ayg-avatar--live .ayg-avatar__img{box-shadow:0 0 0 3px var(--surface),0 0 0 5.5px var(--live)}
-.ayg-avatar__fallback{width:100%;height:100%;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;background:var(--grad-aurora);color:#fff;font-family:var(--font-display);font-weight:var(--fw-semibold)}
-.ayg-avatar__live{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);background:var(--live);color:#fff;font-family:var(--font-body);font-weight:var(--fw-bold);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:.2em .5em;border-radius:var(--radius-pill);border:1.5px solid var(--surface)}
+.aug-avatar{position:relative;display:inline-flex;flex:none}
+.aug-avatar__img{width:100%;height:100%;border-radius:var(--radius-pill);object-fit:cover;display:block;background:var(--grad-aurora)}
+.aug-avatar--ring .aug-avatar__img{box-shadow:0 0 0 3px var(--surface),0 0 0 5.5px var(--brand)}
+.aug-avatar--live .aug-avatar__img{box-shadow:0 0 0 3px var(--surface),0 0 0 5.5px var(--live)}
+.aug-avatar__fallback{width:100%;height:100%;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;background:var(--grad-aurora);color:#fff;font-family:var(--font-display);font-weight:var(--fw-semibold)}
+.aug-avatar__live{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);background:var(--live);color:#fff;font-family:var(--font-body);font-weight:var(--fw-bold);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:.2em .5em;border-radius:var(--radius-pill);border:1.5px solid var(--surface)}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – SOCIAL BUTTON  (.ayg-social)
+   COMPONENT – SOCIAL BUTTON  (.aug-social)
    ═══════════════════════════════════════════════════════ */
-.ayg-social{
+.aug-social{
   display:inline-flex;align-items:center;gap:.6em;cursor:pointer;text-decoration:none;
   font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-md);
   padding:.7rem 1.3rem;border-radius:var(--radius-pill);line-height:1;
@@ -318,53 +320,53 @@ ul,ol{list-style:none}
   box-shadow:0 6px 18px color-mix(in srgb,var(--_c,#9146ff) 38%,transparent);
   transition:transform var(--dur-fast) var(--ease-bounce),filter var(--dur-base) var(--ease-soft);
 }
-.ayg-social:hover{transform:translateY(-2px);filter:brightness(1.06)}
-.ayg-social:active{transform:translateY(0) scale(.97)}
-.ayg-social:focus-visible{outline:none;box-shadow:var(--ring)}
-.ayg-social__logo{width:1.15em;height:1.15em;display:block}
-.ayg-social--soft{background:color-mix(in srgb,var(--_c,#9146ff) 14%,var(--surface));color:var(--text);box-shadow:none;border:var(--border-base) solid color-mix(in srgb,var(--_c,#9146ff) 28%,transparent)}
-.ayg-social--soft:hover{background:color-mix(in srgb,var(--_c,#9146ff) 22%,var(--surface));filter:none}
-.ayg-social--icon{padding:.7rem}
+.aug-social:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.aug-social:active{transform:translateY(0) scale(.97)}
+.aug-social:focus-visible{outline:none;box-shadow:var(--ring)}
+.aug-social__logo{width:1.15em;height:1.15em;display:block}
+.aug-social--soft{background:color-mix(in srgb,var(--_c,#9146ff) 14%,var(--surface));color:var(--text);box-shadow:none;border:var(--border-base) solid color-mix(in srgb,var(--_c,#9146ff) 28%,transparent)}
+.aug-social--soft:hover{background:color-mix(in srgb,var(--_c,#9146ff) 22%,var(--surface));filter:none}
+.aug-social--icon{padding:.7rem}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – SCHEDULE CARD  (.ayg-sched)
+   COMPONENT – SCHEDULE CARD  (.aug-sched)
    ═══════════════════════════════════════════════════════ */
-.ayg-sched{
+.aug-sched{
   display:flex;align-items:center;gap:var(--space-4);
   background:var(--surface);border:var(--border-thin) solid var(--border);
   border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm);
   transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) var(--ease-soft),border-color var(--dur-base) var(--ease-soft);
 }
-.ayg-sched:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--border-brand)}
-.ayg-sched--off{opacity:.55}
-.ayg-sched--off:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--border)}
-.ayg-sched--today{border-color:var(--brand);box-shadow:var(--glow-sky)}
-.ayg-sched__date{flex:none;width:62px;text-align:center;border-radius:var(--radius-md);background:var(--grad-aurora);color:#1c2b3a;padding:.55rem .25rem;font-family:var(--font-display)}
-.ayg-sched--off .ayg-sched__date{background:var(--surface-sunken)}
-.ayg-sched__dow{font-size:var(--text-xs);font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:var(--tracking-caps);opacity:.85}
-.ayg-sched__day{font-size:var(--text-2xl);font-weight:var(--fw-bold);line-height:1}
-.ayg-sched__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:.3rem}
-.ayg-sched__game{font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-lg);color:var(--text)}
-.ayg-sched__meta{display:flex;align-items:center;gap:.9rem;font:var(--type-label);color:var(--text-muted)}
-.ayg-sched__meta span{display:inline-flex;align-items:center;gap:.35em}
-.ayg-sched__meta i{width:14px;height:14px}
-.ayg-sched__trailing{margin-left:auto;flex:none}
+.aug-sched:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--border-brand)}
+.aug-sched--off{opacity:.55}
+.aug-sched--off:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--border)}
+.aug-sched--today{border-color:var(--brand);box-shadow:var(--glow-sky)}
+.aug-sched__date{flex:none;width:62px;text-align:center;border-radius:var(--radius-md);background:var(--grad-aurora);color:#1c2b3a;padding:.55rem .25rem;font-family:var(--font-display)}
+.aug-sched--off .aug-sched__date{background:var(--surface-sunken)}
+.aug-sched__dow{font-size:var(--text-xs);font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:var(--tracking-caps);opacity:.85}
+.aug-sched__day{font-size:var(--text-2xl);font-weight:var(--fw-bold);line-height:1}
+.aug-sched__body{flex:1;min-width:0;display:flex;flex-direction:column;gap:.3rem}
+.aug-sched__game{font-family:var(--font-display);font-weight:var(--fw-semibold);font-size:var(--text-lg);color:var(--text)}
+.aug-sched__meta{display:flex;align-items:center;gap:.9rem;font:var(--type-label);color:var(--text-muted)}
+.aug-sched__meta span{display:inline-flex;align-items:center;gap:.35em}
+.aug-sched__meta i{width:14px;height:14px}
+.aug-sched__trailing{margin-left:auto;flex:none}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – STAT BLOCK  (.ayg-stat)
+   COMPONENT – STAT BLOCK  (.aug-stat)
    ═══════════════════════════════════════════════════════ */
-.ayg-stat{display:inline-flex;flex-direction:column;gap:.15rem;font-family:var(--font-display)}
-.ayg-stat__row{display:flex;align-items:center;gap:.45rem}
-.ayg-stat__icon{display:inline-flex;color:var(--brand-strong)}
-.ayg-stat__icon i{width:18px;height:18px}
-.ayg-stat__value{font-size:var(--text-2xl);font-weight:var(--fw-bold);color:var(--text);line-height:1}
-.ayg-stat__label{font:var(--type-label);color:var(--text-muted)}
+.aug-stat{display:inline-flex;flex-direction:column;gap:.15rem;font-family:var(--font-display)}
+.aug-stat__row{display:flex;align-items:center;gap:.45rem}
+.aug-stat__icon{display:inline-flex;color:var(--brand-strong)}
+.aug-stat__icon i{width:18px;height:18px}
+.aug-stat__value{font-size:var(--text-2xl);font-weight:var(--fw-bold);color:var(--text);line-height:1}
+.aug-stat__label{font:var(--type-label);color:var(--text-muted)}
 
 /* ═══════════════════════════════════════════════════════
-   COMPONENT – TAG  (.ayg-tag)
+   COMPONENT – TAG  (.aug-tag)
    ═══════════════════════════════════════════════════════ */
-.ayg-tag{display:inline-flex;align-items:center;gap:.35em;font:var(--type-label);padding:.35em .85em;border-radius:var(--radius-pill);background:var(--surface-sunken);color:var(--text-muted);border:var(--border-thin) solid var(--border);transition:background var(--dur-base),color var(--dur-base),border-color var(--dur-base)}
-.ayg-tag:hover{background:var(--brand-soft);color:var(--brand-strong);border-color:var(--border-brand)}
+.aug-tag{display:inline-flex;align-items:center;gap:.35em;font:var(--type-label);padding:.35em .85em;border-radius:var(--radius-pill);background:var(--surface-sunken);color:var(--text-muted);border:var(--border-thin) solid var(--border);transition:background var(--dur-base),color var(--dur-base),border-color var(--dur-base)}
+.aug-tag:hover{background:var(--brand-soft);color:var(--brand-strong);border-color:var(--border-brand)}
 
 /* ═══════════════════════════════════════════════════════
    NAVIGATION
@@ -413,18 +415,18 @@ ul,ol{list-style:none}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--night-900) 35%,transparent) 0%,color-mix(in srgb,var(--night-900) 75%,transparent) 60%,var(--night-900) 100%)}
 :not([data-theme="night"]) .hero__scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--cream-50) 20%,transparent) 0%,color-mix(in srgb,var(--cream-50) 65%,transparent) 60%,var(--cream-50) 100%)}
 /* ── Announcement Notice ─────────────────────────────────── */
-@keyframes ayg-notice-drop{
+@keyframes aug-notice-drop{
   from{opacity:0;transform:translateY(-10px)}
   to{opacity:1;transform:translateY(0)}
 }
-.ayg-notice-wrap{
+.aug-notice-wrap{
   width:100%;max-width:760px;
   margin-bottom:var(--space-7);
-  animation:ayg-notice-drop .45s var(--ease-soft) both;
+  animation:aug-notice-drop .45s var(--ease-soft) both;
 }
 /* Reduce hero top padding when notice is active so gaps are equal above and below */
 .hero__inner--has-notice{padding-top:var(--space-7)}
-.ayg-notice{
+.aug-notice{
   display:flex;
   align-items:flex-start;
   gap:var(--space-3);
@@ -435,13 +437,13 @@ ul,ol{list-style:none}
   border-radius:var(--radius-xl);
   box-shadow:0 4px 20px color-mix(in srgb,var(--honey) 12%,rgba(0,0,0,.25));
 }
-.ayg-notice__icon{
+.aug-notice__icon{
   font-size:1.25rem;
   line-height:1.35;
   flex-shrink:0;
   user-select:none;
 }
-.ayg-notice__heading{
+.aug-notice__heading{
   font-family:var(--font-display);
   font-weight:var(--fw-bold);
   font-size:var(--text-md);
@@ -449,7 +451,7 @@ ul,ol{list-style:none}
   color:var(--moon-300);
   margin-bottom:.35rem;
 }
-.ayg-notice__body{
+.aug-notice__body{
   font-family:var(--font-body);
   font-weight:var(--fw-regular);
   font-size:var(--text-sm);
@@ -457,10 +459,10 @@ ul,ol{list-style:none}
   color:rgba(255,255,255,.92);
 }
 @media(max-width:600px){
-  .ayg-notice-wrap{margin-bottom:var(--space-5)}
+  .aug-notice-wrap{margin-bottom:var(--space-5)}
   .hero__inner--has-notice{padding-top:var(--space-5)}
-  .ayg-notice{gap:var(--space-2);padding:var(--space-3) var(--space-4)}
-  .ayg-notice__icon{font-size:1.1rem}
+  .aug-notice{gap:var(--space-2);padding:var(--space-3) var(--space-4)}
+  .aug-notice__icon{font-size:1.1rem}
 }
 /* Honeycomb tile — subtle honey-gold pattern */
 .hero::before{content:'';position:absolute;inset:0;pointer-events:none;
@@ -469,13 +471,13 @@ ul,ol{list-style:none}
 :not([data-theme="night"]) .hero::before{filter:invert(1) hue-rotate(180deg);opacity:.4}
 /* Ambient glow orbs — honey-warm & dreamy */
 .hero__orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
-.hero__orb--a{width:520px;height:520px;background:var(--dream-400);top:-140px;left:-160px;opacity:.22;animation:ayg-float 9s var(--ease-soft) infinite}
-.hero__orb--b{width:380px;height:380px;background:var(--moon-400);bottom:-80px;right:-100px;opacity:.18;animation:ayg-float 11s var(--ease-soft) infinite reverse}
-.hero__orb--c{width:260px;height:260px;background:var(--sky-400);top:40%;left:52%;opacity:.12;animation:ayg-float 13s var(--ease-soft) infinite 2s}
+.hero__orb--a{width:520px;height:520px;background:var(--dream-400);top:-140px;left:-160px;opacity:.22;animation:aug-float 9s var(--ease-soft) infinite}
+.hero__orb--b{width:380px;height:380px;background:var(--moon-400);bottom:-80px;right:-100px;opacity:.18;animation:aug-float 11s var(--ease-soft) infinite reverse}
+.hero__orb--c{width:260px;height:260px;background:var(--sky-400);top:40%;left:52%;opacity:.12;animation:aug-float 13s var(--ease-soft) infinite 2s}
 .hero__stars{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.star{position:absolute;border-radius:50%;background:#fff;animation:ayg-twinkle var(--dur,3s) var(--ease-soft) infinite var(--delay,0s)}
-@keyframes ayg-twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
-@keyframes ayg-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+.star{position:absolute;border-radius:50%;background:#fff;animation:aug-twinkle var(--dur,3s) var(--ease-soft) infinite var(--delay,0s)}
+@keyframes aug-twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+@keyframes aug-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
 .hero__inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:var(--space-9) 0 var(--space-8)}
 .hero__card{
   width:100%;max-width:760px;
@@ -497,8 +499,8 @@ ul,ol{list-style:none}
 .hero__title{font:var(--type-h1);margin:2px 0 0;color:var(--text)}
 .hero__lead{font:var(--type-lead);color:var(--text);margin:0 0 var(--space-5)}
 /* Honey-accent tag - same base style as other pills, warm yellow glow on hover */
-.ayg-tag--honey{background:var(--surface-sunken);color:var(--text-muted);border:var(--border-thin) solid var(--border)}
-.ayg-tag--honey:hover{background:color-mix(in srgb,var(--honey) 18%,var(--surface));color:var(--honey-deep);border-color:var(--honey)}
+.aug-tag--honey{background:var(--surface-sunken);color:var(--text-muted);border:var(--border-thin) solid var(--border)}
+.aug-tag--honey:hover{background:color-mix(in srgb,var(--honey) 18%,var(--surface));color:var(--honey-deep);border-color:var(--honey)}
 .hero__cta{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5);justify-content:center}
 .hero__pills{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-5);justify-content:center}
 .hero__stats{display:flex;gap:var(--space-6);padding-top:var(--space-5);border-top:var(--border-thin) solid var(--border);justify-content:center}
@@ -525,7 +527,7 @@ ul,ol{list-style:none}
 .twitch-embed-ratio{position:relative;padding-bottom:56.25%;height:0}
 .twitch-embed-ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 .twitch-offline{aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-4);background:linear-gradient(135deg,var(--night-900) 0%,var(--night-700) 100%);padding:var(--space-7);text-align:center}
-.twitch-offline__icon{font-size:3rem;animation:ayg-float 4s var(--ease-soft) infinite}
+.twitch-offline__icon{font-size:3rem;animation:aug-float 4s var(--ease-soft) infinite}
 .twitch-offline__title{font:var(--type-h3);color:var(--text)}
 .twitch-offline__desc{font:var(--type-lead);color:var(--text-muted);max-width:300px}
 .twitch-sidebar{display:flex;flex-direction:column;gap:var(--space-4)}
@@ -540,12 +542,12 @@ ul,ol{list-style:none}
 .schedule-note i{width:15px;height:15px}
 
 /* Schedule: loading skeleton & error state */
-@keyframes ayg-shimmer{0%,100%{opacity:.38}50%{opacity:.75}}
+@keyframes aug-shimmer{0%,100%{opacity:.38}50%{opacity:.75}}
 .schedule-skeleton{display:flex;flex-direction:column;gap:var(--space-3)}
 .schedule-skeleton__item{display:flex;align-items:center;gap:var(--space-4);background:var(--surface);border:var(--border-thin) solid var(--border);border-radius:var(--radius-lg);padding:var(--space-4)}
-.schedule-skeleton__date{flex:none;width:62px;height:76px;border-radius:var(--radius-md);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.schedule-skeleton__date{flex:none;width:62px;height:76px;border-radius:var(--radius-md);background:var(--surface-sunken);animation:aug-shimmer 1.5s ease-in-out infinite}
 .schedule-skeleton__lines{flex:1;display:flex;flex-direction:column;gap:.65rem}
-.schedule-skeleton__line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.schedule-skeleton__line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:aug-shimmer 1.5s ease-in-out infinite}
 .schedule-skeleton__line--short{width:45%}
 .schedule-error{padding:var(--space-6);text-align:center;color:var(--text-muted);font:var(--type-body)}
 .schedule-error p{margin-top:var(--space-2)}
@@ -644,7 +646,7 @@ ul,ol{list-style:none}
 
 /* ── Video card: loading skeleton ── */
 .video-card--skeleton .video-thumb{background:var(--surface-soft)}
-.video-skel-line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
+.video-skel-line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:aug-shimmer 1.5s ease-in-out infinite}
 .video-skel-line+.video-skel-line{margin-top:.5rem}
 @media(prefers-reduced-motion:reduce){.video-skel-line{animation:none;opacity:.5}}
 
@@ -757,7 +759,7 @@ ul,ol{list-style:none}
 }
 @media(max-width:860px){
   .site-nav{display:none}
-  .header-actions .ayg-btn{display:none}
+  .header-actions .aug-btn{display:none}
   .nav-hamburger{display:flex}
   .video-grid{grid-template-columns:1fr 1fr}
   .clip-row{grid-template-columns:repeat(2,1fr)}
@@ -776,7 +778,7 @@ ul,ol{list-style:none}
   .hero__orb--c{display:none}
   .hero::before{background-size:42px 74px}
   .hero__cta{flex-direction:column}
-  .hero__cta .ayg-social,.hero__cta .ayg-btn{width:100%;justify-content:center}
+  .hero__cta .aug-social,.hero__cta .aug-btn{width:100%;justify-content:center}
   .hero__body{padding:var(--space-4)}
   .video-grid{grid-template-columns:1fr}
   .clip-row{grid-template-columns:repeat(2,1fr)}
@@ -793,7 +795,7 @@ ul,ol{list-style:none}
   .discord-card{padding:var(--space-5)}
   .partnerships-contact{padding:var(--space-5)}
   .hive__tiers{flex-wrap:wrap}
-  .ayg-sched__meta{flex-wrap:wrap;gap:.5rem}
+  .aug-sched__meta{flex-wrap:wrap;gap:.5rem}
   .videos-tabs{flex-wrap:wrap}
 }
 </style>
@@ -823,9 +825,9 @@ ul,ol{list-style:none}
 
   <div class="header-actions">
     <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
-       class="ayg-social ayg-btn--sm"
+       class="aug-social aug-btn--sm"
        style="--_c:#9146ff;font-size:var(--text-sm);padding:.5rem 1rem">
-      <img class="ayg-social__logo"
+      <img class="aug-social__logo"
            src="https://cdn.simpleicons.org/twitch/white" alt="" />
       Watch live
     </a>
@@ -867,7 +869,7 @@ ul,ol{list-style:none}
     <div class="container">
       <div class="hero__inner">
         
-        <div id="ayg-notice-mount"></div>
+        <div id="aug-notice-mount"></div>
         
         <div class="hero__card">
           
@@ -883,12 +885,12 @@ ul,ol{list-style:none}
           <div class="hero__body">
           <div class="hero__top">
             
-            <span class="ayg-avatar ayg-avatar--ring" style="width:84px;height:84px">
-              <img class="ayg-avatar__img"
+            <span class="aug-avatar aug-avatar--ring" style="width:84px;height:84px">
+              <img class="aug-avatar__img"
                    src="assets/social-profile.jpg"
                    alt="Gee, AyUpGee"
                    fetchpriority="high" decoding="async"
-                   onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'ayg-avatar__fallback\' style=\'font-size:2.2rem\'>G</span>'" />
+                   onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'aug-avatar__fallback\' style=\'font-size:2.2rem\'>G</span>'" />
             </span>
             <div>
               <div class="hero__eyebrow">Manchester · cosy gaming &amp; chill</div>
@@ -902,50 +904,50 @@ ul,ol{list-style:none}
 
           <div class="hero__cta">
             <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
-               class="ayg-social" style="--_c:#9146ff">
-              <img class="ayg-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" />
+               class="aug-social" style="--_c:#9146ff">
+              <img class="aug-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" />
               Watch live
             </a>
             <a href="https://discord.gg/uAhZtzkKDU" target="_blank" rel="noopener"
-               class="ayg-social" style="--_c:#5865F2">
-              <img class="ayg-social__logo" src="https://cdn.simpleicons.org/discord/white" alt="" />
+               class="aug-social" style="--_c:#5865F2">
+              <img class="aug-social__logo" src="https://cdn.simpleicons.org/discord/white" alt="" />
               Join the Hive
             </a>
-            <a href="#videos" class="ayg-btn ayg-btn--secondary ayg-btn--md">
+            <a href="#videos" class="aug-btn aug-btn--secondary aug-btn--md">
               <i data-lucide="play-circle"></i> Latest videos
             </a>
           </div>
 
           
           <div class="hero__pills">
-            <span class="ayg-tag">🌿 Lurker-friendly</span>
-            <span class="ayg-tag">🏳️‍🌈 LGBTQIA+</span>
-            <span class="ayg-tag">🥤 Grab a drink</span>
-            <span class="ayg-tag ayg-tag--honey">🐝 Join the hive</span>
-            <span class="ayg-tag">🏝️ Cosy first</span>
+            <span class="aug-tag">🌿 Lurker-friendly</span>
+            <span class="aug-tag">🏳️‍🌈 LGBTQIA+</span>
+            <span class="aug-tag">🥤 Grab a drink</span>
+            <span class="aug-tag aug-tag--honey">🐝 Join the hive</span>
+            <span class="aug-tag">🏝️ Cosy first</span>
           </div>
 
           <div class="hero__stats">
-            <div class="ayg-stat">
-              <div class="ayg-stat__row">
-                <span class="ayg-stat__icon"><i data-lucide="sparkles"></i></span>
-                <span class="ayg-stat__value">Cosy</span>
+            <div class="aug-stat">
+              <div class="aug-stat__row">
+                <span class="aug-stat__icon"><i data-lucide="sparkles"></i></span>
+                <span class="aug-stat__value">Cosy</span>
               </div>
-              <span class="ayg-stat__label">Gaming vibes</span>
+              <span class="aug-stat__label">Gaming vibes</span>
             </div>
-            <div class="ayg-stat">
-              <div class="ayg-stat__row">
-                <span class="ayg-stat__icon"><i data-lucide="users"></i></span>
-                <span class="ayg-stat__value">The hive</span>
+            <div class="aug-stat">
+              <div class="aug-stat__row">
+                <span class="aug-stat__icon"><i data-lucide="users"></i></span>
+                <span class="aug-stat__value">The hive</span>
               </div>
-              <span class="ayg-stat__label">Our community</span>
+              <span class="aug-stat__label">Our community</span>
             </div>
-            <div class="ayg-stat">
-              <div class="ayg-stat__row">
-                <span class="ayg-stat__icon"><i data-lucide="map-pin"></i></span>
-                <span class="ayg-stat__value">MCR</span>
+            <div class="aug-stat">
+              <div class="aug-stat__row">
+                <span class="aug-stat__icon"><i data-lucide="map-pin"></i></span>
+                <span class="aug-stat__value">MCR</span>
               </div>
-              <span class="ayg-stat__label">Manchester, UK</span>
+              <span class="aug-stat__label">Manchester, UK</span>
             </div>
           </div>
           </div>
@@ -965,7 +967,7 @@ ul,ol{list-style:none}
         <p class="section-desc">Catch me live on Twitch for cosy games, Disney Dreamlight Valley adventures, community chat, and the occasional bit of organised chaos. Lurkers are always welcome, so settle in however you like.</p>
       </div>
       <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
-         class="ayg-btn ayg-btn--md" style="--_bg:#9146ff;--_fg:#fff;flex:none">
+         class="aug-btn aug-btn--md" style="--_bg:#9146ff;--_fg:#fff;flex:none">
         <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" loading="lazy" decoding="async" />
         Open on Twitch
       </a>
@@ -981,7 +983,7 @@ ul,ol{list-style:none}
             <span id="liveStatusBadge"></span>
           </div>
           <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
-             class="ayg-btn ayg-btn--sm" style="--_bg:#9146ff;--_fg:#fff">
+             class="aug-btn aug-btn--sm" style="--_bg:#9146ff;--_fg:#fff">
             Follow ↗
           </a>
         </div>
@@ -997,31 +999,31 @@ ul,ol{list-style:none}
 
       
       <div class="twitch-sidebar">
-        <div class="ayg-card ayg-card--pad">
+        <div class="aug-card aug-card--pad">
           <p style="font-family:var(--font-display);font-weight:var(--fw-semibold);color:var(--dream-400);margin-bottom:var(--space-2)">twitch.tv/ayupgee</p>
           <p style="font:var(--type-body);color:var(--text-muted);margin-bottom:var(--space-5)">
             Cosy streams, wholesome games, and a beautiful community. Hit follow so you never miss a session.
           </p>
           <a href="https://twitch.tv/ayupgee" target="_blank" rel="noopener"
-             class="ayg-social ayg-btn--block" style="--_c:#9146ff;justify-content:center">
-            <img class="ayg-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" />
+             class="aug-social aug-btn--block" style="--_c:#9146ff;justify-content:center">
+            <img class="aug-social__logo" src="https://cdn.simpleicons.org/twitch/white" alt="" loading="lazy" decoding="async" />
             Follow on Twitch
           </a>
         </div>
 
-        <div class="ayg-card ayg-card--pad">
+        <div class="aug-card aug-card--pad">
           <p style="font:var(--type-label);text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--text-faint);margin-bottom:var(--space-3)">Catch up</p>
           <p style="font:var(--type-body);color:var(--text-muted);margin-bottom:var(--space-4)">
             Missed a stream? VODs are on Twitch and edited highlights on YouTube.
           </p>
           <div style="display:flex;flex-direction:column;gap:var(--space-2)">
             <a href="https://twitch.tv/ayupgee/videos" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm ayg-btn--block">
+               class="aug-btn aug-btn--secondary aug-btn--sm aug-btn--block">
               <img src="https://cdn.simpleicons.org/twitch/9146ff" style="width:14px;height:14px" alt="" loading="lazy" decoding="async" />
               Twitch VODs
             </a>
             <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
-               class="ayg-btn ayg-btn--secondary ayg-btn--sm ayg-btn--block">
+               class="aug-btn aug-btn--secondary aug-btn--sm aug-btn--block">
               <img src="https://cdn.simpleicons.org/youtube/FF0033" style="width:14px;height:14px" alt="" loading="lazy" decoding="async" />
               YouTube highlights
             </a>
@@ -1098,7 +1100,7 @@ ul,ol{list-style:none}
       </div>
       <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
         <a href="https://twitch.tv/ayupgee/videos?filter=all&sort=time" target="_blank" rel="noopener"
-           class="ayg-btn ayg-btn--ghost ayg-btn--md">
+           class="aug-btn aug-btn--ghost aug-btn--md">
           <i data-lucide="external-link"></i> All Twitch VODs
         </a>
       </div>
@@ -1132,7 +1134,7 @@ ul,ol{list-style:none}
       </div>
       <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
         <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener"
-           class="ayg-btn ayg-btn--ghost ayg-btn--md">
+           class="aug-btn aug-btn--ghost aug-btn--md">
           <i data-lucide="external-link"></i> YouTube channel
         </a>
       </div>
@@ -1161,8 +1163,8 @@ ul,ol{list-style:none}
 
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
       <a href="https://tiktok.com/@ayupgee" target="_blank" rel="noopener"
-         class="ayg-social" style="--_c:#000000">
-        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/tiktok/white" alt="" loading="lazy" decoding="async" />
+         class="aug-social" style="--_c:#000000">
+        <img class="aug-social__logo" src="https://cdn.simpleicons.org/tiktok/white" alt="" loading="lazy" decoding="async" />
         Follow on TikTok
       </a>
     </div>
@@ -1191,8 +1193,8 @@ ul,ol{list-style:none}
     <div style="text-align:center;margin-top:var(--space-6)" class="reveal">
       
       <a href="https://instagram.com/ayupgee" target="_blank" rel="noopener"
-         class="ayg-social" style="--_c:#E4405F">
-        <img class="ayg-social__logo" src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" />
+         class="aug-social" style="--_c:#E4405F">
+        <img class="aug-social__logo" src="https://cdn.simpleicons.org/instagram/white" alt="" loading="lazy" decoding="async" />
         Follow on Instagram
       </a>
     </div>
@@ -1316,13 +1318,13 @@ ul,ol{list-style:none}
         </p>
 
         <div class="about-tags">
-          <span class="ayg-tag">🏰 Dreamlight Valley</span>
-          <span class="ayg-tag">🏝️ Animal Crossing</span>
-          <span class="ayg-tag">🌿 Cosy games</span>
-          <span class="ayg-tag">💜 Life sims</span>
-          <span class="ayg-tag">🇬🇧 Manchester</span>
-          <span class="ayg-tag">🥤 Drink enjoyer</span>
-          <span class="ayg-tag">🐝 The hive</span>
+          <span class="aug-tag">🏰 Dreamlight Valley</span>
+          <span class="aug-tag">🏝️ Animal Crossing</span>
+          <span class="aug-tag">🌿 Cosy games</span>
+          <span class="aug-tag">💜 Life sims</span>
+          <span class="aug-tag">🇬🇧 Manchester</span>
+          <span class="aug-tag">🥤 Drink enjoyer</span>
+          <span class="aug-tag">🐝 The hive</span>
         </div>
       </div>
     </div>
@@ -1336,7 +1338,7 @@ ul,ol{list-style:none}
         </p>
         <div style="margin-top:var(--space-4)">
           <a href="https://twitch.tv/ayupgee/subscribe" target="_blank" rel="noopener"
-             class="ayg-btn ayg-btn--md" style="--_bg:#9146ff;--_fg:#fff">
+             class="aug-btn aug-btn--md" style="--_bg:#9146ff;--_fg:#fff">
             <img src="https://cdn.simpleicons.org/twitch/white" style="width:1em;height:1em" alt="" loading="lazy" decoding="async" />
             Subscribe on Twitch
           </a>
@@ -1419,7 +1421,7 @@ ul,ol{list-style:none}
         </p>
         
         <a href="mailto:hello@ayupgee.com"
-           class="ayg-btn ayg-btn--primary ayg-btn--lg ayg-btn--block">
+           class="aug-btn aug-btn--primary aug-btn--lg aug-btn--block">
           <i data-lucide="mail"></i> hello@ayupgee.com
         </a>
         <p class="partnerships-contact__note">
@@ -1507,7 +1509,7 @@ ul,ol{list-style:none}
 // To update: edit the text below.
 // To disable: set enabled: false.
 // ══════════════════════════════════════════════════════════
-const AYG_NOTICE = {
+const AUG_NOTICE = {
   enabled: true,
   icon:    '🌞',
   heading: 'Heatwave Update',
@@ -1515,18 +1517,18 @@ const AYG_NOTICE = {
 };
 
 (function renderNotice() {
-  const mount = document.getElementById('ayg-notice-mount');
-  if (!mount || !AYG_NOTICE.enabled) return;
+  const mount = document.getElementById('aug-notice-mount');
+  if (!mount || !AUG_NOTICE.enabled) return;
   const aside = document.createElement('aside');
   aside.setAttribute('aria-label', 'Site announcement');
   aside.setAttribute('role', 'note');
-  aside.className = 'ayg-notice-wrap';
+  aside.className = 'aug-notice-wrap';
   aside.innerHTML =
-    '<div class="ayg-notice">' +
-      '<span class="ayg-notice__icon" aria-hidden="true">' + AYG_NOTICE.icon + '</span>' +
-      '<div class="ayg-notice__content">' +
-        '<p class="ayg-notice__heading">' + AYG_NOTICE.heading + '</p>' +
-        '<p class="ayg-notice__body">'    + AYG_NOTICE.body    + '</p>' +
+    '<div class="aug-notice">' +
+      '<span class="aug-notice__icon" aria-hidden="true">' + AUG_NOTICE.icon + '</span>' +
+      '<div class="aug-notice__content">' +
+        '<p class="aug-notice__heading">' + AUG_NOTICE.heading + '</p>' +
+        '<p class="aug-notice__body">'    + AUG_NOTICE.body    + '</p>' +
       '</div>' +
     '</div>';
   mount.replaceWith(aside);
@@ -1553,7 +1555,7 @@ function applyTheme(night) {
     themeToggle.querySelector('i').setAttribute('data-lucide', 'moon-star');
   }
   if (window.lucide) lucide.createIcons();
-  localStorage.setItem('ayg-theme', night ? NIGHT : 'day');
+  localStorage.setItem('aug-theme', night ? NIGHT : 'day');
 }
 
 themeToggle.addEventListener('click', () => {
@@ -1562,7 +1564,7 @@ themeToggle.addEventListener('click', () => {
 
 // Restore saved preference
 (function() {
-  const saved = localStorage.getItem('ayg-theme');
+  const saved = localStorage.getItem('aug-theme');
   if (saved === 'day') applyTheme(false);
   // default is night (already set on html tag)
 })();
@@ -1830,7 +1832,7 @@ function renderTwitchVodItems(items) {
         </div>
         <div class="video-card__foot">
           <a href="${url}" target="_blank" rel="noopener noreferrer"
-             class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch on Twitch ↗</a>
+             class="aug-btn aug-btn--secondary aug-btn--sm">Watch on Twitch ↗</a>
         </div>
       </div>`;
   }).join('');
@@ -1876,7 +1878,7 @@ const _ytPlaceholder = `
     </div>
     <div class="video-card__foot">
       <a href="https://youtube.com/@ayupgee" target="_blank" rel="noopener noreferrer"
-         class="ayg-btn ayg-btn--secondary ayg-btn--sm" style="opacity:.65">
+         class="aug-btn aug-btn--secondary aug-btn--sm" style="opacity:.65">
         YouTube channel ↗
       </a>
     </div>
@@ -1927,7 +1929,7 @@ function renderYouTubeItems(items) {
         </div>
         <div class="video-card__foot">
           <a href="${url}" target="_blank" rel="noopener noreferrer"
-             class="ayg-btn ayg-btn--secondary ayg-btn--sm">Watch on YouTube ↗</a>
+             class="aug-btn aug-btn--secondary aug-btn--sm">Watch on YouTube ↗</a>
         </div>
       </div>`;
   }).join('');
@@ -2063,12 +2065,12 @@ async function loadYouTubeVideos() {
     return `${hh}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'} UK`;
   }
 
-  // ── Build a single .ayg-sched card (DOM element) ─────────────────────────
+  // ── Build a single .aug-sched card (DOM element) ─────────────────────────
   function buildCard({ dow, day, game, timeStr, tag, isOff, isToday }) {
     const el = document.createElement('div');
-    el.className = ['ayg-sched reveal',
-      isOff   ? 'ayg-sched--off'   : '',
-      isToday ? 'ayg-sched--today' : '',
+    el.className = ['aug-sched reveal',
+      isOff   ? 'aug-sched--off'   : '',
+      isToday ? 'aug-sched--today' : '',
     ].filter(Boolean).join(' ');
 
     const dateSty = isOff
@@ -2076,18 +2078,18 @@ async function loadYouTubeVideos() {
       : 'background:var(--grad-aurora);color:#1c2b3a';
 
     el.innerHTML = `
-      <div class="ayg-sched__date" style="${dateSty}">
-        <div class="ayg-sched__dow">${dow}</div>
-        <div class="ayg-sched__day">${day}</div>
+      <div class="aug-sched__date" style="${dateSty}">
+        <div class="aug-sched__dow">${dow}</div>
+        <div class="aug-sched__day">${day}</div>
       </div>
-      <div class="ayg-sched__body">
-        <div class="ayg-sched__game">${game}</div>
-        ${timeStr || tag ? `<div class="ayg-sched__meta">
+      <div class="aug-sched__body">
+        <div class="aug-sched__game">${game}</div>
+        ${timeStr || tag ? `<div class="aug-sched__meta">
           ${timeStr ? `<span><i data-lucide="clock"></i>${timeStr}</span>` : ''}
           ${tag     ? `<span><i data-lucide="gamepad-2"></i>${tag}</span>` : ''}
         </div>` : ''}
       </div>
-      ${isToday ? `<div class="ayg-sched__trailing"><span class="ayg-badge ayg-badge--brand">Today</span></div>` : ''}
+      ${isToday ? `<div class="aug-sched__trailing"><span class="aug-badge aug-badge--brand">Today</span></div>` : ''}
     `;
     return el;
   }
@@ -2172,17 +2174,17 @@ async function loadYouTubeVideos() {
     if (window.lucide) lucide.createIcons();
   }
 
-  // ── No streams card (styled like .ayg-sched--today but without the badge) ─
+  // ── No streams card (styled like .aug-sched--today but without the badge) ─
   function renderNoSchedule() {
     list.className = 'schedule-list';
     list.innerHTML = '';
     const el = document.createElement('div');
-    el.className = 'ayg-sched ayg-sched--today reveal';
+    el.className = 'aug-sched aug-sched--today reveal';
     el.style.justifyContent = 'center';
     el.innerHTML = `
-      <div class="ayg-sched__body" style="text-align:center;align-items:center">
-        <div class="ayg-sched__game">No streams scheduled yet</div>
-        <div class="ayg-sched__meta" style="justify-content:center">
+      <div class="aug-sched__body" style="text-align:center;align-items:center">
+        <div class="aug-sched__game">No streams scheduled yet</div>
+        <div class="aug-sched__meta" style="justify-content:center">
           <span><i data-lucide="bell"></i>Follow on Twitch for stream notifications 🔔</span>
         </div>
       </div>

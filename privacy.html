@@ -335,19 +335,19 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
       </thead>
       <tbody>
         <tr>
-          <td><code>ayg_cookie_consent</code></td>
+          <td><code>aug_cookie_consent</code></td>
           <td>Stores your cookie preference (accepted / declined)</td>
           <td>AyUpGee</td>
           <td>Persists in localStorage until cleared</td>
         </tr>
         <tr>
-          <td><code>ayg_session</code></td>
+          <td><code>aug_session</code></td>
           <td>Keeps you signed in (members / moderators only)</td>
           <td>AyUpGee</td>
           <td>7 days, or on logout</td>
         </tr>
         <tr>
-          <td><code>ayg_csrf</code></td>
+          <td><code>aug_csrf</code></td>
           <td>Prevents cross-site request forgery attacks (members only)</td>
           <td>AyUpGee</td>
           <td>Session</td>
@@ -536,7 +536,7 @@ function applyTheme(night) {
     themeToggle.querySelector('i').setAttribute('data-lucide', 'moon-star');
   }
   if (window.lucide) lucide.createIcons();
-  localStorage.setItem('ayg-theme', night ? NIGHT : 'day');
+  localStorage.setItem('aug-theme', night ? NIGHT : 'day');
 }
 
 themeToggle.addEventListener('click', () => {
@@ -544,14 +544,14 @@ themeToggle.addEventListener('click', () => {
 });
 
 (function () {
-  const saved = localStorage.getItem('ayg-theme');
+  const saved = localStorage.getItem('aug-theme');
   if (saved === 'day') applyTheme(false);
   // default is night (already set on html tag)
 })();
 
 // ── Consent widget ────────────────────────────────────────
 (function () {
-  const KEY = 'ayg_cookie_consent';
+  const KEY = 'aug_cookie_consent';
   const statusEl   = document.getElementById('consentStatus');
   const acceptBtn  = document.getElementById('consentAccept');
   const declineBtn = document.getElementById('consentDecline');

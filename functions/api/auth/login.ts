@@ -5,8 +5,8 @@
  *   { email, password, rememberMe?, turnstileToken }
  *
  * On success:
- *   - Sets ayg_session HTTP-only cookie
- *   - Sets ayg_csrf readable cookie (for JS-driven API calls)
+ *   - Sets aug_session HTTP-only cookie
+ *   - Sets aug_csrf readable cookie (for JS-driven API calls)
  *   - Returns { ok: true, data: { user, redirectTo } }
  */
 

@@ -1,6 +1,6 @@
 /** Cookie name constants */
-export const SESSION_COOKIE = 'ayg_session';
-export const CSRF_COOKIE    = 'ayg_csrf';
+export const SESSION_COOKIE = 'aug_session';
+export const CSRF_COOKIE    = 'aug_csrf';
 
 export const SESSION_TTL_SHORT  = 60 * 60 * 24;        // 24 hours
 export const SESSION_TTL_LONG   = 60 * 60 * 24 * 30;   // 30 days (remember me)
