@@ -420,6 +420,54 @@ ul,ol{list-style:none}
 :not([data-theme="night"]) .hero__bg{opacity:.75}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--night-900) 35%,transparent) 0%,color-mix(in srgb,var(--night-900) 75%,transparent) 60%,var(--night-900) 100%)}
 :not([data-theme="night"]) .hero__scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--cream-50) 20%,transparent) 0%,color-mix(in srgb,var(--cream-50) 65%,transparent) 60%,var(--cream-50) 100%)}
+/* ── Announcement Notice ─────────────────────────────────── */
+@keyframes ayg-notice-drop{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.ayg-notice-wrap{
+  width:100%;max-width:760px;
+  margin-bottom:var(--space-7);
+  animation:ayg-notice-drop .45s var(--ease-soft) both;
+}
+/* Reduce hero top padding when notice is active so gaps are equal above and below */
+.hero__inner--has-notice{padding-top:var(--space-7)}
+.ayg-notice{
+  display:flex;
+  align-items:flex-start;
+  gap:var(--space-3);
+  padding:var(--space-4) var(--space-5);
+  background:color-mix(in srgb,var(--honey) 16%,color-mix(in srgb,var(--surface) 72%,transparent));
+  backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);
+  border:var(--border-thin) solid color-mix(in srgb,var(--honey) 45%,transparent);
+  border-radius:var(--radius-xl);
+  box-shadow:0 4px 20px color-mix(in srgb,var(--honey) 12%,rgba(0,0,0,.25));
+}
+.ayg-notice__icon{
+  font-size:1.25rem;
+  line-height:1.35;
+  flex-shrink:0;
+  user-select:none;
+}
+.ayg-notice__heading{
+  font-family:var(--font-display);
+  font-weight:var(--fw-bold);
+  font-size:var(--text-sm);
+  line-height:var(--leading-snug);
+  color:var(--moon-300);
+  margin-bottom:.25rem;
+}
+.ayg-notice__body{
+  font:var(--type-caption);
+  color:rgba(255,255,255,.75);
+  line-height:var(--leading-relaxed);
+}
+@media(max-width:600px){
+  .ayg-notice-wrap{margin-bottom:var(--space-5)}
+  .hero__inner--has-notice{padding-top:var(--space-5)}
+  .ayg-notice{gap:var(--space-2);padding:var(--space-3) var(--space-4)}
+  .ayg-notice__icon{font-size:1.1rem}
+}
 /* Honeycomb tile — subtle honey-gold pattern */
 .hero::before{content:'';position:absolute;inset:0;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98'%3E%3Cpolygon points='28,2 54,16 54,50 28,64 2,50 2,16' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3Cpolygon points='28,50 54,64 54,98 28,112 2,98 2,64' fill='none' stroke='rgba(255%2C209%2C102%2C.09)' stroke-width='1.2'/%3E%3C/svg%3E");
@@ -831,6 +879,8 @@ ul,ol{list-style:none}
 
     <div class="container">
       <div class="hero__inner">
+        <!-- Announcement notice (rendered by AYG_NOTICE config in script below) -->
+        <div id="ayg-notice-mount"></div>
         <!-- Glass intro card -->
         <div class="hero__card">
           <!-- Browser chrome -->
@@ -1503,6 +1553,38 @@ ul,ol{list-style:none}
      JAVASCRIPT
      ═══════════════════════════════════════════════════════ -->
 <script>
+// ══════════════════════════════════════════════════════════
+// ANNOUNCEMENT NOTICE CONFIG
+// To update: edit the text below.
+// To disable: set enabled: false.
+// ══════════════════════════════════════════════════════════
+const AYG_NOTICE = {
+  enabled: true,
+  icon:    '🌞',
+  heading: 'Heatwave Update',
+  body:    'Due to the extreme heat across the UK, I\'ve had to pause this week\'s live streams (week commencing 22 June) to keep things safe and comfortable. I\'ll still be sharing plenty of cozy content across my socials in the meantime, and I\'m looking forward to being back live next week. Thanks for your understanding! 💛',
+};
+
+(function renderNotice() {
+  const mount = document.getElementById('ayg-notice-mount');
+  if (!mount || !AYG_NOTICE.enabled) return;
+  const aside = document.createElement('aside');
+  aside.setAttribute('aria-label', 'Site announcement');
+  aside.setAttribute('role', 'note');
+  aside.className = 'ayg-notice-wrap';
+  aside.innerHTML =
+    '<div class="ayg-notice">' +
+      '<span class="ayg-notice__icon" aria-hidden="true">' + AYG_NOTICE.icon + '</span>' +
+      '<div class="ayg-notice__content">' +
+        '<p class="ayg-notice__heading">' + AYG_NOTICE.heading + '</p>' +
+        '<p class="ayg-notice__body">'    + AYG_NOTICE.body    + '</p>' +
+      '</div>' +
+    '</div>';
+  mount.replaceWith(aside);
+  // Reduce hero top padding so spacing above and below the banner is equal
+  document.querySelector('.hero__inner')?.classList.add('hero__inner--has-notice');
+}());
+
 // ── Lucide icons ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
