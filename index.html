@@ -430,6 +430,7 @@ ul,ol{list-style:none}
 }
 .hero__inner--has-notice{padding-top:var(--space-7)}
 .aug-notice{
+  position:relative;
   display:flex;
   flex-direction:column;
   padding:var(--space-4) var(--space-5);
@@ -457,30 +458,32 @@ ul,ol{list-style:none}
 }
 [data-theme="night"] .aug-notice__heading{color:var(--moon-300)}
 [data-theme="night"] .aug-notice__body{color:rgba(255,255,255,.92)}
-/* Carousel controls — bottom-left */
+/* Carousel controls — subtle, bottom-right */
+.aug-notice--multi{padding-bottom:2rem}
 .aug-notice__controls{
-  display:flex;align-items:center;gap:var(--space-3);
-  margin-top:var(--space-3);padding-top:var(--space-3);
-  border-top:1px solid color-mix(in srgb,var(--honey) 25%,transparent);
+  position:absolute;bottom:var(--space-3);right:var(--space-4);
+  display:flex;align-items:center;gap:4px;
 }
 .aug-notice__arrow{
-  width:28px;height:28px;border-radius:50%;
-  background:color-mix(in srgb,var(--honey) 18%,transparent);
-  border:1px solid color-mix(in srgb,var(--honey) 35%,transparent);
-  color:var(--honey-deep);cursor:pointer;
+  width:22px;height:22px;border-radius:4px;
+  background:transparent;border:none;
+  color:color-mix(in srgb,var(--honey-deep) 55%,transparent);
+  cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:background var(--dur-fast),transform var(--dur-fast);
+  transition:color var(--dur-fast),background var(--dur-fast);
 }
-[data-theme="night"] .aug-notice__arrow{color:var(--moon-300)}
-.aug-notice__arrow:hover{background:color-mix(in srgb,var(--honey) 32%,transparent);transform:scale(1.1)}
+[data-theme="night"] .aug-notice__arrow{color:color-mix(in srgb,var(--moon-300) 50%,transparent)}
+.aug-notice__arrow:hover{background:color-mix(in srgb,var(--honey) 18%,transparent);color:var(--honey-deep)}
+[data-theme="night"] .aug-notice__arrow:hover{color:var(--moon-300)}
 .aug-notice__arrow:focus-visible{outline:2px solid var(--honey);outline-offset:2px}
-.aug-notice__arrow svg{width:14px;height:14px;pointer-events:none}
+.aug-notice__arrow svg{width:13px;height:13px;pointer-events:none}
 .aug-notice__counter{
-  font-family:var(--font-body);font-size:var(--text-xs);
-  font-weight:var(--fw-semibold);color:var(--honey-deep);
-  min-width:28px;text-align:center;
+  font-family:var(--font-body);font-size:.7rem;
+  font-weight:var(--fw-semibold);
+  color:color-mix(in srgb,var(--honey-deep) 55%,transparent);
+  min-width:26px;text-align:center;letter-spacing:.02em;
 }
-[data-theme="night"] .aug-notice__counter{color:var(--moon-300)}
+[data-theme="night"] .aug-notice__counter{color:color-mix(in srgb,var(--moon-300) 55%,transparent)}
 @media(max-width:600px){
   .aug-notice-wrap{margin-bottom:var(--space-5)}
   .hero__inner--has-notice{padding-top:var(--space-5)}
@@ -1583,7 +1586,7 @@ ul,ol{list-style:none}
     const n0    = _notices[0];
 
     aside.innerHTML =
-      '<div class="aug-notice">' +
+      '<div class="aug-notice' + (multi ? ' aug-notice--multi' : '') + '">' +
         '<div class="aug-notice__slide" id="aug-notice-slide">' +
           '<span class="aug-notice__icon" aria-hidden="true">' + escHtml(n0.emoji) + '</span>' +
           '<div class="aug-notice__content">' +
@@ -1594,11 +1597,11 @@ ul,ol{list-style:none}
         (multi ?
           '<div class="aug-notice__controls">' +
             '<button class="aug-notice__arrow" id="aug-notice-prev" aria-label="Previous notice">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
             '</button>' +
             '<span class="aug-notice__counter" id="aug-notice-counter" aria-live="polite">1 / ' + _notices.length + '</span>' +
             '<button class="aug-notice__arrow" id="aug-notice-next" aria-label="Next notice">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
             '</button>' +
           '</div>'
         : '') +
