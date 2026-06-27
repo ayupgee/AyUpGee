@@ -469,6 +469,35 @@ ul{list-style:none}
   animation:skel-fade 1.4s ease-in-out infinite;
 }
 @keyframes skel-fade { 0%,100%{opacity:1}50%{opacity:.5} }
+/* ── Notice management ──────────────────────────────────────────────────────── */
+.notice-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);
+  display:flex;align-items:flex-start;gap:var(--space-4);
+  transition:border-color var(--dur-base);
+}
+.notice-card--active{border-color:color-mix(in srgb,var(--honey) 50%,transparent)}
+.notice-card__icon{font-size:1.6rem;line-height:1;flex-shrink:0;width:36px;text-align:center}
+.notice-card__body{flex:1;min-width:0}
+.notice-card__title{font-family:var(--font-display);font-weight:600;font-size:.9375rem;color:var(--text);margin-bottom:.25rem}
+.notice-card__text{font-size:.8125rem;color:var(--text-muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.notice-card__meta{display:flex;align-items:center;gap:.5rem;margin-top:.4rem;flex-wrap:wrap}
+.notice-card__badge{font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.2em .55em;border-radius:999px}
+.notice-card__badge--active{background:rgba(255,209,102,.15);color:var(--moon-300)}
+.notice-card__badge--inactive{background:var(--surface-sunken);color:var(--text-faint)}
+.notice-card__order{font-size:.75rem;color:var(--text-faint)}
+.notice-card__actions{display:flex;flex-direction:column;gap:.4rem;flex-shrink:0}
+.notice-label{display:block;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.3rem}
+.notice-input{
+  width:100%;background:var(--surface-sunken);border:1.5px solid var(--border);
+  border-radius:var(--radius-md);padding:.55rem .75rem;font-family:var(--font-body);
+  font-size:.875rem;color:var(--text);transition:border-color var(--dur-base);
+}
+.notice-input:focus{outline:none;border-color:var(--brand)}
+textarea.notice-input{font-family:var(--font-body)}
+.notice-skeleton{animation:skel-fade 1.4s ease-in-out infinite}
+#noticeFormOverlay{display:none}
+#noticeFormOverlay.open{display:flex}
 
 /* ── Cleanup section ────────────────────────────────────────────────────────── */
 .cleanup-section { margin-top:var(--space-6) }
@@ -568,6 +597,9 @@ ul{list-style:none}
       </a>
 
       <div class="sidebar__section-label" style="margin-top:.75rem">Management</div>
+      <a class="sidebar__item" href="#notices" data-section="notices">
+        <i data-lucide="megaphone"></i> Notices
+      </a>
       <a class="sidebar__item" href="#users" data-section="users">
         <i data-lucide="users"></i> Users
         <span class="sidebar__badge" id="usersBadge" style="display:none">0</span>
@@ -794,6 +826,20 @@ ul{list-style:none}
           </div>
         </div>
 
+
+        <!-- Notice -->
+        <div class="admin-card" onclick="openModule('notices')">
+          <div class="admin-card__icon" style="background:rgba(255,209,102,.12)">📢</div>
+          <div>
+            <div class="admin-card__title">Notices</div>
+            <div class="admin-card__desc">Create and manage homepage notice banners. Up to 3 active at once.</div>
+          </div>
+          <div class="admin-card__footer">
+            <span class="admin-card__status admin-card__status--active" id="noticeCardStatus">Active</span>
+            <span class="admin-card__action">Manage <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+          </div>
+        </div>
+
       </div><!-- /admin-grid -->
 
     </div><!-- /dashboardView -->
@@ -866,6 +912,102 @@ ul{list-style:none}
       </div>
 
     </div><!-- /socialView -->
+
+    <!-- ═══ NOTICE MANAGEMENT VIEW ══════════════════════════════════════════ -->
+    <div id="noticeView" class="view">
+      <div class="social-panel-header">
+        <h2>Notice Management</h2>
+        <button class="aug-btn aug-btn--primary aug-btn--sm" id="noticeAddBtn" onclick="noticeOpenForm()">
+          <i data-lucide="plus" style="width:14px;height:14px"></i> New Notice
+        </button>
+      </div>
+
+      <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:var(--space-5)">
+        Notices appear as a banner on the homepage, above the hero card. Maximum <strong>3 active</strong> at once.
+        Inactive notices are saved but not shown to visitors.
+      </p>
+
+      <!-- Active cap warning -->
+      <div id="noticeCapWarn" style="display:none;margin-bottom:var(--space-4);padding:.75rem 1rem;background:rgba(255,209,102,.1);border:1.5px solid rgba(255,209,102,.35);border-radius:var(--radius-md);font-size:.875rem;color:var(--moon-300)">
+        ⚠️ Maximum of 3 active notices reached. Disable or delete one before adding another.
+      </div>
+
+      <!-- Notice list -->
+      <div id="noticeList" style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="notice-skeleton">
+          <div class="skel" style="height:100px;border-radius:var(--radius-md)"></div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="noticeEmpty" style="display:none;text-align:center;padding:var(--space-8) 0;color:var(--text-muted)">
+        <div style="font-size:2.5rem;margin-bottom:var(--space-3)">📢</div>
+        <p style="font-weight:600;color:var(--text);margin-bottom:.4rem">No notices yet</p>
+        <p style="font-size:.875rem">Click <strong>New Notice</strong> to create your first banner.</p>
+      </div>
+
+      <!-- Create / Edit form modal overlay -->
+      <div id="noticeFormOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem">
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-6);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)">
+            <h3 id="noticeFormTitle" style="font-family:var(--font-display);font-size:1.25rem;font-weight:600">New Notice</h3>
+            <button onclick="noticeCloseForm()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:.25rem">
+              <i data-lucide="x" style="width:18px;height:18px"></i>
+            </button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+
+            <div style="display:grid;grid-template-columns:80px 1fr;gap:var(--space-3)">
+              <div>
+                <label class="notice-label">Emoji</label>
+                <input id="nfEmoji" class="notice-input" type="text" maxlength="8" placeholder="📢"
+                       style="text-align:center;font-size:1.4rem" />
+              </div>
+              <div>
+                <label class="notice-label">Title <span style="color:var(--blossom-400)">*</span></label>
+                <input id="nfTitle" class="notice-input" type="text" maxlength="120" placeholder="Heatwave Update" />
+              </div>
+            </div>
+
+            <div>
+              <label class="notice-label">Body text <span style="color:var(--blossom-400)">*</span></label>
+              <textarea id="nfBody" class="notice-input" rows="4" maxlength="600"
+                        placeholder="Share your update here…" style="resize:vertical;min-height:90px"></textarea>
+              <div style="text-align:right;font-size:.75rem;color:var(--text-faint);margin-top:.25rem">
+                <span id="nfBodyCount">0</span> / 600
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:var(--space-4)">
+              <div>
+                <label class="notice-label">Sort order</label>
+                <input id="nfOrder" class="notice-input" type="number" min="0" max="99" value="0"
+                       style="width:80px" />
+              </div>
+              <div style="display:flex;align-items:center;gap:.5rem;padding-top:1.4rem">
+                <button id="nfToggle" onclick="noticeToggleActive()"
+                        style="position:relative;width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;transition:background .2s;background:var(--night-600)"
+                        role="switch" aria-checked="false" aria-label="Active">
+                  <span id="nfToggleThumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s"></span>
+                </button>
+                <label class="notice-label" style="margin-bottom:0" id="nfToggleLabel">Inactive</label>
+              </div>
+            </div>
+
+            <div id="nfError" style="display:none;padding:.6rem .9rem;background:rgba(232,95,147,.1);border:1.5px solid var(--blossom-400);border-radius:var(--radius-md);font-size:.875rem;color:var(--blossom-400)"></div>
+
+            <div style="display:flex;gap:var(--space-3);justify-content:flex-end;padding-top:var(--space-2)">
+              <button onclick="noticeCloseForm()" class="aug-btn aug-btn--secondary aug-btn--sm">Cancel</button>
+              <button id="nfSaveBtn" onclick="noticeSave()" class="aug-btn aug-btn--primary aug-btn--sm">
+                <i data-lucide="save" style="width:14px;height:14px"></i> Save notice
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /noticeView -->
 
     </main><!-- /admin-content -->
   </div><!-- /admin-main -->
@@ -966,7 +1108,7 @@ ul{list-style:none}
     if (view) view.classList.add('active');
 
     // Update topbar title and document.title
-    const titles = { dashboard: 'Dashboard', social: 'Social Integrations' };
+    const titles = { dashboard: 'Dashboard', social: 'Social Integrations', notices: 'Notice Management' };
     const label = titles[name] ?? 'Dashboard';
     document.getElementById('topbarTitle').textContent = label;
     document.title = label + ' | Admin | AyUpGee';
@@ -977,9 +1119,19 @@ ul{list-style:none}
     } else {
       stopSocialRefresh();
     }
+    if (name === 'notices') {
+      loadNotices();
+    }
   }
 
   window.openModule = function (name) {
+    if (name === 'notices') {
+      document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('active'));
+      const si = document.querySelector('.sidebar__item[data-section="notices"]');
+      if (si) si.classList.add('active');
+      showView('notices');
+      return;
+    }
     if (SOCIAL_MODULES.has(name)) {
       // All social modules share the Social Integrations view
       document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('active'));
@@ -1280,6 +1432,232 @@ ul{list-style:none}
     if (!iso) return '-:-';
     return utcDate(iso).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   }
+
+
+  // ── Notice Management ────────────────────────────────────────────────────────
+
+  let _notices    = [];
+  let _editingId  = null;
+  let _formActive = false;
+
+  async function loadNotices() {
+    const list  = document.getElementById('noticeList');
+    const empty = document.getElementById('noticeEmpty');
+    const cap   = document.getElementById('noticeCapWarn');
+    list.innerHTML = '<div class="notice-skeleton"><div class="provider-skeleton" style="height:90px;border-radius:var(--radius-md)"></div></div>';
+    empty.style.display = 'none';
+
+    try {
+      const res  = await fetch('/api/admin/notices', { credentials: 'same-origin' });
+      const data = await res.json();
+      _notices = data.notices ?? [];
+    } catch {
+      _notices = [];
+      showToast('Could not load notices', true);
+    }
+
+    const activeCount = _notices.filter(n => n.is_active).length;
+    cap.style.display = activeCount >= 3 ? 'block' : 'none';
+    document.getElementById('noticeAddBtn').disabled = false;
+
+    // Update dashboard card badge
+    const cardBadge = document.getElementById('noticeCardStatus');
+    if (cardBadge) {
+      if (activeCount === 0) {
+        cardBadge.textContent = 'No active notices';
+        cardBadge.className = 'admin-card__status admin-card__status--soon';
+      } else {
+        cardBadge.textContent = activeCount + ' active';
+        cardBadge.className = 'admin-card__status admin-card__status--live';
+      }
+    }
+
+    list.innerHTML = '';
+    if (_notices.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    _notices.forEach(n => {
+      const card = document.createElement('div');
+      card.className = 'notice-card' + (n.is_active ? ' notice-card--active' : '');
+      card.dataset.id = n.id;
+      card.innerHTML = `
+        <div class="notice-card__icon">${esc(n.emoji)}</div>
+        <div class="notice-card__body">
+          <div class="notice-card__title">${esc(n.title)}</div>
+          <div class="notice-card__text">${esc(n.body)}</div>
+          <div class="notice-card__meta">
+            <span class="notice-card__badge ${n.is_active ? 'notice-card__badge--active' : 'notice-card__badge--inactive'}">
+              ${n.is_active ? 'Active' : 'Inactive'}
+            </span>
+            <span class="notice-card__order">Order: ${n.sort_order}</span>
+          </div>
+        </div>
+        <div class="notice-card__actions">
+          <button class="aug-btn aug-btn--secondary aug-btn--sm" onclick="noticeOpenForm('${n.id}')">
+            <i data-lucide="pencil" style="width:13px;height:13px"></i> Edit
+          </button>
+          <button class="aug-btn aug-btn--sm" style="--_bg:${n.is_active ? 'var(--surface-sunken)' : 'rgba(255,209,102,.15)'};--_fg:${n.is_active ? 'var(--text-muted)' : 'var(--moon-300)'};--_bd:${n.is_active ? 'var(--border)' : 'rgba(255,209,102,.3)'}"
+                  onclick="noticeToggleFromList('${n.id}', ${n.is_active ? 0 : 1})">
+            ${n.is_active ? 'Disable' : 'Enable'}
+          </button>
+          <button class="aug-btn aug-btn--sm" style="--_bg:rgba(232,95,147,.08);--_fg:var(--blossom-400);--_bd:rgba(232,95,147,.25)"
+                  onclick="noticeDelete('${n.id}')">
+            <i data-lucide="trash-2" style="width:13px;height:13px"></i>
+          </button>
+        </div>`;
+      list.appendChild(card);
+    });
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function noticeOpenForm(id = null) {
+    _editingId  = id;
+    _formActive = false;
+    const overlay = document.getElementById('noticeFormOverlay');
+    overlay.classList.add('open');
+    document.getElementById('noticeFormTitle').textContent = id ? 'Edit Notice' : 'New Notice';
+    document.getElementById('nfError').style.display = 'none';
+
+    if (id) {
+      const n = _notices.find(x => x.id === id);
+      if (!n) return;
+      document.getElementById('nfEmoji').value = n.emoji;
+      document.getElementById('nfTitle').value = n.title;
+      document.getElementById('nfBody').value  = n.body;
+      document.getElementById('nfOrder').value = n.sort_order;
+      _formActive = !!n.is_active;
+    } else {
+      document.getElementById('nfEmoji').value = '📢';
+      document.getElementById('nfTitle').value = '';
+      document.getElementById('nfBody').value  = '';
+      document.getElementById('nfOrder').value = _notices.length;
+      _formActive = true;
+    }
+    noticeUpdateToggle();
+    document.getElementById('nfBody').addEventListener('input', noticeUpdateBodyCount);
+    noticeUpdateBodyCount();
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function noticeCloseForm() {
+    document.getElementById('noticeFormOverlay').classList.remove('open');
+    _editingId = null;
+  }
+
+  function noticeToggleActive() {
+    _formActive = !_formActive;
+    noticeUpdateToggle();
+  }
+
+  function noticeUpdateToggle() {
+    const btn   = document.getElementById('nfToggle');
+    const thumb = document.getElementById('nfToggleThumb');
+    const lbl   = document.getElementById('nfToggleLabel');
+    btn.style.background = _formActive ? 'var(--sky-400)' : 'var(--night-600)';
+    btn.setAttribute('aria-checked', _formActive ? 'true' : 'false');
+    thumb.style.left = _formActive ? '23px' : '3px';
+    lbl.textContent  = _formActive ? 'Active' : 'Inactive';
+  }
+
+  function noticeUpdateBodyCount() {
+    const val = document.getElementById('nfBody').value.length;
+    document.getElementById('nfBodyCount').textContent = val;
+  }
+
+  async function noticeSave() {
+    const btn   = document.getElementById('nfSaveBtn');
+    const errEl = document.getElementById('nfError');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    const payload = {
+      emoji:      document.getElementById('nfEmoji').value.trim() || '📢',
+      title:      document.getElementById('nfTitle').value.trim(),
+      body:       document.getElementById('nfBody').value.trim(),
+      sort_order: Number(document.getElementById('nfOrder').value) || 0,
+      is_active:  _formActive,
+    };
+
+    try {
+      const url    = _editingId ? `/api/admin/notices/${_editingId}` : '/api/admin/notices';
+      const method = _editingId ? 'PUT' : 'POST';
+      const res    = await fetch(url, {
+        method,
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        errEl.textContent = data.error ?? 'Something went wrong';
+        errEl.style.display = 'block';
+        return;
+      }
+      noticeCloseForm();
+      showToast(_editingId ? '✅ Notice updated' : '✅ Notice created');
+      loadNotices();
+    } catch {
+      errEl.textContent = 'Network error, please try again';
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="save" style="width:14px;height:14px"></i> Save notice';
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+
+  async function noticeToggleFromList(id, newActive) {
+    const activeCount = _notices.filter(n => n.is_active).length;
+    if (newActive && activeCount >= 3) {
+      showToast('⚠️ Maximum 3 active notices. Disable one first.', true);
+      return;
+    }
+    try {
+      const res  = await fetch('/api/admin/notices/' + id, {
+        method: 'PUT',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: newActive }),
+      });
+      const data = await res.json();
+      if (!data.ok) { showToast('❌ ' + (data.error ?? 'Update failed'), true); return; }
+      showToast(newActive ? '✅ Notice enabled' : '✅ Notice disabled');
+      loadNotices();
+    } catch {
+      showToast('❌ Network error', true);
+    }
+  }
+
+  async function noticeDelete(id) {
+    if (!confirm('Delete this notice? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/api/admin/notices/' + id, {
+        method: 'DELETE', credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!data.ok) { showToast('❌ ' + (data.error ?? 'Delete failed'), true); return; }
+      showToast('✅ Notice deleted');
+      loadNotices();
+    } catch {
+      showToast('❌ Network error', true);
+    }
+  }
+
+  // Close overlay on backdrop click
+  document.getElementById('noticeFormOverlay').addEventListener('click', function(e) {
+    if (e.target === this) noticeCloseForm();
+  });
+
+  // Expose for inline onclick
+  window.noticeOpenForm     = noticeOpenForm;
+  window.noticeCloseForm    = noticeCloseForm;
+  window.noticeToggleActive = noticeToggleActive;
+  window.noticeSave         = noticeSave;
+  window.noticeToggleFromList = noticeToggleFromList;
+  window.noticeDelete       = noticeDelete;
 
   function showToast(msg, isError = false) {
     const t = document.createElement('div');

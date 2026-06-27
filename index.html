@@ -415,22 +415,23 @@ ul,ol{list-style:none}
 :not([data-theme="night"]) .hero__bg{opacity:.75}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--night-900) 35%,transparent) 0%,color-mix(in srgb,var(--night-900) 75%,transparent) 60%,var(--night-900) 100%)}
 :not([data-theme="night"]) .hero__scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--cream-50) 20%,transparent) 0%,color-mix(in srgb,var(--cream-50) 65%,transparent) 60%,var(--cream-50) 100%)}
-/* ── Announcement Notice ─────────────────────────────────── */
+/* ── Announcement Notice (dynamic from /api/notices) ─────── */
 @keyframes aug-notice-drop{
   from{opacity:0;transform:translateY(-10px)}
   to{opacity:1;transform:translateY(0)}
+}
+@keyframes aug-notice-fade-in{
+  from{opacity:0} to{opacity:1}
 }
 .aug-notice-wrap{
   width:100%;max-width:760px;
   margin-bottom:var(--space-7);
   animation:aug-notice-drop .45s var(--ease-soft) both;
 }
-/* Reduce hero top padding when notice is active so gaps are equal above and below */
 .hero__inner--has-notice{padding-top:var(--space-7)}
 .aug-notice{
   display:flex;
-  align-items:flex-start;
-  gap:var(--space-3);
+  flex-direction:column;
   padding:var(--space-4) var(--space-5);
   background:color-mix(in srgb,var(--honey) 16%,color-mix(in srgb,var(--surface) 72%,transparent));
   backdrop-filter:var(--blur-glass);-webkit-backdrop-filter:var(--blur-glass);
@@ -438,33 +439,53 @@ ul,ol{list-style:none}
   border-radius:var(--radius-xl);
   box-shadow:0 4px 20px color-mix(in srgb,var(--honey) 12%,rgba(0,0,0,.25));
 }
+.aug-notice__slide{
+  display:flex;align-items:flex-start;gap:var(--space-3);
+  animation:aug-notice-fade-in .3s var(--ease-soft) both;
+}
 .aug-notice__icon{
-  font-size:1.25rem;
-  line-height:1.35;
-  flex-shrink:0;
-  user-select:none;
+  font-size:1.25rem;line-height:1.35;flex-shrink:0;user-select:none;
 }
 .aug-notice__heading{
-  font-family:var(--font-display);
-  font-weight:var(--fw-bold);
-  font-size:var(--text-md);
-  line-height:var(--leading-snug);
-  color:var(--honey-deep);
-  margin-bottom:.35rem;
+  font-family:var(--font-display);font-weight:var(--fw-bold);
+  font-size:var(--text-md);line-height:var(--leading-snug);
+  color:var(--honey-deep);margin-bottom:.35rem;
 }
 .aug-notice__body{
-  font-family:var(--font-body);
-  font-weight:var(--fw-regular);
-  font-size:var(--text-sm);
-  line-height:var(--leading-relaxed);
-  color:var(--text);
+  font-family:var(--font-body);font-weight:var(--fw-regular);
+  font-size:var(--text-sm);line-height:var(--leading-relaxed);color:var(--text);
 }
 [data-theme="night"] .aug-notice__heading{color:var(--moon-300)}
 [data-theme="night"] .aug-notice__body{color:rgba(255,255,255,.92)}
+/* Carousel controls — bottom-left */
+.aug-notice__controls{
+  display:flex;align-items:center;gap:var(--space-3);
+  margin-top:var(--space-3);padding-top:var(--space-3);
+  border-top:1px solid color-mix(in srgb,var(--honey) 25%,transparent);
+}
+.aug-notice__arrow{
+  width:28px;height:28px;border-radius:50%;
+  background:color-mix(in srgb,var(--honey) 18%,transparent);
+  border:1px solid color-mix(in srgb,var(--honey) 35%,transparent);
+  color:var(--honey-deep);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--dur-fast),transform var(--dur-fast);
+}
+[data-theme="night"] .aug-notice__arrow{color:var(--moon-300)}
+.aug-notice__arrow:hover{background:color-mix(in srgb,var(--honey) 32%,transparent);transform:scale(1.1)}
+.aug-notice__arrow:focus-visible{outline:2px solid var(--honey);outline-offset:2px}
+.aug-notice__arrow svg{width:14px;height:14px;pointer-events:none}
+.aug-notice__counter{
+  font-family:var(--font-body);font-size:var(--text-xs);
+  font-weight:var(--fw-semibold);color:var(--honey-deep);
+  min-width:28px;text-align:center;
+}
+[data-theme="night"] .aug-notice__counter{color:var(--moon-300)}
 @media(max-width:600px){
   .aug-notice-wrap{margin-bottom:var(--space-5)}
   .hero__inner--has-notice{padding-top:var(--space-5)}
-  .aug-notice{gap:var(--space-2);padding:var(--space-3) var(--space-4)}
+  .aug-notice{padding:var(--space-3) var(--space-4)}
+  .aug-notice__slide{gap:var(--space-2)}
   .aug-notice__icon{font-size:1.1rem}
 }
 /* Honeycomb tile — subtle honey-gold pattern */
@@ -1512,31 +1533,99 @@ ul,ol{list-style:none}
 // To update: edit the text below.
 // To disable: set enabled: false.
 // ══════════════════════════════════════════════════════════
-const AUG_NOTICE = {
-  enabled: true,
-  icon:    '🌞',
-  heading: 'Heatwave Update',
-  body:    'Due to the extreme heat across the UK, I\'ve had to pause this week\'s live streams (week commencing 22 June) to keep things safe and comfortable. I\'ll still be sharing plenty of cozy content across my socials in the meantime, and I\'m looking forward to being back live next week. Thanks for your understanding! 💛',
-};
-
-(function renderNotice() {
+// ── Dynamic Notice Banner ─────────────────────────────────────────────────────
+// Fetches active notices from /api/notices and renders a carousel if > 1.
+// Nothing renders if there are no active notices.
+(function() {
   const mount = document.getElementById('aug-notice-mount');
-  if (!mount || !AUG_NOTICE.enabled) return;
-  const aside = document.createElement('aside');
-  aside.setAttribute('aria-label', 'Site announcement');
-  aside.setAttribute('role', 'note');
-  aside.className = 'aug-notice-wrap';
-  aside.innerHTML =
-    '<div class="aug-notice">' +
-      '<span class="aug-notice__icon" aria-hidden="true">' + AUG_NOTICE.icon + '</span>' +
+  if (!mount) return;
+
+  let _notices = [];
+  let _current = 0;
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderSlide() {
+    const n   = _notices[_current];
+    const slide = document.getElementById('aug-notice-slide');
+    if (!slide || !n) return;
+    slide.style.animation = 'none';
+    slide.offsetHeight; // reflow
+    slide.style.animation = '';
+    slide.innerHTML =
+      '<span class="aug-notice__icon" aria-hidden="true">' + escHtml(n.emoji) + '</span>' +
       '<div class="aug-notice__content">' +
-        '<p class="aug-notice__heading">' + AUG_NOTICE.heading + '</p>' +
-        '<p class="aug-notice__body">'    + AUG_NOTICE.body    + '</p>' +
-      '</div>' +
-    '</div>';
-  mount.replaceWith(aside);
-  // Reduce hero top padding so spacing above and below the banner is equal
-  document.querySelector('.hero__inner')?.classList.add('hero__inner--has-notice');
+        '<p class="aug-notice__heading">' + escHtml(n.title) + '</p>' +
+        '<p class="aug-notice__body">'    + escHtml(n.body)  + '</p>' +
+      '</div>';
+    const counter = document.getElementById('aug-notice-counter');
+    if (counter) counter.textContent = (_current + 1) + ' / ' + _notices.length;
+  }
+
+  function prev() {
+    _current = (_current - 1 + _notices.length) % _notices.length;
+    renderSlide();
+  }
+  function next() {
+    _current = (_current + 1) % _notices.length;
+    renderSlide();
+  }
+
+  function buildNotice() {
+    const aside = document.createElement('aside');
+    aside.setAttribute('role', 'note');
+    aside.setAttribute('aria-label', 'Site announcement' + (_notices.length > 1 ? 's' : ''));
+    aside.className = 'aug-notice-wrap';
+
+    const multi = _notices.length > 1;
+    const n0    = _notices[0];
+
+    aside.innerHTML =
+      '<div class="aug-notice">' +
+        '<div class="aug-notice__slide" id="aug-notice-slide">' +
+          '<span class="aug-notice__icon" aria-hidden="true">' + escHtml(n0.emoji) + '</span>' +
+          '<div class="aug-notice__content">' +
+            '<p class="aug-notice__heading">' + escHtml(n0.title) + '</p>' +
+            '<p class="aug-notice__body">'    + escHtml(n0.body)  + '</p>' +
+          '</div>' +
+        '</div>' +
+        (multi ?
+          '<div class="aug-notice__controls">' +
+            '<button class="aug-notice__arrow" id="aug-notice-prev" aria-label="Previous notice">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+            '</button>' +
+            '<span class="aug-notice__counter" id="aug-notice-counter" aria-live="polite">1 / ' + _notices.length + '</span>' +
+            '<button class="aug-notice__arrow" id="aug-notice-next" aria-label="Next notice">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+            '</button>' +
+          '</div>'
+        : '') +
+      '</div>';
+
+    mount.replaceWith(aside);
+    document.querySelector('.hero__inner')?.classList.add('hero__inner--has-notice');
+
+    if (multi) {
+      document.getElementById('aug-notice-prev').addEventListener('click', prev);
+      document.getElementById('aug-notice-next').addEventListener('click', next);
+      // Keyboard support on the banner itself
+      aside.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      });
+    }
+  }
+
+  fetch('/api/notices')
+    .then(r => r.json())
+    .then(data => {
+      _notices = (data.notices ?? []).slice(0, 3);
+      if (_notices.length > 0) buildNotice();
+      // else: mount div stays empty, hero renders normally
+    })
+    .catch(() => { /* fail silently — no notice is fine */ });
 }());
 
 // ── Lucide icons ──────────────────────────────────────────
