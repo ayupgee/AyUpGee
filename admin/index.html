@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin | AyUpGee</title>
+<title>Admin Dashboard | AyUpGee</title>
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- Favicons -->
@@ -965,9 +965,11 @@ ul{list-style:none}
     const view = document.getElementById(name + 'View');
     if (view) view.classList.add('active');
 
-    // Update topbar title
+    // Update topbar title and document.title
     const titles = { dashboard: 'Dashboard', social: 'Social Integrations' };
-    document.getElementById('topbarTitle').textContent = titles[name] ?? 'Dashboard';
+    const label = titles[name] ?? 'Dashboard';
+    document.getElementById('topbarTitle').textContent = label;
+    document.title = label + ' | Admin | AyUpGee';
 
     if (name === 'social') {
       startSocialRefresh();
