@@ -566,6 +566,7 @@ ul,ol{list-style:none}
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════ */
+@media(max-width:1150px){.nav-link__emoji{display:none}}
 @media(max-width:900px){
   .gw-hero__inner{grid-template-columns:1fr;gap:var(--space-6)}
   .gw-prize-card{max-width:420px;margin:0 auto}
@@ -606,7 +607,7 @@ ul,ol{list-style:none}
     <a href="/#community"    class="nav-link">Community</a>
     <a href="/#about"        class="nav-link">About</a>
     <a href="/#partnerships" class="nav-link">Collab</a>
-    <a href="/giveaway"      class="nav-link nav-link--active">🎁 Giveaway</a>
+    <a href="/giveaway"      class="nav-link nav-link--active"><span class="nav-link__emoji">🎁 </span>Giveaway</a>
   </nav>
 
   <div class="header-actions">
