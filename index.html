@@ -402,6 +402,7 @@ ul,ol{list-style:none}
 .nav-mobile{display:none;position:fixed;top:61px;left:0;right:0;background:color-mix(in srgb,var(--bg) 96%,transparent);backdrop-filter:var(--blur-glass);border-bottom:var(--border-thin) solid var(--border);padding:var(--space-4) var(--space-5);flex-direction:column;z-index:99}
 .nav-mobile.open{display:flex}
 .nav-mobile a{font-family:var(--font-display);font-size:var(--text-lg);color:var(--text-muted);padding:var(--space-3) 0;border-bottom:var(--border-thin) solid var(--border);transition:color var(--dur-fast)}
+.nav-mobile a:last-child{border-bottom:none}
 .nav-mobile a:hover{color:var(--brand)}
 
 /* ═══════════════════════════════════════════════════════
@@ -2102,7 +2103,11 @@ async function loadYouTubeVideos() {
     ticking = true;
     requestAnimationFrame(() => {
       const y = window.scrollY;
-      // Don't hide while within the first 80px (top of page)
+      // Never hide while the mobile menu is open
+      if (document.getElementById('navMobile')?.classList.contains('open')) {
+        ticking = false;
+        return;
+      }
       if (y > 80) {
         header.classList.toggle('site-header--hidden', y > lastY);
       } else {
