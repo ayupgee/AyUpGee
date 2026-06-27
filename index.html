@@ -448,7 +448,7 @@ ul,ol{list-style:none}
   font-weight:var(--fw-bold);
   font-size:var(--text-md);
   line-height:var(--leading-snug);
-  color:var(--moon-300);
+  color:var(--honey-deep);
   margin-bottom:.35rem;
 }
 .aug-notice__body{
@@ -456,8 +456,10 @@ ul,ol{list-style:none}
   font-weight:var(--fw-regular);
   font-size:var(--text-sm);
   line-height:var(--leading-relaxed);
-  color:rgba(255,255,255,.92);
+  color:var(--text);
 }
+[data-theme="night"] .aug-notice__heading{color:var(--moon-300)}
+[data-theme="night"] .aug-notice__body{color:rgba(255,255,255,.92)}
 @media(max-width:600px){
   .aug-notice-wrap{margin-bottom:var(--space-5)}
   .hero__inner--has-notice{padding-top:var(--space-5)}
