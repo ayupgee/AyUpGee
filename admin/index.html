@@ -462,6 +462,15 @@ ul{list-style:none}
 }
 .btn-sm i { width:13px;height:13px }
 
+/* aug-btn aliases (notices UI) */
+.aug-btn { display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .8rem;font-size:.8rem;font-weight:600;border-radius:var(--radius-md);border:1.5px solid var(--border);background:var(--surface-raised);color:var(--text);cursor:pointer;transition:background .15s,border-color .15s,color .15s }
+.aug-btn:disabled { opacity:.45;cursor:not-allowed;pointer-events:none }
+.aug-btn--sm { padding:.3rem .7rem;font-size:.775rem }
+.aug-btn--primary { background:rgba(95,212,214,.12);color:var(--sky-300);border-color:rgba(95,212,214,.3) }
+.aug-btn--primary:hover { background:rgba(95,212,214,.22) }
+.aug-btn--secondary { background:var(--surface-sunken);color:var(--text-muted);border-color:var(--border) }
+.aug-btn--secondary:hover { background:var(--brand-soft);color:var(--brand);border-color:var(--brand) }
+
 /* Skeleton / loading state */
 .provider-skeleton {
   background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);
@@ -947,7 +956,7 @@ textarea.notice-input{font-family:var(--font-body)}
       </div>
 
       <!-- Create / Edit form modal overlay -->
-      <div id="noticeFormOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem">
+      <div id="noticeFormOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:1rem">
         <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-6);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)">
             <h3 id="noticeFormTitle" style="font-family:var(--font-display);font-size:1.25rem;font-weight:600">New Notice</h3>
