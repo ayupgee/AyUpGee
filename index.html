@@ -555,6 +555,11 @@ ul,ol{list-style:none}
 .video-card--placeholder:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--border)}
 .video-card--placeholder .video-thumb__ph{opacity:.5}
 
+/* ── Video card: clickable card variant ── */
+.video-card--link{cursor:pointer}
+.video-card__title-link{color:inherit;text-decoration:none}
+.video-card__title-link:hover{text-decoration:underline;text-underline-offset:3px}
+
 /* ── Video card: loading skeleton ── */
 .video-card--skeleton .video-thumb{background:var(--surface-soft)}
 .video-skel-line{height:.8rem;border-radius:var(--radius-pill);background:var(--surface-sunken);animation:ayg-shimmer 1.5s ease-in-out infinite}
@@ -1729,10 +1734,11 @@ function renderTwitchVodItems(items) {
     const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl) : '';
 
     return `
-      <div class="video-card reveal ${delays[i] ?? ''}">
+      <div class="video-card video-card--link reveal ${delays[i] ?? ''}"
+           onclick="if(!event.target.closest('a'))window.open('${url}','_blank','noopener,noreferrer')">
         <div class="video-thumb">
           ${thumb
-            ? `<img class="video-thumb__img" src="${thumb}" alt="" loading="lazy" decoding="async"
+            ? `<img class="video-thumb__img" src="${thumb}" alt="${title}" loading="lazy" decoding="async"
                     onerror="this.style.display='none'" />`
             : '<div class="video-thumb__ph">🟣</div>'
           }
@@ -1744,7 +1750,9 @@ function renderTwitchVodItems(items) {
           </span>
         </div>
         <div class="video-card__body">
-          <p class="video-card__title">${title}</p>
+          <p class="video-card__title">
+            <a class="video-card__title-link" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>
+          </p>
           <p class="video-card__meta"><i data-lucide="calendar"></i> ${date || 'Recent stream'}</p>
         </div>
         <div class="video-card__foot">
@@ -1823,10 +1831,11 @@ function renderYouTubeItems(items) {
     const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl) : '';
 
     return `
-      <div class="video-card ${delays[i] ?? 'reveal'}">
+      <div class="video-card video-card--link ${delays[i] ?? 'reveal'}"
+           onclick="if(!event.target.closest('a'))window.open('${url}','_blank','noopener,noreferrer')">
         <div class="video-thumb" style="background:linear-gradient(135deg,var(--night-900),var(--twilight-700))">
           ${thumb
-            ? `<img class="video-thumb__img" src="${thumb}" alt="" loading="lazy" decoding="async"
+            ? `<img class="video-thumb__img" src="${thumb}" alt="${title}" loading="lazy" decoding="async"
                     onerror="this.style.display='none'" />`
             : '<div class="video-thumb__ph">▶️</div>'
           }
@@ -1838,7 +1847,9 @@ function renderYouTubeItems(items) {
           </span>
         </div>
         <div class="video-card__body">
-          <p class="video-card__title">${title}</p>
+          <p class="video-card__title">
+            <a class="video-card__title-link" href="${url}" target="_blank" rel="noopener noreferrer">${title}</a>
+          </p>
           <p class="video-card__meta"><i data-lucide="calendar"></i> ${date || 'Recent upload'}</p>
         </div>
         <div class="video-card__foot">
