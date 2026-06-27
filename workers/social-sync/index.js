@@ -404,6 +404,15 @@ function formatYouTubeDuration(iso) {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
+/** Returns total seconds from an ISO 8601 duration — used to detect Shorts (≤ 60s). */
+function parseDurationSeconds(iso) {
+  if (!iso) return 0;
+  const h = parseInt(iso.match(/(\d+)H/)?.[1] ?? 0);
+  const m = parseInt(iso.match(/(\d+)M/)?.[1] ?? 0);
+  const s = parseInt(iso.match(/(\d+)S/)?.[1] ?? 0);
+  return h * 3600 + m * 60 + s;
+}
+
 async function syncYouTube(env) {
   if (!env.YOUTUBE_API_KEY) {
     console.log('[youtube] YOUTUBE_API_KEY not set — skipping');
@@ -473,7 +482,9 @@ async function syncYouTube(env) {
     .map(i => i.snippet?.resourceId?.videoId)
     .filter(Boolean);
 
-  const durationMap = {};
+  const durationMap    = {}; // videoId → display string e.g. "18:42"
+  const durationSecMap = {}; // videoId → total seconds (used to detect Shorts)
+
   if (videoIds.length > 0) {
     const detailRes = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(',')}&key=${key}`,
@@ -482,13 +493,29 @@ async function syncYouTube(env) {
     if (detailRes.ok) {
       const detailData = await detailRes.json();
       for (const v of (detailData?.items ?? [])) {
-        durationMap[v.id] = formatYouTubeDuration(v.contentDetails?.duration);
+        const iso = v.contentDetails?.duration;
+        durationMap[v.id]    = formatYouTubeDuration(iso);
+        durationSecMap[v.id] = parseDurationSeconds(iso);
       }
     }
-    // Non-fatal if duration fetch fails — cards will render without timestamps
+    // Non-fatal if duration fetch fails — cards render without timestamps and no Shorts filter
   }
 
-  // ── Step 4: upsert into D1 ───────────────────────────────────────────────────
+  // ── Remove any Shorts (≤ 60 s) already saved in D1 ──────────────────────────
+  // Shorts live in the uploads playlist but should never appear on the site.
+  const shortDbIds = videoIds
+    .filter(id => (durationSecMap[id] ?? 999) <= 60)
+    .map(id => `yt_${id}`);
+
+  if (shortDbIds.length > 0) {
+    const placeholders = shortDbIds.map(() => '?').join(',');
+    await env.DB.prepare(
+      `DELETE FROM social_posts WHERE platform = 'youtube' AND id IN (${placeholders})`
+    ).bind(...shortDbIds).run();
+    console.log(`[youtube] Removed ${shortDbIds.length} Short(s) from D1`);
+  }
+
+  // ── Step 4: upsert regular videos (> 60 s) into D1 ──────────────────────────
   let synced  = 0;
   let skipped = 0;
 
@@ -496,6 +523,9 @@ async function syncYouTube(env) {
     try {
       const videoId = item.snippet?.resourceId?.videoId;
       if (!videoId) { skipped++; continue; }
+
+      // Skip Shorts — already deleted from D1 above
+      if ((durationSecMap[videoId] ?? 999) <= 60) { skipped++; continue; }
 
       const id    = `yt_${videoId}`;
       const title = item.snippet?.title || 'YouTube Video';
