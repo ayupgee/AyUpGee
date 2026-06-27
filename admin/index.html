@@ -1088,16 +1088,16 @@ ul{list-style:none}
 
     const statusLabel = { online:'🟢 Online', warning:'🟠 Warning', offline:'🔴 Offline', unknown:'🟡 Connecting' };
     const badgeClass  = { online:'status-badge--online', warning:'status-badge--warning', offline:'status-badge--offline', unknown:'status-badge--unknown' };
-    const icons       = { twitch:'tv-2', instagram:'camera', tiktok:'music-2', twitchvods:'video', youtube:'youtube' };
-    const iconBgs     = { twitch:'rgba(145,71,255,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)', twitchvods:'rgba(145,71,255,.15)', youtube:'rgba(255,80,80,.15)' };
-    const iconEmojis  = { twitch:'🟣', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬' };
+    const icons       = { twitch:'server', instagram:'camera', tiktok:'music-2', twitchvods:'video', youtube:'youtube' };
+    const iconBgs     = { twitch:'rgba(95,212,214,.15)', instagram:'rgba(232,95,147,.15)', tiktok:'rgba(255,176,96,.15)', twitchvods:'rgba(145,71,255,.15)', youtube:'rgba(255,80,80,.15)' };
+    const iconEmojis  = { twitch:'⚙️', instagram:'📸', tiktok:'🎵', twitchvods:'📹', youtube:'🎬' };
 
     const status = p.status ?? 'unknown';
     const lastSync = p.lastSync ? relativeTime(p.lastSync) : '—';
     const rt       = p.responseTime ? `${p.responseTime}ms` : '—';
     const items    = p.itemCount != null ? p.itemCount : '—';
     const lastErr  = p.lastError ?? 'None';
-    const subLabel = { twitch:'ayupgee-social-sync.workers.dev', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3' }[id] ?? '';
+    const subLabel = { twitch:'Sync overview — all 4 platforms', instagram:'behold.so', tiktok:'tikhub.io', twitchvods:'api.twitch.tv/helix', youtube:'googleapis.com/youtube/v3' }[id] ?? '';
     const canSync  = id === 'twitch'; // worker handles all syncs
 
     const logsHtml = (p.logs ?? []).length === 0

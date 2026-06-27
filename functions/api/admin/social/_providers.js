@@ -101,21 +101,21 @@ export async function getLastError(env, platform) {
   }
 }
 
-// ── Twitch Provider ────────────────────────────────────────────────────────────
+// ── Sync Worker Provider (health of the social-sync Cloudflare Worker) ────────
 export const TwitchProvider = {
   id:           'twitch',
-  name:         'Twitch Sync Worker',
+  name:         'Social Sync Worker',
   dashboardUrl: WORKER_URL,
-  providerUrl:  'https://dashboard.twitch.tv',
+  providerUrl:  WORKER_URL,
 
   async getStatus(env) {
-    // The worker root returns version + D1 stats — ping it
+    // Ping the worker health endpoint — it returns version + D1 stats for all platforms
     const start  = Date.now();
     const ctrl   = new AbortController();
     const tid    = setTimeout(() => ctrl.abort(), 6000);
-    let reachable = false;
+    let reachable    = false;
     let responseTime = null;
-    let workerData = null;
+    let workerData   = null;
 
     try {
       const res = await fetch(WORKER_URL, {
@@ -131,30 +131,44 @@ export const TwitchProvider = {
       responseTime = null;
     }
 
-    const stats     = await getPostStats(env, 'instagram'); // worker manages instagram+tiktok
-    const lastError = await getLastError(env, 'instagram');
-    const lastSync  = workerData?.providers?.instagram?.lastSync ?? stats.lastSync;
-    const status    = computeStatus(reachable, lastSync);
+    // Use the most recent sync across all platforms to determine worker health
+    const row = await env.DB.prepare(`
+      SELECT MAX(created_at) AS last_sync, COUNT(*) AS total_items
+      FROM   social_posts
+      WHERE  platform IN ('instagram','tiktok','twitch','youtube')
+    `).first().catch(() => null);
+
+    const lastSync = workerData?.lastSync ?? row?.last_sync ?? null;
+    const status   = computeStatus(reachable, lastSync);
+
+    // Surface the most recent error across all platforms
+    const errRow = await env.DB.prepare(`
+      SELECT error_message, created_at
+      FROM   sync_logs
+      WHERE  event = 'sync_error'
+      ORDER  BY created_at DESC
+      LIMIT  1
+    `).first().catch(() => null);
 
     return {
       reachable,
       responseTime,
       status,
       lastSync,
-      itemCount:   workerData?.providers?.instagram?.itemCount ?? stats.itemCount,
-      lastError:   lastError?.message ?? null,
-      lastErrorAt: lastError?.at      ?? null,
-      version:     workerData?.version ?? null,
+      itemCount:   row?.total_items ?? 0,
+      lastError:   errRow?.error_message ?? null,
+      lastErrorAt: errRow?.created_at    ?? null,
+      version:     workerData?.version   ?? null,
     };
   },
 
   async getLogs(env) {
-    // Show combined logs (instagram + tiktok) since worker handles both
+    // Show a combined overview of all 4 platforms — newest activity across all syncs
     try {
       const { results } = await env.DB.prepare(`
         SELECT event, message, items_synced, error_message, response_time_ms, created_at
         FROM   sync_logs
-        WHERE  platform IN ('instagram','tiktok')
+        WHERE  platform IN ('instagram','tiktok','twitch','youtube')
         ORDER  BY created_at DESC
         LIMIT  20
       `).all();
@@ -165,7 +179,7 @@ export const TwitchProvider = {
   },
 
   async sync() {
-    const res  = await fetch(`${WORKER_URL}/sync`, { method: 'GET' });
+    const res = await fetch(`${WORKER_URL}/sync`, { method: 'GET' });
     return res.ok ? res.json() : { ok: false, error: `Worker returned ${res.status}` };
   },
 };

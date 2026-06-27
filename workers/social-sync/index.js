@@ -152,43 +152,24 @@ async function syncTikTok(env) {
     'User-Agent': 'AyUpGee-SocialSync/2.0',
   };
 
-  // Step 1 — resolve secUid
-  const secUidRes = await fetch(
-    'https://api.tikhub.io/api/v1/tiktok/web/get_sec_user_id?url=https://www.tiktok.com/@ayupgee',
-    { headers }
-  );
-
-  let secUid = null;
-  if (secUidRes.ok) {
-    const secUidJson = await secUidRes.json();
-    secUid = secUidJson?.data ?? null;
-  }
-
-  if (!secUid) {
-    const msg = 'Could not resolve TikTok secUid';
-    await writeLog(env, 'tiktok', 'sync_error', 'TikTok sync failed', {
-      error_message: msg,
-      response_time_ms: Date.now() - start,
-    });
-    throw new Error(msg);
-  }
-
-  // Step 2 — fetch latest videos
+  // Single call — app/v3 endpoint accepts unique_id directly, no secUid resolution needed
   const res = await fetch(
-    `https://api.tikhub.io/api/v1/tiktok/web/fetch_user_post?unique_id=ayupgee&secUid=${encodeURIComponent(secUid)}&count=4`,
+    'https://api.tikhub.io/api/v1/tiktok/app/v3/fetch_user_post_videos?unique_id=ayupgee&count=4',
     { headers }
   );
 
   if (!res.ok) {
-    const msg = `TikHub returned ${res.status}`;
+    const body = await res.text().catch(() => '');
+    const msg  = `TikHub returned ${res.status}`;
     await writeLog(env, 'tiktok', 'sync_error', 'TikTok sync failed', {
-      error_message: msg,
+      error_message: `${msg}${body ? ': ' + body.slice(0, 200) : ''}`,
       response_time_ms: Date.now() - start,
     });
-    throw new Error(`${msg}: ${await res.text()}`);
+    throw new Error(`${msg}: ${body}`);
   }
 
   const json   = await res.json();
+  // app/v3 returns aweme_list under data.aweme_list (same as web endpoint)
   const videos = json?.data?.aweme_list ?? [];
 
   if (videos.length === 0) {
