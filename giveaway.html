@@ -472,8 +472,10 @@ ul,ol{list-style:none}
    CREATOR RECOGNITION
    ═══════════════════════════════════════════════════════ */
 .gw-creators{
+  position:relative;z-index:1;
   text-align:center;
-  padding-bottom:var(--space-6);
+  margin-top:-32px;
+  padding:0 0 var(--space-5);
 }
 .gw-creators__label{
   font-family:var(--font-body);font-size:var(--text-xs);font-weight:var(--fw-semibold);
@@ -753,24 +755,25 @@ ul,ol{list-style:none}
 <!-- ═══════════════════════════════════════════════════
      GLEAM.IO WIDGET SECTION
      ═══════════════════════════════════════════════════ -->
-<section class="section" id="enter">
+<!-- Creator recognition — bleeds into hero bottom -->
+<div class="gw-creators">
   <div class="container">
-
-    <!-- Creator recognition strip -->
-    <div class="gw-creators">
-      <p class="gw-creators__label">Shared by these incredible creators</p>
-      <div class="gw-creators__pills">
-        <a class="gw-creator-pill" href="https://www.twitch.tv/t1nksy" target="_blank" rel="nofollow noopener noreferrer">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-          T1nksy
-        </a>
-        <a class="gw-creator-pill" href="https://www.twitch.tv/myysticmoon" target="_blank" rel="nofollow noopener noreferrer">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
-          MyysticMoon
-        </a>
-      </div>
+    <p class="gw-creators__label">Shared by these incredible creators</p>
+    <div class="gw-creators__pills">
+      <a class="gw-creator-pill" href="https://www.twitch.tv/t1nksy" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+        T1nksy
+      </a>
+      <a class="gw-creator-pill" href="https://www.twitch.tv/myysticmoon" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+        MyysticMoon
+      </a>
     </div>
+  </div>
+</div>
 
+<section class="section" id="enter" style="padding-top:var(--space-5)">
+  <div class="container">
     <div class="gw-gleam-wrap">
       <div class="gw-gleam-header">
         <div class="gw-section-label" style="justify-content:center">🎁 Enter Now</div>
