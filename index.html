@@ -76,14 +76,12 @@
 <link rel="manifest" href="/assets/favicon/site.webmanifest" />
 <meta name="theme-color" content="#161427" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
 
 <link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
-<link rel="dns-prefetch" href="https://unpkg.com" />
 
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<script src="/assets/js/lucide.min.js" defer></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════
@@ -839,7 +837,7 @@ ul,ol{list-style:none}
   <a href="#hero" class="brand-lockup">
     <div class="brand-mark">
       
-      <img src="assets/images/ui/honey-drips.png"
+      <img src="assets/images/ui/honey-drips.webp"
            alt="AyUpGee bee"
            onerror="this.style.display='none';this.parentNode.innerHTML='🐝'" />
     </div>
@@ -922,8 +920,9 @@ ul,ol{list-style:none}
             
             <span class="aug-avatar aug-avatar--ring" style="width:84px;height:84px">
               <img class="aug-avatar__img"
-                   src="assets/images/og/social-profile.jpg"
+                   src="assets/images/ui/avatar-168.webp"
                    alt="Gee, AyUpGee"
+                   width="84" height="84"
                    fetchpriority="high" decoding="async"
                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'aug-avatar__fallback\' style=\'font-size:2.2rem\'>G</span>'" />
             </span>
@@ -1026,8 +1025,8 @@ ul,ol{list-style:none}
         
         <div class="twitch-embed-ratio">
           <iframe
-            src="https://player.twitch.tv/?channel=ayupgee&parent=ayupgee.com&parent=localhost&parent=127.0.0.1&autoplay=false&muted=true"
-            allowfullscreen loading="lazy" title="AyUpGee on Twitch">
+            data-src="https://player.twitch.tv/?channel=ayupgee&parent=ayupgee.com&parent=localhost&parent=127.0.0.1&autoplay=false&muted=true"
+            allowfullscreen title="AyUpGee on Twitch">
           </iframe>
         </div>
       </div>
@@ -1322,7 +1321,7 @@ ul,ol{list-style:none}
           <div class="about-avatar-ring-outer"></div>
           <div class="about-avatar-inner">
             
-            <img src="assets/images/og/social-profile.jpg"
+            <img src="assets/images/ui/avatar-400.webp"
                  alt="Gee, AyUpGee"
                  loading="lazy" decoding="async"
                  onerror="this.style.display='none';this.parentNode.innerHTML='🎮'" />
@@ -1474,7 +1473,7 @@ ul,ol{list-style:none}
     <div>
       <a href="#hero" class="brand-lockup" style="margin-bottom:var(--space-3);display:inline-flex">
         <div class="brand-mark" style="width:32px;height:32px">
-          <img src="assets/images/ui/honey-drips.png"
+          <img src="assets/images/ui/honey-drips.webp"
                style="width:22px;height:22px;object-fit:contain" alt="AyUpGee bee"
                onerror="this.style.display='none';this.parentNode.innerHTML='🐝'" />
         </div>
@@ -1932,7 +1931,7 @@ function renderTwitchVodItems(items) {
     const url      = _esc(item.url   || 'https://twitch.tv/ayupgee/videos');
     const date     = _esc(_fmtDate(item.publishedAt));
     const duration = _esc(item.duration || '');
-    const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl) : '';
+    const thumb    = item.thumbnailUrl ? _esc(item.thumbnailUrl.replace('640x360', '320x180')) : '';
 
     return `
       <div class="video-card video-card--link reveal ${delays[i] ?? ''}"
@@ -2432,6 +2431,22 @@ function switchTab(id, btn) {
 // When deploying: update the Twitch iframe src:
 //   Change parent=localhost&parent=127.0.0.1
 //   To:     parent=yourdomain.com
+
+// ── Twitch iframe: scroll-based lazy load ─────────────────
+// The iframe uses data-src so Twitch JS is not fetched on page load.
+// IntersectionObserver swaps in the real src when the section
+// is 400px away from entering the viewport, giving it time to load.
+(function () {
+  const iframe = document.querySelector('.twitch-embed-ratio iframe[data-src]');
+  if (!iframe) return;
+  const obs = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      iframe.src = iframe.dataset.src;
+      obs.disconnect();
+    }
+  }, { rootMargin: '400px' });
+  obs.observe(iframe);
+}());
 </script>
 
 <script src="/assets/js/cookie-consent.js" defer></script>
