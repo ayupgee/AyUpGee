@@ -469,6 +469,48 @@ ul,ol{list-style:none}
 }
 
 /* ═══════════════════════════════════════════════════════
+   CREATOR RECOGNITION
+   ═══════════════════════════════════════════════════════ */
+.gw-creators{
+  text-align:center;
+  padding-bottom:var(--space-6);
+}
+.gw-creators__label{
+  font-family:var(--font-body);font-size:var(--text-xs);font-weight:var(--fw-semibold);
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:var(--space-3);
+}
+.gw-creators__pills{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-2);
+}
+.gw-creator-pill{
+  display:inline-flex;align-items:center;gap:.4em;
+  font-family:var(--font-body);font-size:var(--text-sm);font-weight:var(--fw-semibold);
+  color:var(--text-muted);
+  background:var(--surface-sunken);
+  border:var(--border-thin) solid var(--border);
+  border-radius:var(--radius-pill);
+  padding:.35em .9em;
+  text-decoration:none;
+  transition:background var(--dur-base),color var(--dur-base),border-color var(--dur-base),transform var(--dur-fast) var(--ease-bounce);
+}
+.gw-creator-pill:hover{
+  background:color-mix(in srgb,var(--honey) 14%,var(--surface));
+  color:var(--honey-deep);
+  border-color:color-mix(in srgb,var(--honey) 40%,var(--border));
+  transform:translateY(-1px);
+}
+.gw-creator-pill:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--honey);
+}
+[data-theme="night"] .gw-creator-pill:hover{
+  color:var(--moon-300);
+  border-color:color-mix(in srgb,var(--moon-300) 35%,transparent);
+  background:color-mix(in srgb,var(--honey) 10%,var(--night-800));
+}
+
+/* ═══════════════════════════════════════════════════════
    GLEAM WIDGET SECTION
    ═══════════════════════════════════════════════════════ */
 .gw-gleam-wrap{
@@ -713,6 +755,22 @@ ul,ol{list-style:none}
      ═══════════════════════════════════════════════════ -->
 <section class="section" id="enter">
   <div class="container">
+
+    <!-- Creator recognition strip -->
+    <div class="gw-creators">
+      <p class="gw-creators__label">Shared by these incredible creators</p>
+      <div class="gw-creators__pills">
+        <a class="gw-creator-pill" href="https://www.twitch.tv/t1nksy" target="_blank" rel="nofollow noopener noreferrer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+          T1nksy
+        </a>
+        <a class="gw-creator-pill" href="https://www.twitch.tv/myysticmoon" target="_blank" rel="nofollow noopener noreferrer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+          MyysticMoon
+        </a>
+      </div>
+    </div>
+
     <div class="gw-gleam-wrap">
       <div class="gw-gleam-header">
         <div class="gw-section-label" style="justify-content:center">🎁 Enter Now</div>
@@ -947,6 +1005,11 @@ ul,ol{list-style:none}
       <div class="gw-terms__section">
         <h3>12. Disclaimer</h3>
         <p>This giveaway is not sponsored, endorsed, administered by or associated with Disney, Gameloft, Gleam, Twitch, YouTube, TikTok, Instagram, Discord, Steam, Epic Games, PlayStation, Xbox, Nintendo, Apple or any of their affiliates. All trademarks remain the property of their respective owners.</p>
+      </div>
+
+      <div class="gw-terms__section">
+        <h3>13. Creator Acknowledgement</h3>
+        <p>The creators listed under "Shared by these incredible creators" are not organisers, sponsors, partners, or affiliates of this giveaway. They are wonderful creator friends who have kindly shared the giveaway with their own communities, and this section exists simply to recognise and thank them for their support.</p>
       </div>
 
       <div class="gw-terms__section">
